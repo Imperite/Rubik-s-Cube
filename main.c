@@ -15,6 +15,59 @@
     7. also, Compressing the cube down from a char per side to 3 bytes per side would mean a reduction from 50 bytes per state to 30, so could be worth it if running into space issues (but adds a lot to time cost -- now have to isloate each face for operations, making rotations even harder?)
 */
 
+
+
+/*
+Notation:
+XYz
+  X = C, S, or (W B O R G Y)
+    C = Corner cube
+    S = Side cube
+    (W B O R G Y) = center cube; one face and constant, so can be used for orientation
+
+  Y = 0-a
+    Denotes the index of this cube on the face
+  
+  z = (w b o r g y)
+    Represents the directional face of each cube by the center facing the same direction
+
+Normal Cube state: (original orientation, used in array-struct form)  
+  L1: C0 S0 C1    L2: S4 B1 S5    L3: C4 S8 C5
+      S1 W0 S2        O2 -- R3        S9 Y5 Sa
+      C2 S3 C3        S6 G4 S7        C6 Sb C8
+
+Standard method of storing compressed: (just showing cubes, not specific faces)
+          Center Cubes                  Side cubes                    
+  C0 C1 C2 C3 C4 C5 C6 C7 C8 | S0 S1 S2 S3 S4 S5 S6 S7 S8 S9 Sa Sb | <DEPTH INT>
+
+  Requires storing each cube as a set of 2-3 chars describing faces of cube; would need to factor in rotations in changing cubes, making it more challenging
+
+Expanded form: (shows faces -- set up for simple rotations?)
+    White Corners |  Blue Corners   |  Orange Corners | Yellow Corners  |  Green Corners  |  Red Corners    |
+  C0w C1w C3w C2w | C4b C5b C1b C0b | C4o C0o C2o C6o | C6y C8y C5y C4y | C2g C3g C8g C6g | C1r C5r C8r C3r | . . .
+
+    White Sides   |   Blue Sides    |   Orange Sides  |   Yellow Sides  |   Green Sides   |   Red Sides     |
+  S0w S2w S3w S1w | S8b S5b S0b S4b | S4o S1o S6o S9o | Sby Say S8y S9y | S3g S7g Sbg S6g | S5r Sar S7r S2r | <DEPTH INT>
+
+
+Ideas:
+   - Been using W B O R G Y; didn't think it mattered too much. Now that order of sides looks to become more important, maybe switch to W B O Y G R?
+    + Opp face is always (face + 3 )%6
+    + Touching faces are 1, 2, -2, -1 for white, similar relationship for all (could be derived from above statement)
+    + if a face is x away in the line, the opposite face is 3-x away in opposite direction
+
+    + Direct benefit: Would simplify rotations somewhat, as easier to calculate where next faces are?
+
+  - Eventually, could go from char-based (1-byte) storage to 3-bit group storage?
+    + Means massive reduction in space (50 bytes -> 30)
+    = Would likely also want to store int in one byte-length (only using 4 bits, maybe could use to help delineate?)
+    - Requires more computation to read and write, so will negatively affect runtime
+    Conclusion: Only use if seem to be running out of space computing answer
+
+*/
+
+
+
 //I have a lot of constant variables here, so I'm using enums to group them up
 
 // both of these are set up in the same orientation(i.e. the front face is white, the top is blue, so the right is red, back is yellow, etc.), and will help make the code more readable.
@@ -258,8 +311,7 @@ bool solve_cube(Change moves[20], Cube_State *initial_state, Cube_State *solved)
 
 int main()
 {
-  return 0;
-  
+  /*
   //Obviously, I don't have the power to test this function and see if it works fully in 15 min, but here, I've simulated the two main different types of circumstances that could occur, of 3:
     //a) the cube is some number of rotations away on the front face, in which case this the first and second examples prove that it works
     //b) the cube is some number of rotations away on a different face, in which case the third example demostrates that this works
