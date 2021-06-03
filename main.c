@@ -18,52 +18,214 @@
 
 
 /*
-Notation:
-XYz
-  X = C, S, or (W B O R G Y)
-    C = Corner cube
-    S = Side cube
-    (W B O R G Y) = center cube; one face and constant, so can be used for orientation
+  Notation:
+    XYz
+      X = C, S, or (W B O R G Y)
+        C = Corner cube
+        S = Side cube
+        (W B O R G Y) = center cube; one face and constant, so can be used for orientation
 
-  Y = 0-a
-    Denotes the index of this cube on the face
-  
-  z = (w b o r g y)
-    Represents the directional face of each cube by the center facing the same direction
+      Y = 0-a
+        Denotes the index of this cube on the face
+      
+      z = (w b o r g y) = (0 1 2 3 4 5)?
+        Represents the directional face of each cube by the center facing the same direction
+    
+    zY
+      z = (w b o r g y) = (0 1 2 3 4 5)?
+        Represents a side of the cube
+      Y = 0-7
+        Represents what part of that side this block is: 0-3 are 
 
-Normal Cube state: (original orientation, used in array-struct form)  
-  L1: C0 S0 C1    L2: S4 B1 S5    L3: C4 S8 C5
-      S1 W0 S2        O2 -- R3        S9 Y5 Sa
-      C2 S3 C3        S6 G4 S7        C6 Sb C8
+  Normal Cube state: (original orientation, used in array-struct form)  
+    L1: C0 S0 C1    L2: S4 B1 S5    L3: C4 S8 C5
+        S1 W0 S2        O2 -- R3        S9 Y5 Sa
+        C2 S3 C3        S6 G4 S7        C6 Sb C7
 
-Standard method of storing compressed: (just showing cubes, not specific faces)
-          Center Cubes                  Side cubes                    
-  C0 C1 C2 C3 C4 C5 C6 C7 C8 | S0 S1 S2 S3 S4 S5 S6 S7 S8 S9 Sa Sb | <DEPTH INT>
+  (NOT USED) Standard method of storing compressed: (just showing cubes, not specific faces)
+            Center Cubes                  Side cubes                    
+    C0 C1 C2 C3 C4 C5 C6 C7 C8 | S0 S1 S2 S3 S4 S5 S6 S7 S8 S9 Sa Sb | <DEPTH INT>
 
-  Requires storing each cube as a set of 2-3 chars describing faces of cube; would need to factor in rotations in changing cubes, making it more challenging
+    Requires storing each cube as a set of 2-3 chars describing faces of cube; would need to factor in rotations in changing cubes, making it more challenging
 
-Expanded form: (shows faces -- set up for simple rotations?)
-    White Corners |  Blue Corners   |  Orange Corners | Yellow Corners  |  Green Corners  |  Red Corners    |
-  C0w C1w C3w C2w | C4b C5b C1b C0b | C4o C0o C2o C6o | C6y C8y C5y C4y | C2g C3g C8g C6g | C1r C5r C8r C3r | . . .
+  Expanded form: (shows faces -- set up for simple rotations?)
+      White Corners |  Blue Corners   |  Orange Corners | Yellow Corners  |  Green Corners  |  Red Corners    |         < Group
+    C0w C1w C3w C2w | C4b C5b C1b C0b | C4o C0o C2o C6o | C6y C7y C5y C4y | C2g C3g C7g C6g | C1r C5r C7r C3r | . . .   < Original Face
+    w0  w1  w2  w3  | b0  b1  b2  b3  | o0  o1  o2  o3  | y0  y1  y2  y3  | g0  g1  g2  g3  | r0  r1  r2  r3  |         < New Terminology
 
-    White Sides   |   Blue Sides    |   Orange Sides  |   Yellow Sides  |   Green Sides   |   Red Sides     |
-  S0w S2w S3w S1w | S8b S5b S0b S4b | S4o S1o S6o S9o | Sby Say S8y S9y | S3g S7g Sbg S6g | S5r Sar S7r S2r | <DEPTH INT>
+      White Sides   |   Blue Sides    |   Orange Sides  |   Yellow Sides  |   Green Sides   |   Red Sides     |
+    S0w S2w S3w S1w | S8b S5b S0b S4b | S4o S1o S6o S9o | Sby Say S8y S9y | S3g S7g Sbg S6g | S5r Sar S7r S2r | <DEPTH INT>
+    w4  w5  w6  w7  | b4  b5  b6  b7  | o4  o5  o6  o7  | y4  y5  y6  y7  | g4 g5  g6  g7   | r4  r5  r6  r7  |
 
+  Rotations:
+    Needed:
+      Must describe completely how to switch values of different positions
+        Could use array as in prev version
+        Possibility of finding formula?
 
-Ideas:
-   - Been using W B O R G Y; didn't think it mattered too much. Now that order of sides looks to become more important, maybe switch to W B O Y G R?
-    + Opp face is always (face + 3 )%6
-    + Touching faces are 1, 2, -2, -1 for white, similar relationship for all (could be derived from above statement)
-    + if a face is x away in the line, the opposite face is 3-x away in opposite direction
+    Poss formula:
+    white rotates:
+      90:
+        white corners:
+          w0 > w1 > w2 > w3 >
+        white sides:
+          w4 > w5 > w6 > w7 >
+        adjacent corners:
+          b2 > r3 > g0 > o1 >
+          b3 > r0 > g1 > o2 >
+        adjacent sides:
+          b6 > r7 > g4 > o5 >
 
-    + Direct benefit: Would simplify rotations somewhat, as easier to calculate where next faces are?
+      180:
+        white corners:
+          w0 > w2 >
+          w1 > w3 >
+        white sides:
+          w4 > w6 >
+          w5 > w7 >
+        adjacent corners:
+          b2 > g0 >
+          b3 > g1 >
+          r3 > o1 >
+          r0 > o2 >
+        adjacent sides:
+          b6 > g4 >
+          o7 > r5 >
+        Again, if I store white face side progression, there's a pattern that continues into a 270:
+      
+      270 (-90)
+        white corners:
+          w0 > w3 > w2 > w1 >
+        white sides:
+          w4 > w7 > w6 > w5 >
+        adjacent corners:
+          b2 > o1 > g0 > r3 >
+          b3 > o2 > g1 > r0 >
+        adjacent sides:
+          b6 > o7 > g4 > r5 >
+        index + 3 % 4, or index-1 % 4 works
+      Algorithm: Rot white face mod 4 for corners and sides, shift index by 1/-1 for adj corners/sides
+      Pattern:  b r g o = 1 5 4 2 = -2 -1
+    blue rotates:
+      90:
+        blue corners:
+          b0 > b1 > b2 > b3 >
+        blue sides:  
+          b4 > b5 > b6 > b7 >
+        adjacent corners:
+          w0 > o0 > y2 > r0 >
+          w1 > o1 > y3 > r1 >
+        adjacent sides:
+          w4 > o4 > y6 > r4 >
+      
+      180:
+        blue corners:
+          b0 > b2 >
+          b1 > b3 >
+        blue sides:
+          b4 > b6 >
+          b5 > b7 >
+        adjacent corners:
+          w0 > y2 >
+          w1 > y3 > 
+          o0 > r0 >
+          o1 > r1 >
+        adjacent sides:
+          w4 > y6 >
+          o4 > r4 >
+      
+      270 (-90):
+        blue corners:
+          b0 > b3 > b2 > b1 >
+        blue sides:
+          b4 > b7 > b6 > b5 >
+        adjacent corners:
+          w0 > r0 > y2 > o0 >
+          w1 > r1 > y3 > o1 >
+        adjacent sides:
+          w4 > r4 > y6 > o4 >
+      
+      Diff algorithm (face changes but position remains same, except for in yellow) than white face for adj. rots, same for face rots.
+      Pattern: y r w o = 3 5 0 2 = +2 +1
+    orange rotates:
+      90:
+        orange corners:
+          o0 > o1 > o2 > o3 >
+        orange sides:
+          o4 > o5 > o6 > o7 >
+        adjacent corners:
+          w0 > g0 > y0 > b0 >
+          w1 > g1 > y1 > b1 >
+        adjacent sides:
+          w7 > g7 > y7 > b7 >
+      180:
+        orange corners:
+          o0 > o2 >
+          o1 > o3 >
+        orange sides:
+          o4 > o6 >
+          o5 > o7 >
+        adjacent corners:
+          w0 > y0 >
+          g0 > b0 >
+        adjacent sides:
+          w7 > y7 >
+          g7 > b7 >
+      270:
+        orange corners:
+          o0 > o3 > o2 > o1 >
+        orange sides:
+          o4 > o7 > o6 > o5 >
+        adjacent corners:
+          w0 > b0 > y0 > g0 >
+          w1 > b1 > y1 > g1 >
+        adjacent sides:
+          w7 > b7 > y7 > g7 >
+      Truly simple rotation: All are just incrementing the index as they progress
+      Pattern: w g y b = 0 4 3 1 = -2 -1
+      
+    yellow rotates:
+      90:
+        yellow corners:
+          y0 > y1 > y2 > y3 >
+        yellow sides:
+          y4 > y5 > y6 > y7 >
+        adjacent corners:
+          b0 > o3 > g2 > r1 >
+          b1 > o0 > g3 > r2 >
+        adjacent sides:
+          b4 > o7 > g6 > r5 >
+      
+      180:
+        yellow corners:
+          y0 > y2 >
+          y1 > y3 > 
+        yellow sides:
+          y4 > y6 >
+          y5 > y7 >
+        adjacent corners:
+          b0 > g2 >
+          b1 > g3 >
+          o3 > r1 >
+          o0 > r2 >
+        adjacent sides: 
+          b4 > o6 >
+          o7 > r5 >
+        
+      270 (-90):
+        yellow corners:
+          y0 > y3 > y2 > y1 >
+        yellow sides:
+          y4 > y7 > y6 > y5 > 
+        adjacent corners: 
+          b0 > r1 > g2 > o3 >
+          b1 > r2 > g3 > o0 >
+        adjacent sides:
+          b4 > r5 > g6 > o7 >
+      same as white, just with different base pattern:
+      Pattern: b o g r = 1 2 4 5
 
-  - Eventually, could go from char-based (1-byte) storage to 3-bit group storage?
-    + Means massive reduction in space (50 bytes -> 30)
-    = Would likely also want to store int in one byte-length (only using 4 bits, maybe could use to help delineate?)
-    - Requires more computation to read and write, so will negatively affect runtime
-    Conclusion: Only use if seem to be running out of space computing answer
-
+Maybe have w b o be linked in c-orientation, and y g r also be linked in c-orientation? need to see how differs from above method, if any benefits for simplicity
 */
 
 
