@@ -63,7 +63,6 @@
         Could use array as in prev version
         Possibility of finding formula?
 
-    Poss formula:
     white rotates:
       90:
         white corners:
@@ -225,8 +224,41 @@
       same as white, just with different base pattern:
       Pattern: b o g r = 1 2 4 5
 
-Maybe have w b o be linked in c-orientation, and y g r also be linked in c-orientation? need to see how differs from above method, if any benefits for simplicity
+  Should work above ^^
+
+  Formula:
+    90 degrees means  shift = 1, 180 degrees means shift = 2, 270 degrees means shift = 3 (or -1?)
+    White/Yellow:
+      store  patttern that represents the order of sides to access w/ lowest value first
+        White:  4 2 1 5 = g o b r)
+        Yellow: 1 2 4 5 = b o g r
+      face corners and sides:
+        next_loc = prev_loc + shift % 4
+      adj corners:
+        next_loc_0 = prev_loc + shift % 4
+        next_loc_1 = prev_loc - shift % 4
+      adj sides:
+        next_loc = prev_loc + shift % 4
+    Blue/Green:
+      store  patttern that represents the order of sides to access w/ lowest value first
+        Blue:   3 5 0 2 = y r w o 
+        Green:  3 2 0 5 = y o w r
+      face corners and sides:
+        next_loc = prev_loc + shift % 4
+      adj corners and sides:
+        next_loc = (face =! yellow ? prev_loc : prev_loc + 2 )
+    Orange/Red:
+      store  patttern that represents the order of sides to access w/ lowest value first
+        Orange: 0 4 3 1 w g y b
+        Red:    0 1 3 4 w b y g
+      face corners and sides:
+        next_loc = prev_loc + shift % 4
+      adj corners:
+        next_loc = prev_loc
+      adj sides:
+        next_loc = prev_loc
 */
+
 
 
 
