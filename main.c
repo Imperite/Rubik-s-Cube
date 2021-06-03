@@ -553,10 +553,8 @@ bool solve_cube(Change moves[20], Cube_State *initial_state, Cube_State *solved)
 int main()
 {
   Cube * solved = init_Cube();
-  puts(solved->cube);
   print_Cube(solved);
 
-  puts(to_String(solved));
 
   destroy_Cube(solved);
   /*
@@ -889,7 +887,6 @@ void destroy_Cube(Cube * cube)
 void print_Cube(Cube * cube)
 {
   char* chars = (cube->cube);
-  printf("\na: %c :a\n", chars[0]);
   
   printf("\t\t%c %c %c\n",  chars[BLUE], chars[BLUE+4], chars[BLUE+1]);
   printf("\t\t%c b %c\n",   chars[BLUE+7], chars[BLUE+5]);
