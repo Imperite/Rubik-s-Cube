@@ -261,16 +261,63 @@
 
 
 
+//stores index in char array that each face starts
+enum faces {WHITE = 0, BLUE = 8, ORANGE = 16, YELLOW = 24, GREEN = 32, RED = 40};
+int colors[] = {WHITE, BLUE, ORANGE, YELLOW, GREEN, RED};   //needed to go from index (0-5) to color
+char char_representation[] = {'w', 'b', 'o', 'y', 'g', 'r'}; // needed to go from color/index -> char; only really needed for generating cubes
+//represents the adjacent faces for each specific value; index of each face can be found by face/8
+enum faces rot_patterns[6][4] = {
+    {GREEN, ORANGE, BLUE, RED},
+    {YELLOW, RED, WHITE, ORANGE},
+    {WHITE, GREEN, YELLOW, BLUE},
+    {BLUE, ORANGE, GREEN, RED},
+    {YELLOW, ORANGE, WHITE, RED},
+    {WHITE, BLUE, YELLOW, GREEN}
+};
+
+enum rotations {NONE = 0, ROT_90 = 1, ROT_180 = 2, ROT_270 = 3};
+
+typedef struct cube {
+  char* cube;        //stores all 48 faces, 1 byte per face, and then leaves room to put in depth
+  short depth;          //used to store distance from original state
+  char* prev_states;   //used to store all previous states; will have variable length; will store face and rotation for each move, meaning max of 38 chars, but will let specific size be decided at creation.
+  size_t prev_state_length;
+} Cube;
+
+
+//generates solved cube state. Not needed, but useful for demostrating how everything's stored and rotations
+Cube * init_Cube();
+//destroys cube
+void destroy_Cube(Cube * cube);
+//With the new methods, generating a solved cube is very simple and not costly at all, but randomizing will likely take time.
+Cube * randomize_Cube();
+//will require more work to visualize effectively, but should be doable
+void print_Cube(Cube * cube);
+//returns form that will be put into the heap/radix tree to store and compare for later 
+char* to_String(Cube * cube);
+
+void rotate_Cube(Cube * cube, enum faces side, enum rotations rot);
+
+//No need for isEqual anymore, as strcmp works just fine
+
+
+
+
+
+
+
+
+
 
 //I have a lot of constant variables here, so I'm using enums to group them up
 
 // both of these are set up in the same orientation(i.e. the front face is white, the top is blue, so the right is red, back is yellow, etc.), and will help make the code more readable.
   //orgainzed so that any face +3 %6 will return the opposite face; helps with generation of cubes
   enum direction {FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM};
-  enum color {WHITE, BLUE, ORANGE, RED, GREEN, YELLOW};
+  enum color {WHITEC, BLUEC, ORANGEC, REDC, GREENC, YELLOWC};
   enum definitions {NUM_CORNERS = 8, NUM_SIDES = 12, NUM_CENTERS = 6, NUM_CORNER_FACES = 3, NUM_SIDE_FACES = 2, NUM_CENTER_FACES = 1};
   //none is only used in the main solving function to denote if the cube is solved before the 20 move mark.
-  enum rotations {ROT_270 = 0, ROT_180 = 1, ROT_90 = 2, NONE = 3};
+  //enum rotations {ROT_270 = 0, ROT_180 = 1, ROT_90 = 2, NONE = 3};
 
   char *numbers = "0123456789";
 
@@ -505,107 +552,90 @@ bool solve_cube(Change moves[20], Cube_State *initial_state, Cube_State *solved)
 
 int main()
 {
+  Cube * solved = init_Cube();
+  puts(solved->cube);
+  print_Cube(solved);
+
+  puts(to_String(solved));
+
+  destroy_Cube(solved);
   /*
-  //Obviously, I don't have the power to test this function and see if it works fully in 15 min, but here, I've simulated the two main different types of circumstances that could occur, of 3:
-    //a) the cube is some number of rotations away on the front face, in which case this the first and second examples prove that it works
-    //b) the cube is some number of rotations away on a different face, in which case the third example demostrates that this works
-    //c) the cube is not 1 move away, and so should be rotated again. this is proven by the 4th one, which is two different moves away from a solve.
-  srand(42);
-  Cube_State *solved = init_subCubes();
+    //Obviously, I don't have the power to test this function and see if it works fully in 15 min, but here, I've simulated the two main different types of circumstances that could occur, of 3:
+      //a) the cube is some number of rotations away on the front face, in which case this the first and second examples prove that it works
+      //b) the cube is some number of rotations away on a different face, in which case the third example demostrates that this works
+      //c) the cube is not 1 move away, and so should be rotated again. this is proven by the 4th one, which is two different moves away from a solve.
+    srand(42);
+    Cube_State *solved = init_subCubes();
 
-  //1st EXAMPLE:
-  printf("\t");
-  Cube_State *rotated = rotate(solved, FRONT, ROT_90);
-  //right now, the cube has stored the previous move that it just did, so I need to remove that from it's memory:
-  rotated->prev_change.degree = NONE;
-  puts("\nTo solve a front 90 rotation:");
-  solve(rotated, solved);
+    //1st EXAMPLE:
+    printf("\t");
+    Cube_State *rotated = rotate(solved, FRONT, ROT_90);
+    //right now, the cube has stored the previous move that it just did, so I need to remove that from it's memory:
+    rotated->prev_change.degree = NONE;
+    puts("\nTo solve a front 90 rotation:");
+    solve(rotated, solved);
 
-  puts("DONE");
+    puts("DONE");
 
-  puts("Press Enter to Continue");
-  char c;
-  scanf("%c", &c);
+    puts("Press Enter to Continue");
+    char c;
+    scanf("%c", &c);
 
-  //2nd EXAMPLE:
-  printf("\n\n\t");
-  rotated = rotate(rotated, FRONT, ROT_90);
-  rotated->prev_change.degree = NONE;
-  puts("\n\nTo solve a cube rotated on front face 180:");
-  solve(rotated, solved);
-
-
-  puts("Press Enter to Continue");
-  scanf("%c", &c);
-
-  //3rd EXAMPLE:
-  printf("\n\n\t");
-  rotated = rotate(solved, BACK, ROT_90);
-  rotated->prev_change.degree = NONE;
-  puts("\n\nTo solve a cube rotated on Back face 90:");
-  solve(rotated, solved);
-
-  puts("Press Enter to Continue");
-  scanf("%c", &c);
-
-  //4th EXAMPLE:
-  printf("\n\n\t");
-  rotated = rotate(solved, FRONT, ROT_90);
-  rotated = rotate(rotated, BACK, ROT_180);
-  //right now, the cube has stored the previous move that it just did, so I need to remove that from it's memory:
-  rotated->prev_change.degree = NONE;
-  puts("\n\nTo solve a cube rotated on front face 90 and the back 180:");
-  solve(rotated, solved);
+    //2nd EXAMPLE:
+    printf("\n\n\t");
+    rotated = rotate(rotated, FRONT, ROT_90);
+    rotated->prev_change.degree = NONE;
+    puts("\n\nTo solve a cube rotated on front face 180:");
+    solve(rotated, solved);
 
 
-  puts("Press Enter to Continue");
-  scanf("%c", &c);
-  /*
-  //ARRAYLIST TESTING
-  ArrayListPtr storage = storage_list_create();
-  size_t iterations = 42;
-  size_t length = 2;
-  for(size_t i = 0; i < iterations; ++i)
-  {
-    char *rand_string = malloc(sizeof(char *) * length); //need to get there to be duplicates, so I made it
-    for(size_t j = 0; j<length; ++j)
-      rand_string[j] = color_to_char(WHITE + (rand() % 6));
-      printf("size: %zu\n", storage->size);
-    if(i > 0 && !storage_list_contains(storage->prev_states, storage->size, rand_string))
-      storage_list_insert(storage, rand_string);
-    else if (i == 0)
-      storage_list_insert(storage, rand_string);
-    else
+    puts("Press Enter to Continue");
+    scanf("%c", &c);
+
+    //3rd EXAMPLE:
+    printf("\n\n\t");
+    rotated = rotate(solved, BACK, ROT_90);
+    rotated->prev_change.degree = NONE;
+    puts("\n\nTo solve a cube rotated on Back face 90:");
+    solve(rotated, solved);
+
+    puts("Press Enter to Continue");
+    scanf("%c", &c);
+
+    //4th EXAMPLE:
+    printf("\n\n\t");
+    rotated = rotate(solved, FRONT, ROT_90);
+    rotated = rotate(rotated, BACK, ROT_180);
+    //right now, the cube has stored the previous move that it just did, so I need to remove that from it's memory:
+    rotated->prev_change.degree = NONE;
+    puts("\n\nTo solve a cube rotated on front face 90 and the back 180:");
+    solve(rotated, solved);
+
+
+    puts("Press Enter to Continue");
+    scanf("%c", &c);
+    //ARRAYLIST TESTING
+    ArrayListPtr storage = storage_list_create();
+    size_t iterations = 42;
+    size_t length = 2;
+    for(size_t i = 0; i < iterations; ++i)
     {
-      printf("FOUND DUPLICATE\n");
-      free(rand_string);
+      char *rand_string = malloc(sizeof(char *) * length); //need to get there to be duplicates, so I made it
+      for(size_t j = 0; j<length; ++j)
+        rand_string[j] = color_to_char(WHITE + (rand() % 6));
+        printf("size: %zu\n", storage->size);
+      if(i > 0 && !storage_list_contains(storage->prev_states, storage->size, rand_string))
+        storage_list_insert(storage, rand_string);
+      else if (i == 0)
+        storage_list_insert(storage, rand_string);
+      else
+      {
+        printf("FOUND DUPLICATE\n");
+        free(rand_string);
+      }
     }
-  }
 
-  storage_list_destroy(&storage);
-  //*/
-
-  /*
-  //RUBIKS SIMULATION TESTING; comment out line above to run
-  Cube_State *solved = init_subCubes();
-  print_cube(*solved);
-  char* string = compress_cube(solved, 0);
-  printf("  Size of Cube_State: %zu \n  Size of Compressed String: %zu\n  ", sizeof(*solved), sizeof(string));
-  puts(string);
-
-  Cube_State *randomized = randomize_cube(solved);
-
-  print_cube(*randomized);
-
-  printf("Equal? %d\n", isEqual(randomized, solved));
-
-  Cube_State *original = randomize_cube(solved);
-  print_cube(*original);
-
-  Cube_State *front90 = rotate(solved, LEFT, ROT_90);
-  print_cube(*front90);
-
-  destroy_cube(&solved);
+    storage_list_destroy(&storage);
   //*/
   return 0;
 }
@@ -827,7 +857,65 @@ bool storage_list_contains(char **prev_states, size_t size, char *to_find)
     return false;
 }
 
-//RUBIK'S CUBE SIMULATION FUNCTIONS:
+
+
+
+//RUBIK's CUBE CHAR ARRAY SIMULATION FUNCTIONS:
+//creates a basic, solved cube
+Cube * init_Cube() {
+  Cube * solved = malloc(sizeof(Cube));
+  char* cube = calloc(50, sizeof(char));
+  for(size_t i = 0; i < 6; i++)
+    for (size_t j = 0; j < 8; j++)
+      cube[i*8 + j] = char_representation[i];
+  solved->cube = cube;
+
+  solved->depth = 0;
+  solved->prev_states = NULL;
+  solved->prev_state_length = 0;
+  
+  return solved;
+}
+
+//destroys cube; not wanting to destroy the state, as that'll be saved elsewhere
+void destroy_Cube(Cube * cube)
+{
+  free(cube->prev_states);
+  free(cube);
+}
+
+//prints cube out in more graphically applealing manner to help confirm that rotations are done correctly
+//not done effieciently, but works
+void print_Cube(Cube * cube)
+{
+  char* chars = (cube->cube);
+  printf("\na: %c :a\n", chars[0]);
+  
+  printf("\t\t%c %c %c\n",  chars[BLUE], chars[BLUE+4], chars[BLUE+1]);
+  printf("\t\t%c b %c\n",   chars[BLUE+7], chars[BLUE+5]);
+  printf("\t\t%c %c %c\n\n",  chars[BLUE+3], chars[BLUE+6], chars[BLUE+2]);
+  printf("%c %c %c   %c %c %c   %c %c %c\n",  chars[ORANGE], chars[ORANGE+4], chars[ORANGE+1], chars[WHITE],    chars[WHITE+4], chars[WHITE+1], chars[RED], chars[RED+4], chars[RED+1]);
+  printf("%c o %c   %c w %c   %c r %c\n",   chars[ORANGE+7], chars[ORANGE+5], chars[WHITE+7], chars[WHITE+5], chars[RED+7], chars[RED+5]);
+  printf("%c %c %c   %c %c %c   %c %c %c\n\n",  chars[ORANGE+3], chars[ORANGE+6], chars[ORANGE+2], chars[WHITE+3], chars[WHITE+6], chars[WHITE+2], chars[RED+3], chars[RED+6], chars[RED+2]);
+  printf("\t\t%c %c %c\n", chars[GREEN], chars[GREEN+4], chars[GREEN+1]);
+  printf("\t\t%c g %c\n", chars[GREEN+7], chars[GREEN+5]);
+  printf("\t\t%c %c %c\n\n", chars[GREEN+3],chars[GREEN+6],chars[GREEN+2]);
+  printf("\t\t%c %c %c\n", chars[YELLOW], chars[YELLOW+4], chars[YELLOW+1]);
+  printf("\t\t%c y %c\n", chars[YELLOW+7], chars[YELLOW+5]);
+  printf("\t\t%c %c %c\n", chars[YELLOW+3], chars[YELLOW+6], chars[YELLOW+2]);
+  
+}
+
+char * to_String(Cube *cube)
+{
+  char* numbers = "0123456789";
+  cube->cube[49] = numbers[cube->depth/10];
+  cube->cube[50] = numbers[cube->depth%10];
+
+  return cube->cube;
+}
+
+//RUBIK'S CUBE Struct/Array SIMULATION FUNCTIONS:
 //init_subcubes creates a basic, solved rubik's cube that can then be modified how you want. This is currently stored in a struct; in the future, I plan to work on making this a string instead, although that will make it even harder to understand.
 Cube_State * init_subCubes()
 {
@@ -848,7 +936,7 @@ Cube_State * init_subCubes()
 
   //sets centers to be the correct color: 0 1 2 3 4 5 to w b o r y g
   for(index = 0; index < NUM_CENTERS; ++index)
-    solved->centers[index]->face[0] = (WHITE + index);
+    solved->centers[index]->face[0] = (WHITEC + index);
 
 
   for(index = 0; index < 4; ++index)
@@ -861,42 +949,42 @@ Cube_State * init_subCubes()
     //front and back
       //very simple, just needs 0 1 2 3 for corners and sides (and inverse for back)
       //used to use index and NUM_CORNERS-index-1 here, but changed for consistency
-    solved->corners[iteration_shifts[FRONT][ROT_CORNERS][index]]->faces[1] = WHITE;
-    solved->corners[iteration_shifts[BACK][ROT_CORNERS][index]]->faces[1] = YELLOW;
+    solved->corners[iteration_shifts[FRONT][ROT_CORNERS][index]]->faces[1] = WHITEC;
+    solved->corners[iteration_shifts[BACK][ROT_CORNERS][index]]->faces[1] = YELLOWC;
 
-    solved->sides[iteration_shifts[FRONT][ROT_SIDES][index]]->faces[0] = WHITE;
-    solved->sides[iteration_shifts[BACK][ROT_SIDES][index]]->faces[0] = YELLOW;
+    solved->sides[iteration_shifts[FRONT][ROT_SIDES][index]]->faces[0] = WHITEC;
+    solved->sides[iteration_shifts[BACK][ROT_SIDES][index]]->faces[0] = YELLOWC;
 
     //left and right
       //left corners need 0 2 4 6 and shifted 1 to the right for the right side
       //used to use index*2 and index*2+1 here
-    solved->corners[iteration_shifts[LEFT][ROT_CORNERS][index]]->faces[0] = ORANGE;
-    solved->corners[iteration_shifts[RIGHT][ROT_CORNERS][index]]->faces[0] = RED;
+    solved->corners[iteration_shifts[LEFT][ROT_CORNERS][index]]->faces[0] = ORANGEC;
+    solved->corners[iteration_shifts[RIGHT][ROT_CORNERS][index]]->faces[0] = REDC;
 
     //this is very complicated. I ran into a problem of how to designate which face was "side" and which was "front_back" for sides[4] thru sides[7], and so this is the simplest way I thought of to handle it. In this case, I set the "front_back" face to be on the left_right (x) axis, if necessary, and work from there. This if statement filters out the sides for which this is necessary. Then, I use the equation to get the sequence 1 4 9 6 (the indices of the side cubes for the left face), and set those to be the correct face, as well as shift one over and set red face.
       //used to use (index+1) * (index+1) % 10 for the left face and (index+1) * (index+1) % 10 +1 for the right
     if(index%2 == 0)
     {
-      solved->sides[iteration_shifts[LEFT][ROT_SIDES][index]]->faces[1] = ORANGE;
-      solved->sides[iteration_shifts[RIGHT][ROT_SIDES][index]]->faces[1] = RED;
+      solved->sides[iteration_shifts[LEFT][ROT_SIDES][index]]->faces[1] = ORANGEC;
+      solved->sides[iteration_shifts[RIGHT][ROT_SIDES][index]]->faces[1] = REDC;
     }
     else
     {
-      solved->sides[iteration_shifts[LEFT][ROT_SIDES][index]]->faces[0] = ORANGE;
-      solved->sides[iteration_shifts[RIGHT][ROT_SIDES][index]]->faces[0] = RED;
+      solved->sides[iteration_shifts[LEFT][ROT_SIDES][index]]->faces[0] = ORANGEC;
+      solved->sides[iteration_shifts[RIGHT][ROT_SIDES][index]]->faces[0] = REDC;
     }
 
     //top and bottom
       //for corners, need 0 1 4 5 in some order, using order 4 5 0 1 here
       //used to use (4+index) % 6 for the top and (4+index) % 6 + 2 for the bottom
-    solved->corners[iteration_shifts[TOP][ROT_CORNERS][index]]->faces[2] = BLUE;
-    solved->corners[iteration_shifts[BOTTOM][ROT_CORNERS][index]]->faces[2] = GREEN;
+    solved->corners[iteration_shifts[TOP][ROT_CORNERS][index]]->faces[2] = BLUEC;
+    solved->corners[iteration_shifts[BOTTOM][ROT_CORNERS][index]]->faces[2] = GREENC;
 
     //sides need 0 4 5 8 and 3 6 7 11, using 4 5 8 0 and 6 7 11 3 here
         //4 * (index %2) + (index/2)%2 * 4 + ((index+1)/3) %2 - ((index)/3 %2) works for top, but is unnecessarily complicated and doesn't work for bottom
         //used to use an if statemnt for if index is less than 2, and use 4+index (or 6+index) if true, or (6+index) % 9 (or (6+index) % 9 + 3) if false
-    solved->sides[iteration_shifts[TOP][ROT_SIDES][index]]->faces[1] = BLUE;
-    solved->sides[iteration_shifts[BOTTOM][ROT_SIDES][index]]->faces[1] = GREEN;
+    solved->sides[iteration_shifts[TOP][ROT_SIDES][index]]->faces[1] = BLUEC;
+    solved->sides[iteration_shifts[BOTTOM][ROT_SIDES][index]]->faces[1] = GREENC;
   }
   solved->prev_change.degree = NONE;
   solved->prev_change.face = FRONT;
@@ -946,7 +1034,7 @@ Cube_State *randomize_cube(Cube_State *solved)
   for(; i < NUM_CENTERS; ++i)
   {
     randomized->centers[i] = malloc(sizeof(Center));
-    randomized->centers[i]->face[0] = WHITE + i;
+    randomized->centers[i]->face[0] = WHITEC + i;
   }
 
   //adding corners
@@ -1155,17 +1243,17 @@ void print_cube_slice(void * corner_Arr, size_t corner_index, void * side_Arr, s
   {
     switch(c)
     {
-      case WHITE:
+      case WHITEC:
         return 'w';
-      case BLUE:
+      case BLUEC:
         return 'b';
-      case RED:
+      case REDC:
         return 'r';
-      case YELLOW:
+      case YELLOWC:
         return 'y';
-      case GREEN:
+      case GREENC:
         return 'g';
-      case ORANGE:
+      case ORANGEC:
         return 'o';
       default:
         return 'z';
@@ -1242,10 +1330,10 @@ Cube_State *rotate(Cube_State *previous, enum direction face, size_t rot_amount)
     if(i < NUM_CENTERS/2)
     {
       rotated->centers[i] = malloc(sizeof(Center));
-      *rotated->centers[i]->face = WHITE + i;
+      *rotated->centers[i]->face = WHITEC + i;
 
       rotated->centers[NUM_CENTERS-i-1] = malloc(sizeof(Center));
-      *rotated->centers[NUM_CENTERS-i-1]->face = YELLOW-i;
+      *rotated->centers[NUM_CENTERS-i-1]->face = YELLOWC - i;
     }
   }
 
