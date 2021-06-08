@@ -291,8 +291,16 @@ typedef struct cube
   char *cube;        //stores all 48 faces, 1 byte per face, and then leaves room to put in depth
   short depth;       //used to store distance from original state
   char *prev_states; //used to store all previous states; will have variable length; will store face and rotation for each move, meaning max of 38 chars, but will let specific size be decided at creation.
-  size_t prev_state_length;
+  unsigned short prev_state_length;
 } Cube;
+
+typedef struct change
+{
+  enum faces face;
+  enum rotations degree;
+} Change;
+
+char *numbers = "0123456789";
 
 //generates solved cube state. Not needed, but useful for demostrating how everything's stored and rotations
 Cube *init_Cube();
@@ -342,8 +350,6 @@ enum definitions
 };
 //none is only used in the main solving function to denote if the cube is solved before the 20 move mark.
 //enum rotations {ROT_270 = 0, ROT_180 = 1, ROT_90 = 2, NONE = 3};
-
-char *numbers = "0123456789";
 
 /*
   this is very abstract -- go read the comment in the Cube_State struct to help understand what each number stored means. Essentially, the number stored descrbes the position inside of the Cube_State where each cube is stored, and each number is positioned in such a way that going to each index stored inside of the Cube_State would make a circle going around that face. This simplifies the process of rotation, and partially the process of generating the first cube.
@@ -456,12 +462,6 @@ size_t rotation_swaped_faces[6][2][3] = {
         {1, 0, 2}, //corners
         {0, 1, 0}  //sides
     }};
-
-typedef struct change
-{
-  enum direction face;
-  enum rotations degree;
-} Change;
 
 //If I deal with the full 3x3 cube in terms of pointers to different individual cubes, this will work out much better for me, as I'll be able to more easily move them around without worrying about mixing it up
 /*
@@ -585,13 +585,13 @@ typedef struct tree_node
   //stores the index of the previous node pointer inside of the connected_states array
   size_t prev_index;
 
-  Cube_State current;
+  Cube current;
 } Tree_Node;
 typedef Tree_Node *Tree_NodePtr;
 
 //ACTUAL SOLVING FUNCTION:
-void solve(Cube_State *initial_state, Cube_State *solved);
-bool solve_cube(Change moves[20], Cube_State *initial_state, Cube_State *solved);
+void solve(Cube *initial_state, Cube *solved);
+bool solve_cube(Change moves[20], Cube *initial_state, Cube *solved);
 
 int main()
 {
@@ -681,7 +681,7 @@ int main()
 }
 
 //Solve acts as a wrapper function to print out the results of cube_solve.
-void solve(Cube_State *initial_state, Cube_State *solved)
+void solve(Cube *initial_state, Cube *solved)
 {
   Change *moves = calloc(20, sizeof(Change));
 
@@ -694,22 +694,22 @@ void solve(Cube_State *initial_state, Cube_State *solved)
     printf("do a ");
     switch (moves[i].face)
     {
-    case FRONT:
+    case WHITE:
       printf("front ");
       break;
-    case BACK:
+    case YELLOW:
       printf("back ");
       break;
-    case LEFT:
+    case ORANGE:
       printf("left ");
       break;
-    case RIGHT:
+    case RED:
       printf("right ");
       break;
-    case TOP:
+    case BLUE:
       printf("top ");
       break;
-    case BOTTOM:
+    case GREEN:
       printf("bottom ");
       break;
     default:
@@ -740,7 +740,7 @@ void solve(Cube_State *initial_state, Cube_State *solved)
 //This has a time complexity of roughly O(n(from writing into arraylist) * n(for performing operations on each state)), assuming n represents the number of different UNIQUE states the cube can be in. without the arraylist, this would instead be just all 18^20 states within 20 moves of the cube.
 //time complexity of function is O(n^2)
 //Space complexity of function is O(n), for n being the number of unique states. Each new state is stored, and takes up 50 bytes per state (down from 208 originally!)
-bool solve_cube(Change moves[20], Cube_State *initial_state, Cube_State *solved)
+bool solve_cube(Change moves[20], Cube *initial_state, Cube *solved)
 {
   /*
   plan:
@@ -768,12 +768,12 @@ bool solve_cube(Change moves[20], Cube_State *initial_state, Cube_State *solved)
     }
 
   //go through all the possible rotations of the cube
-  for (size_t face = FRONT; face <= BOTTOM; ++face)
+  for (size_t face = WHITE; face <= RED; face += 8)
   {
-    for (size_t rot = ROT_270; rot <= ROT_90; ++rot)
+    for (size_t rot = ROT_90; rot <= ROT_270; ++rot)
     {
       //2-rot is a convenient way to find the inverse rotation -- 90(index 2) goes to 270(index 0), 180(1) goes to 180(1), and 270(0) goes to 90(2) -- basically, this checks if this move would be an inverse of the last
-      if (initial_state->prev_change.face == face && initial_state->prev_change.degree == 2 - rot)
+      if (initial_state->prev_states[initial_state->prev_state_length - 2] == (face / 8) + '0' && initial_state->prev_states[initial_state->prev_state_length - 1] == rot % 2 + '0')
         continue;
 
       //find the new move, and record it
@@ -956,15 +956,16 @@ Cube *rotate_Cube(Cube *cube, enum faces side, enum rotations rot)
   Cube *newCube = init_Cube();
 
   size_t i, shift, rev_shift;
-  switch (side)
-  {
-  case WHITE:
-  case YELLOW:
-    for (i = 0; i < 4; i++)
-    {
-      shift = (rot + i) % 4;
-      rev_shift = (rot - i) % 4;
 
+  for (i = 0; i < 4; i++)
+  {
+    shift = (rot + i) % 4;
+    rev_shift = (rot - i) % 4;
+
+    switch (side)
+    {
+    case WHITE:
+    case YELLOW:
       //corners
       newCube->cube[side + shift] = cube->cube[side + i];
 
@@ -977,16 +978,10 @@ Cube *rotate_Cube(Cube *cube, enum faces side, enum rotations rot)
 
       //adj sides
       newCube->cube[rot_patterns[side][shift] + 4 + rev_shift] = cube->cube[rot_patterns[side][i] + 4 + i];
-    }
-    break;
+      break;
 
-  case BLUE:
-  case GREEN:
-    for (i = 0; i < 4; i++)
-    {
-      shift = (rot + i) % 4;
-      rev_shift = (rot - i) % 4;
-
+    case BLUE:
+    case GREEN:
       //corners
       newCube->cube[side + shift] = cube->cube[side + i];
 
@@ -998,17 +993,31 @@ Cube *rotate_Cube(Cube *cube, enum faces side, enum rotations rot)
       newCube->cube[rot_patterns[side][shift] + (rot_patterns[side][shift] = !YELLOW ? 0 : 2) + 1] = cube->cube[rot_patterns[side][i] + (rot_patterns[side][i] != YELLOW ? 0 : 2) + 1];
 
       //adj sides
-      newCube->cube[rot_patterns[side][shift] + 4 + (rot_patterns[side][shift] =! YELLOW ? 0 : 2)] = cube->cube[rot_patterns[side][i] + 4 + rot_patterns[side][i] != YELLOW ? 0 : 2)];
+      newCube->cube[rot_patterns[side][shift] + 4 + (rot_patterns[side][shift] = !YELLOW ? 0 : 2)] = cube->cube[rot_patterns[side][i] + 4 + (rot_patterns[side][i] != YELLOW ? 0 : 2)];
+      break;
+
+    case ORANGE:
+    case RED:
+      //corners
+      newCube->cube[side + shift] = cube->cube[side + i];
+
+      //sides
+      newCube->cube[side + 4 + shift] = cube->cube[side + i];
+
+      //adj corners
+      newCube->cube[side + i] = cube->cube[side + i];
+      newCube->cube[side + i + 1] = cube->cube[side + i + 1];
+
+      //adj sides
+      newCube->cube[side + 4 + i] = cube->cube[side + 4 + i];
+      break;
+
+    default:
+      return NULL;
     }
-    break;
-
-  case ORANGE:
-  case RED:
-
-    break;
   }
 
-  return NULL;
+  return newCube;
 }
 
 //RUBIK'S CUBE Struct/Array SIMULATION FUNCTIONS:
