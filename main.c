@@ -953,16 +953,53 @@ char *to_String(Cube *cube)
 
 Cube *rotate_Cube(Cube *cube, enum faces side, enum rotations rot)
 {
+  Cube *newCube = init_Cube();
+
+  size_t i, shift, rev_shift;
   switch (side)
   {
   case WHITE:
   case YELLOW:
+    for (i = 0; i < 4; i++)
+    {
+      shift = (rot + i) % 4;
+      rev_shift = (rot - i) % 4;
 
+      //corners
+      newCube->cube[side + shift] = cube->cube[side + i];
+
+      //sides
+      newCube->cube[side + 4 + shift] = cube->cube[side + i];
+
+      //adj corners
+      newCube->cube[rot_patterns[side][shift] + rev_shift] = cube->cube[rot_patterns[side][i] + i];
+      newCube->cube[rot_patterns[side][shift] + rev_shift + 1] = cube->cube[rot_patterns[side][i] + i + 1];
+
+      //adj sides
+      newCube->cube[rot_patterns[side][shift] + 4 + rev_shift] = cube->cube[rot_patterns[side][i] + 4 + i];
+    }
     break;
 
   case BLUE:
   case GREEN:
+    for (i = 0; i < 4; i++)
+    {
+      shift = (rot + i) % 4;
+      rev_shift = (rot - i) % 4;
 
+      //corners
+      newCube->cube[side + shift] = cube->cube[side + i];
+
+      //sides
+      newCube->cube[side + 4 + shift] = cube->cube[side + i];
+
+      //adj corners
+      newCube->cube[rot_patterns[side][shift] + (rot_patterns[side][shift] = !YELLOW ? 0 : 2)] = cube->cube[rot_patterns[side][i] + (rot_patterns[side][i] != YELLOW ? 0 : 2)];
+      newCube->cube[rot_patterns[side][shift] + (rot_patterns[side][shift] = !YELLOW ? 0 : 2) + 1] = cube->cube[rot_patterns[side][i] + (rot_patterns[side][i] != YELLOW ? 0 : 2) + 1];
+
+      //adj sides
+      newCube->cube[rot_patterns[side][shift] + 4 + (rot_patterns[side][shift] =! YELLOW ? 0 : 2)] = cube->cube[rot_patterns[side][i] + 4 + rot_patterns[side][i] != YELLOW ? 0 : 2)];
+    }
     break;
 
   case ORANGE:
