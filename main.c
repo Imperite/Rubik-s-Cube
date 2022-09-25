@@ -335,7 +335,8 @@ int main()
 {
   Cube *solved = init_Cube();
   print_Cube(solved);
-
+  solved = rotate_Cube(solved, WHITE, ROT_90);
+  print_Cube(solved);
   destroy_Cube(solved);
   /*
     //Obviously, I don't have the power to test this function and see if it works fully in 15 min, but here, I've simulated the two main different types of circumstances that could occur, of 3:

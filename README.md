@@ -25,3 +25,16 @@ In the current data structure, the cube is stored as a series of 48 bytes, with 
  - Data Structure Optimizations:
      - Change the depth storage to use one byte (as a number) instead of two (the letter representation)?
      - Change data structure to work off only the rotations of the cubes from the original position - may allow for solving using linear algebra?
+
+
+# Planning new Data structure:
+Store each cube as a transform from it's original position?
+To do so, I'd need 6 things: xyz pos and rotation
+  Can represent rotation using 2 bits (final 2 for type?)
+  24 orientations for 1 cube (6 faces up, each with 4 rotations for 'front' face)
+    8 for side cubes
+
+If I store the subcubes in a 3x3x3 matrix, rotations will be more readable (but sacrifice 7 extra subcubes for this - should be viable?)
+    Each cube would need to encode it's type (could do with id: 26 cubes > 5 bits, or 12 side cubes > 4 bits and 3 bits for corners)
+         - leaves 4 bits to store rotations in
+    Store rotations in terms of the mirror it reflects from original across: bit 1 is reflection in WY direction, bit 2 in BG, and bit 3 in OR dir
