@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-//Rubik's Cube Solver, written by David Bradley using Repl.it, CodeBlocks with MinGW, and Microsoft Visual Studio. Also drew on pseudocode from wikipedia.
+// Rubik's Cube Solver, written by David Bradley using Repl.it, CodeBlocks with MinGW, and Microsoft Visual Studio. Also drew on pseudocode from wikipedia.
 
-//Side note: here are a couple of optimizations I plan to do after the final deadline:
+// Side note: here are a couple of optimizations I plan to do after the final deadline:
 /*
     1. Change all rubik's simulation functions to work on the compressed state instead of the struct. this will be even harder to understand, but will minimize the amount of space free/alloced at once (maybe also switch to using only chars, no ints? no need in compressed-only to keep color_to_char or color enums)
     2. Similarly, if I switch from a arraylist to a radix tree for storing the different checked states, it should work out much more effieciently in the long run. -- Prob will implement as a multi-nided tree, and either dynamically resize the child pointers or (more likely) just declare a 6-lebgth array?
@@ -17,7 +17,7 @@
 
 /*
   Notation:
-    XYz
+    XYZ
       X = C, S, or (W B O R G Y)
         C = Corner cube
         S = Side cube
@@ -25,23 +25,23 @@
 
       Y = 0-a
         Denotes the index of this cube on the face
-      
+
       z = (w b o r g y) = (0 1 2 3 4 5)?
         Represents the directional face of each cube by the center facing the same direction
-    
+
     zY
       z = (w b o r g y) = (0 1 2 3 4 5)?
         Represents a side of the cube
       Y = 0-7
-        Represents what part of that side this block is: 0-3 are 
+        Represents what part of that side this block is: 0-3 are
 
-  Normal Cube state: (original orientation, used in array-struct form)  
+  Normal Cube state: (original orientation, used in array-struct form)
     L1: C0 S0 C1    L2: S4 B1 S5    L3: C4 S8 C5
         S1 W0 S2        O2 -- R3        S9 Y5 Sa
         C2 S3 C3        S6 G4 S7        C6 Sb C7
 
   (NOT USED) Standard method of storing compressed: (just showing cubes, not specific faces)
-            Center Cubes                  Side cubes                    
+            Center Cubes                  Side cubes
     C0 C1 C2 C3 C4 C5 C6 C7 C8 | S0 S1 S2 S3 S4 S5 S6 S7 S8 S9 Sa Sb | <DEPTH INT>
 
     Requires storing each cube as a set of 2-3 chars describing faces of cube; would need to factor in rotations in changing cubes, making it more challenging
@@ -89,7 +89,7 @@
           b6 > g4 >
           o7 > r5 >
         Again, if I store white face side progression, there's a pattern that continues into a 270:
-      
+
       270 (-90)
         white corners:
           w0 > w3 > w2 > w1 >
@@ -107,14 +107,14 @@
       90:
         blue corners:
           b0 > b1 > b2 > b3 >
-        blue sides:  
+        blue sides:
           b4 > b5 > b6 > b7 >
         adjacent corners:
           w0 > o0 > y2 > r0 >
           w1 > o1 > y3 > r1 >
         adjacent sides:
           w4 > o4 > y6 > r4 >
-      
+
       180:
         blue corners:
           b0 > b2 >
@@ -124,13 +124,13 @@
           b5 > b7 >
         adjacent corners:
           w0 > y2 >
-          w1 > y3 > 
+          w1 > y3 >
           o0 > r0 >
           o1 > r1 >
         adjacent sides:
           w4 > y6 >
           o4 > r4 >
-      
+
       270 (-90):
         blue corners:
           b0 > b3 > b2 > b1 >
@@ -141,7 +141,7 @@
           w1 > r1 > y3 > o1 >
         adjacent sides:
           w4 > r4 > y6 > o4 >
-      
+
       Diff algorithm (face changes but position remains same, except for in yellow) than white face for adj. rots, same for face rots.
       Pattern: y r w o = 3 5 0 2 = +2 +1
     orange rotates:
@@ -180,7 +180,7 @@
           w7 > b7 > y7 > g7 >
       Truly simple rotation: All are just incrementing the index as they progress
       Pattern: w g y b = 0 4 3 1 = -2 -1
-      
+
     yellow rotates:
       90:
         yellow corners:
@@ -192,11 +192,11 @@
           b1 > o0 > g3 > r2 >
         adjacent sides:
           b4 > o7 > g6 > r5 >
-      
+
       180:
         yellow corners:
           y0 > y2 >
-          y1 > y3 > 
+          y1 > y3 >
         yellow sides:
           y4 > y6 >
           y5 > y7 >
@@ -205,16 +205,16 @@
           b1 > g3 >
           o3 > r1 >
           o0 > r2 >
-        adjacent sides: 
+        adjacent sides:
           b4 > o6 >
           o7 > r5 >
-        
+
       270 (-90):
         yellow corners:
           y0 > y3 > y2 > y1 >
         yellow sides:
-          y4 > y7 > y6 > y5 > 
-        adjacent corners: 
+          y4 > y7 > y6 > y5 >
+        adjacent corners:
           b0 > r1 > g2 > o3 >
           b1 > r2 > g3 > o0 >
         adjacent sides:
@@ -239,7 +239,7 @@
         next_loc = prev_loc + shift % 4
     Blue/Green:
       store  patttern that represents the order of sides to access w/ lowest value first
-        Blue:   3 5 0 2 = y r w o 
+        Blue:   3 5 0 2 = y r w o
         Green:  3 2 0 5 = y o w r
       face corners and sides:
         next_loc = prev_loc + shift % 4
@@ -257,7 +257,7 @@
         next_loc = prev_loc
 */
 
-//stores index in char array that each face starts
+// stores index in char array that each face starts
 enum faces
 {
   WHITE = 0,
@@ -267,9 +267,9 @@ enum faces
   GREEN = 32,
   RED = 40
 };
-int colors[] = {WHITE, BLUE, ORANGE, YELLOW, GREEN, RED};    //needed to go from index (0-5) to color
+int colors[] = {WHITE, BLUE, ORANGE, YELLOW, GREEN, RED};    // needed to go from index (0-5) to color
 char char_representation[] = {'w', 'b', 'o', 'y', 'g', 'r'}; // needed to go from color/index -> char; only really needed for generating cubes
-//represents the adjacent faces for each specific value; index of each face can be found by face/8
+// represents the adjacent faces for each specific value; index of each face can be found by face/8
 enum faces rot_patterns[6][4] = {
     {GREEN, ORANGE, BLUE, RED},
     {YELLOW, RED, WHITE, ORANGE},
@@ -288,9 +288,9 @@ enum rotations
 
 typedef struct cube
 {
-  char *cube;        //stores all 48 faces, 1 byte per face, and then leaves room to put in depth
-  short depth;       //used to store distance from original state
-  char *prev_states; //used to store all previous states; will have variable length; will store face and rotation for each move, meaning max of 38 chars, but will let specific size be decided at creation.
+  char *cube;        // stores all 48 faces, 1 byte per face, and then leaves room to put in depth
+  short depth;       // used to store distance from original state
+  char *prev_states; // used to store all previous states; will have variable length; will store face and rotation for each move, meaning max of 38 chars, but will let specific size be decided at creation.
   unsigned short prev_state_length;
 } Cube;
 
@@ -302,35 +302,35 @@ typedef struct change
 
 char *numbers = "0123456789";
 
-//generates solved cube state. Not needed, but useful for demostrating how everything's stored and rotations
+// generates solved cube state. Not needed, but useful for demostrating how everything's stored and rotations
 Cube *init_Cube();
-//destroys cube
+// destroys cube
 void destroy_Cube(Cube *cube);
-//With the new methods, generating a solved cube is very simple and not costly at all, but randomizing will likely take time.
+// With the new methods, generating a solved cube is very simple and not costly at all, but randomizing will likely take time.
 Cube *randomize_Cube();
-//will require more work to visualize effectively, but should be doable
+// will require more work to visualize effectively, but should be doable
 void print_Cube(Cube *cube);
-//returns form that will be put into the heap/radix tree to store and compare for later
+// returns form that will be put into the heap/radix tree to store and compare for later
 char *to_String(Cube *cube);
 
 Cube *rotate_Cube(Cube *cube, enum faces side, enum rotations rot);
 
-//No need for isEqual anymore, as strcmp works just fine
+// No need for isEqual anymore, as strcmp works just fine
 
-//IF I HAVE TIME: look into changing base storage and rotations to be only string-based, not number-based
-//actual Search function:
-//use a tree with 18 children -- generate each of the children, then generate their children?
-//create the first child, then recurse into it and repeat until level 20 has been reached or the cube is solved
-//have pointer to previous node, so that once the solved state is found we can return the moves needed. Each index of the connected_states will store one specific move.
-//could I store previous states to reduce time?
-//to do so:
-//need to compress (shrinks storage space from 1664 bits to 54) -- DONE
-// need a way to compare two rubik's Cube_States/compressed form of two rubik's cube_states -- DONE, use strcmp()
-//need to write an arraylist to store and new vals and check if any old vals exist
+// IF I HAVE TIME: look into changing base storage and rotations to be only string-based, not number-based
+// actual Search function:
+// use a tree with 18 children -- generate each of the children, then generate their children?
+// create the first child, then recurse into it and repeat until level 20 has been reached or the cube is solved
+// have pointer to previous node, so that once the solved state is found we can return the moves needed. Each index of the connected_states will store one specific move.
+// could I store previous states to reduce time?
+// to do so:
+// need to compress (shrinks storage space from 1664 bits to 54) -- DONE
+//  need a way to compare two rubik's Cube_States/compressed form of two rubik's cube_states -- DONE, use strcmp()
+// need to write an arraylist to store and new vals and check if any old vals exist
 
-//This'll allow me to store all the states efficiently, letting me do a depth-first search while keeping previous states.
+// This'll allow me to store all the states efficiently, letting me do a depth-first search while keeping previous states.
 
-//store a list of pointers to all created rubik's cube_states
+// store a list of pointers to all created rubik's cube_states
 
 typedef struct array_list
 {
@@ -341,29 +341,30 @@ typedef struct array_list
 typedef ArrayList *ArrayListPtr;
 
 bool cmp_cubes(char *state1, char *state2);
-//create
+// create
 ArrayListPtr storage_list_create();
-//destroy
+// destroy
 void storage_list_destroy(ArrayListPtr *listPtr);
-//add
+// add
 void storage_list_insert(ArrayListPtr list, Cube *cube);
-//resize
+// resize
 void storage_list_resize(ArrayListPtr list);
-//contains; will use a binary search to find in list.
+// contains; will use a binary search to find in list.
 bool storage_list_contains(char **prev_states, size_t end, char *to_find);
 
+// TODO: Delete; unused
 typedef struct tree_node
 {
-  //stores all other nodes that are one rotation away from this current Cube_State
+  // stores all other nodes that are one rotation away from this current Cube_State
   struct tree_node *connected_states[18];
-  //stores the index of the previous node pointer inside of the connected_states array
+  // stores the index of the previous node pointer inside of the connected_states array
   size_t prev_index;
 
   Cube current;
 } Tree_Node;
 typedef Tree_Node *Tree_NodePtr;
 
-//ACTUAL SOLVING FUNCTION:
+// ACTUAL SOLVING FUNCTION:
 void solve(Cube *initial_state, Cube *solved);
 bool solve_cube(Change moves[20], Cube *initial_state, Cube *solved);
 
@@ -454,12 +455,12 @@ int main()
   return 0;
 }
 
-//Solve acts as a wrapper function to print out the results of cube_solve.
+// Solve acts as a wrapper function to print out the results of cube_solve.
 void solve(Cube *initial_state, Cube *solved)
 {
   Change *moves = calloc(20, sizeof(Change));
 
-  //first it checks is a FRONT 270 rotation, so the inverse would be a FRON 90 rotation
+  // first it checks is a FRONT 270 rotation, so the inverse would be a FRON 90 rotation
   bool solve = solve_cube(moves, initial_state, solved);
   printf("solved: %d\n", solve);
 
@@ -510,10 +511,10 @@ void solve(Cube *initial_state, Cube *solved)
   free(moves);
 }
 
-//ACTUAL SOLVING FUNCTION:
-//This has a time complexity of roughly O(n(from writing into arraylist) * n(for performing operations on each state)), assuming n represents the number of different UNIQUE states the cube can be in. without the arraylist, this would instead be just all 18^20 states within 20 moves of the cube.
-//time complexity of function is O(n^2)
-//Space complexity of function is O(n), for n being the number of unique states. Each new state is stored, and takes up 50 bytes per state (down from 208 originally!)
+// ACTUAL SOLVING FUNCTION:
+// This has a time complexity of roughly O(n(from writing into arraylist) * n(for performing operations on each state)), assuming n represents the number of different UNIQUE states the cube can be in. without the arraylist, this would instead be just all 18^20 states within 20 moves of the cube.
+// time complexity of function is O(n^2)
+// Space complexity of function is O(n), for n being the number of unique states. Each new state is stored, and takes up 50 bytes per state (down from 208 originally!)
 bool solve_cube(Change moves[20], Cube *initial_state, Cube *solved)
 {
   /*
@@ -525,7 +526,7 @@ bool solve_cube(Change moves[20], Cube *initial_state, Cube *solved)
     we store the moves made so far in the moves array, and just overwrite previous as we elminate various leaves.
     all previous states are compressed down to the least amount of information possible and stored so we can check if we've encountered them before, while also recording the depth they were found at.
   */
-  //checked_states keeps track of any states that we've checked before to reduce the number of states to check (so we're not checking duplicate states)
+  // checked_states keeps track of any states that we've checked before to reduce the number of states to check (so we're not checking duplicate states)
   static ArrayListPtr checked_states = NULL;
   if (checked_states == NULL)
     checked_states = storage_list_create();
@@ -533,31 +534,31 @@ bool solve_cube(Change moves[20], Cube *initial_state, Cube *solved)
   static size_t depth = 0;
   printf("\ndepth: %zu", depth);
 
-  //if this is the first level of the function, check if the original state is solved.
+  // if this is the first level of the function, check if the original state is solved.
   if (depth == 0)
     if (cmp_cubes(initial_state->cube, solved->cube))
       return true;
 
-  //go through all the possible rotations of the cube
+  // go through all the possible rotations of the cube
   for (size_t face = WHITE; face <= RED; face += 8)
   {
     for (size_t rot = ROT_90; rot <= ROT_270; ++rot)
     {
-      //4-rot checks if this is the inverse of the previous rotation: 90(index 1) goes to 270(index 3), 180(2) goes to 180(2), and 270(3) goes to 90(1)
+      // 4-rot checks if this is the inverse of the previous rotation: 90(index 1) goes to 270(index 3), 180(2) goes to 180(2), and 270(3) goes to 90(1)
       if (initial_state->prev_states[initial_state->prev_state_length - 2] == (face / 8) + '0' && initial_state->prev_states[initial_state->prev_state_length - 1] == 4 - rot + '0')
         continue;
 
-      //find the new move, and record it
+      // find the new move, and record it
       printf("\t");
       moves[depth].face = face;
       moves[depth].degree = rot;
       Cube *new = rotate_Cube(initial_state, face, rot);
 
-      //check if this is solved -- if so, we'll reset our static variables and attach a marker signifying we found the end before reaching the max of 20 moves.
+      // check if this is solved -- if so, we'll reset our static variables and attach a marker signifying we found the end before reaching the max of 20 moves.
       if (cmp_cubes(new->cube, solved->cube))
       {
-        //if this is a solved state:
-        //set the next move to be null
+        // if this is a solved state:
+        // set the next move to be null
         if (depth < 19)
           moves[depth + 1].degree = NONE;
         puts("Found solution!");
@@ -567,7 +568,7 @@ bool solve_cube(Change moves[20], Cube *initial_state, Cube *solved)
         return true;
       }
 
-      //otherwise, check if this state has already been found, and explored further along
+      // otherwise, check if this state has already been found, and explored further along
       if (checked_states->size >= 1 && storage_list_contains(checked_states->prev_states, checked_states->size, new->cube))
       {
         printf("\n Already checked, skipping: ");
@@ -575,15 +576,15 @@ bool solve_cube(Change moves[20], Cube *initial_state, Cube *solved)
         continue;
       }
 
-      //record this state so we can access it later
+      // record this state so we can access it later
       storage_list_insert(checked_states, new);
 
-      //check the rotations from this state and see if they would solve it, as long as the depth is less or equal to the max moves of 20.
-      //if this isn't the final layer
+      // check the rotations from this state and see if they would solve it, as long as the depth is less or equal to the max moves of 20.
+      // if this isn't the final layer
       if (depth < 20)
       {
         ++depth;
-        //if there was a solution found here, return it
+        // if there was a solution found here, return it
         if (solve_cube(moves, new, solved))
         {
           destroy_Cube(new);
@@ -607,7 +608,7 @@ bool cmp_cubes(char *state1, char *state2)
   return true;
 }
 
-//ARRAYLIST FUNCTIONS: most of this will be copied over from the array_list functions we wrote in class, but compare will be of my own design --anything new will be commented
+// ARRAYLIST FUNCTIONS: most of this will be copied over from the array_list functions we wrote in class, but compare will be of my own design --anything new will be commented
 ArrayListPtr storage_list_create()
 {
   ArrayListPtr newList = malloc(sizeof(ArrayList));
@@ -617,7 +618,7 @@ ArrayListPtr storage_list_create()
   return newList;
 }
 
-//this is new in that I free all the previous found states when destroying the arrayList -- I don't copy them over, which saves a small amount of time
+// this is new in that I free all the previous found states when destroying the arrayList -- I don't copy them over, which saves a small amount of time
 void storage_list_destroy(ArrayListPtr *listPtr)
 {
   for (size_t i = 0; i < (*listPtr)->size; ++i)
@@ -627,10 +628,10 @@ void storage_list_destroy(ArrayListPtr *listPtr)
   *listPtr = NULL;
 }
 
-//insertion, sadly, is linear, and that's what slows down the program the most. Implementing this as a hash would have been better, but I don't have the time for that right now
+// insertion, sadly, is linear, and that's what slows down the program the most. Implementing this as a hash would have been better, but I don't have the time for that right now
 void storage_list_insert(ArrayListPtr list, Cube *cube)
 {
-  //complete the char storage by updating the depth
+  // complete the char storage by updating the depth
   cube->cube[48] = cube->depth / 10 + '0';
   cube->cube[49] = cube->depth % 10 + '0';
 
@@ -655,8 +656,8 @@ void storage_list_resize(ArrayListPtr list)
   }
 }
 
-//BASED ON PSEUDOCODE FROM WIKIPEDIA; was having trouble getting it to work recursively based on the code I made in class, so gave up and looked up how to do it on wikipedia.
-//storage_list_contains() a binary search to find out if the current state was already found, and then returns true if we found this state through a longer path than before.
+// BASED ON PSEUDOCODE FROM WIKIPEDIA; was having trouble getting it to work recursively based on the code I made in class, so gave up and looked up how to do it on wikipedia.
+// storage_list_contains() a binary search to find out if the current state was already found, and then returns true if we found this state through a longer path than before.
 bool storage_list_contains(char **prev_states, size_t size, char *to_find)
 {
   puts("");
@@ -677,8 +678,8 @@ bool storage_list_contains(char **prev_states, size_t size, char *to_find)
   return false;
 }
 
-//RUBIK's CUBE CHAR ARRAY SIMULATION FUNCTIONS:
-//creates a basic, solved cube
+// RUBIK's CUBE CHAR ARRAY SIMULATION FUNCTIONS:
+// creates a basic, solved cube
 Cube *init_Cube()
 {
   Cube *solved = malloc(sizeof(Cube));
@@ -695,15 +696,15 @@ Cube *init_Cube()
   return solved;
 }
 
-//destroys cube; not wanting to destroy the state, as that'll be saved elsewhere
+// destroys cube; not wanting to destroy the state, as that'll be saved elsewhere
 void destroy_Cube(Cube *cube)
 {
   free(cube->prev_states);
   free(cube);
 }
 
-//prints cube out in more graphically applealing manner to help confirm that rotations are done correctly
-//not done effieciently, but works
+// prints cube out in more graphically applealing manner to help confirm that rotations are done correctly
+// not done effieciently, but works
 void print_Cube(Cube *cube)
 {
   char *chars = (cube->cube);
@@ -746,49 +747,49 @@ Cube *rotate_Cube(Cube *cube, enum faces side, enum rotations rot)
     {
     case WHITE:
     case YELLOW:
-      //corners
+      // corners
       newCube->cube[side + shift] = cube->cube[side + i];
 
-      //sides
+      // sides
       newCube->cube[side + 4 + shift] = cube->cube[side + i];
 
-      //adj corners
+      // adj corners
       newCube->cube[rot_patterns[side][shift] + rev_shift] = cube->cube[rot_patterns[side][i] + i];
       newCube->cube[rot_patterns[side][shift] + rev_shift + 1] = cube->cube[rot_patterns[side][i] + i + 1];
 
-      //adj sides
+      // adj sides
       newCube->cube[rot_patterns[side][shift] + 4 + rev_shift] = cube->cube[rot_patterns[side][i] + 4 + i];
       break;
 
     case BLUE:
     case GREEN:
-      //corners
+      // corners
       newCube->cube[side + shift] = cube->cube[side + i];
 
-      //sides
+      // sides
       newCube->cube[side + 4 + shift] = cube->cube[side + i];
 
-      //adj corners
+      // adj corners
       newCube->cube[rot_patterns[side][shift] + (rot_patterns[side][shift] = !YELLOW ? 0 : 2)] = cube->cube[rot_patterns[side][i] + (rot_patterns[side][i] != YELLOW ? 0 : 2)];
       newCube->cube[rot_patterns[side][shift] + (rot_patterns[side][shift] = !YELLOW ? 0 : 2) + 1] = cube->cube[rot_patterns[side][i] + (rot_patterns[side][i] != YELLOW ? 0 : 2) + 1];
 
-      //adj sides
+      // adj sides
       newCube->cube[rot_patterns[side][shift] + 4 + (rot_patterns[side][shift] = !YELLOW ? 0 : 2)] = cube->cube[rot_patterns[side][i] + 4 + (rot_patterns[side][i] != YELLOW ? 0 : 2)];
       break;
 
     case ORANGE:
     case RED:
-      //corners
+      // corners
       newCube->cube[side + shift] = cube->cube[side + i];
 
-      //sides
+      // sides
       newCube->cube[side + 4 + shift] = cube->cube[side + i];
 
-      //adj corners
+      // adj corners
       newCube->cube[side + i] = cube->cube[side + i];
       newCube->cube[side + i + 1] = cube->cube[side + i + 1];
 
-      //adj sides
+      // adj sides
       newCube->cube[side + 4 + i] = cube->cube[side + 4 + i];
       break;
 
