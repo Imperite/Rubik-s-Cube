@@ -228,7 +228,7 @@
     90 degrees means  shift = 1, 180 degrees means shift = 2, 270 degrees means shift = 3 (or -1?)
     White/Yellow:
       store  patttern that represents the order of sides to access w/ lowest value first
-        White:  4 2 1 5 = g o b r)
+        White:  4 2 1 5 = g o b r
         Yellow: 1 2 4 5 = b o g r
       face corners and sides:
         next_loc = prev_loc + shift % 4
@@ -683,6 +683,7 @@ bool storage_list_contains(char **prev_states, size_t size, char *to_find)
 Cube *init_Cube()
 {
   Cube *solved = malloc(sizeof(Cube));
+
   char *cube = calloc(50, sizeof(char));
   for (size_t i = 0; i < 6; i++)
     for (size_t j = 0; j < 8; j++)
