@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+
+#include "cube.h"
 // Rubik's Cube Solver, written by David Bradley using Repl.it, CodeBlocks with MinGW, and Microsoft Visual Studio. Also drew on pseudocode from wikipedia.
 
 // Side note: here are a couple of optimizations I plan to do after the final deadline:
@@ -257,50 +259,11 @@
         next_loc = prev_loc
 */
 
-// stores index in char array that each face starts
-enum faces
-{
-  WHITE = 0,
-  BLUE = 8,
-  ORANGE = 16,
-  YELLOW = 24,
-  GREEN = 32,
-  RED = 40
-};
-int colors[] = {WHITE, BLUE, ORANGE, YELLOW, GREEN, RED};    // needed to go from index (0-5) to color
-char char_representation[] = {'w', 'b', 'o', 'y', 'g', 'r'}; // needed to go from color/index -> char; only really needed for generating cubes
-// represents the adjacent faces for each specific value; index of each face can be found by face/8
-enum faces rot_patterns[6][4] = {
-    {GREEN, ORANGE, BLUE, RED},
-    {YELLOW, RED, WHITE, ORANGE},
-    {WHITE, GREEN, YELLOW, BLUE},
-    {BLUE, ORANGE, GREEN, RED},
-    {YELLOW, ORANGE, WHITE, RED},
-    {WHITE, BLUE, YELLOW, GREEN}};
-
-enum rotations
-{
-  NONE = 0,
-  ROT_90 = 1,
-  ROT_180 = 2,
-  ROT_270 = 3
-};
-
-typedef struct cube
-{
-  char *cube;        // stores all 48 faces, 1 byte per face, and then leaves room to put in depth
-  short depth;       // used to store distance from original state
-  char *prev_states; // used to store all previous states; will have variable length; will store face and rotation for each move, meaning max of 38 chars, but will let specific size be decided at creation.
-  unsigned short prev_state_length;
-} Cube;
-
 typedef struct change
 {
   enum faces face;
   enum rotations degree;
 } Change;
-
-char *numbers = "0123456789";
 
 // generates solved cube state. Not needed, but useful for demostrating how everything's stored and rotations
 Cube *init_Cube();
@@ -676,128 +639,4 @@ bool storage_list_contains(char **prev_states, size_t size, char *to_find)
       return true;
   }
   return false;
-}
-
-// RUBIK's CUBE CHAR ARRAY SIMULATION FUNCTIONS:
-// creates a basic, solved cube
-Cube *init_Cube()
-{
-  Cube *solved = malloc(sizeof(Cube));
-
-  char *cube = calloc(50, sizeof(char));
-  for (size_t i = 0; i < 6; i++)
-    for (size_t j = 0; j < 8; j++)
-      cube[i * 8 + j] = char_representation[i];
-  solved->cube = cube;
-
-  solved->depth = 0;
-  solved->prev_states = NULL;
-  solved->prev_state_length = 0;
-
-  return solved;
-}
-
-// destroys cube; not wanting to destroy the state, as that'll be saved elsewhere
-void destroy_Cube(Cube *cube)
-{
-  free(cube->prev_states);
-  free(cube);
-}
-
-// prints cube out in more graphically applealing manner to help confirm that rotations are done correctly
-// not done effieciently, but works
-void print_Cube(Cube *cube)
-{
-  char *chars = (cube->cube);
-
-  printf("\t\t%c %c %c\n", chars[BLUE], chars[BLUE + 4], chars[BLUE + 1]);
-  printf("\t\t%c b %c\n", chars[BLUE + 7], chars[BLUE + 5]);
-  printf("\t\t%c %c %c\n\n", chars[BLUE + 3], chars[BLUE + 6], chars[BLUE + 2]);
-  printf("%c %c %c   %c %c %c   %c %c %c\n", chars[ORANGE], chars[ORANGE + 4], chars[ORANGE + 1], chars[WHITE], chars[WHITE + 4], chars[WHITE + 1], chars[RED], chars[RED + 4], chars[RED + 1]);
-  printf("%c o %c   %c w %c   %c r %c\n", chars[ORANGE + 7], chars[ORANGE + 5], chars[WHITE + 7], chars[WHITE + 5], chars[RED + 7], chars[RED + 5]);
-  printf("%c %c %c   %c %c %c   %c %c %c\n\n", chars[ORANGE + 3], chars[ORANGE + 6], chars[ORANGE + 2], chars[WHITE + 3], chars[WHITE + 6], chars[WHITE + 2], chars[RED + 3], chars[RED + 6], chars[RED + 2]);
-  printf("\t\t%c %c %c\n", chars[GREEN], chars[GREEN + 4], chars[GREEN + 1]);
-  printf("\t\t%c g %c\n", chars[GREEN + 7], chars[GREEN + 5]);
-  printf("\t\t%c %c %c\n\n", chars[GREEN + 3], chars[GREEN + 6], chars[GREEN + 2]);
-  printf("\t\t%c %c %c\n", chars[YELLOW], chars[YELLOW + 4], chars[YELLOW + 1]);
-  printf("\t\t%c y %c\n", chars[YELLOW + 7], chars[YELLOW + 5]);
-  printf("\t\t%c %c %c\n", chars[YELLOW + 3], chars[YELLOW + 6], chars[YELLOW + 2]);
-}
-
-char *to_String(Cube *cube)
-{
-  char *numbers = "0123456789";
-  cube->cube[49] = numbers[cube->depth / 10];
-  cube->cube[50] = numbers[cube->depth % 10];
-
-  return cube->cube;
-}
-
-Cube *rotate_Cube(Cube *cube, enum faces side, enum rotations rot)
-{
-  Cube *newCube = init_Cube();
-
-  size_t i, shift, rev_shift;
-
-  for (i = 0; i < 4; i++)
-  {
-    shift = (rot + i) % 4;
-    rev_shift = (rot - i) % 4;
-
-    switch (side)
-    {
-    case WHITE:
-    case YELLOW:
-      // corners
-      newCube->cube[side + shift] = cube->cube[side + i];
-
-      // sides
-      newCube->cube[side + 4 + shift] = cube->cube[side + i];
-
-      // adj corners
-      newCube->cube[rot_patterns[side][shift] + rev_shift] = cube->cube[rot_patterns[side][i] + i];
-      newCube->cube[rot_patterns[side][shift] + rev_shift + 1] = cube->cube[rot_patterns[side][i] + i + 1];
-
-      // adj sides
-      newCube->cube[rot_patterns[side][shift] + 4 + rev_shift] = cube->cube[rot_patterns[side][i] + 4 + i];
-      break;
-
-    case BLUE:
-    case GREEN:
-      // corners
-      newCube->cube[side + shift] = cube->cube[side + i];
-
-      // sides
-      newCube->cube[side + 4 + shift] = cube->cube[side + i];
-
-      // adj corners
-      newCube->cube[rot_patterns[side][shift] + (rot_patterns[side][shift] = !YELLOW ? 0 : 2)] = cube->cube[rot_patterns[side][i] + (rot_patterns[side][i] != YELLOW ? 0 : 2)];
-      newCube->cube[rot_patterns[side][shift] + (rot_patterns[side][shift] = !YELLOW ? 0 : 2) + 1] = cube->cube[rot_patterns[side][i] + (rot_patterns[side][i] != YELLOW ? 0 : 2) + 1];
-
-      // adj sides
-      newCube->cube[rot_patterns[side][shift] + 4 + (rot_patterns[side][shift] = !YELLOW ? 0 : 2)] = cube->cube[rot_patterns[side][i] + 4 + (rot_patterns[side][i] != YELLOW ? 0 : 2)];
-      break;
-
-    case ORANGE:
-    case RED:
-      // corners
-      newCube->cube[side + shift] = cube->cube[side + i];
-
-      // sides
-      newCube->cube[side + 4 + shift] = cube->cube[side + i];
-
-      // adj corners
-      newCube->cube[side + i] = cube->cube[side + i];
-      newCube->cube[side + i + 1] = cube->cube[side + i + 1];
-
-      // adj sides
-      newCube->cube[side + 4 + i] = cube->cube[side + 4 + i];
-      break;
-
-    default:
-      return NULL;
-    }
-  }
-
-  return newCube;
 }
