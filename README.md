@@ -36,5 +36,10 @@ To do so, I'd need 6 things: xyz pos and rotation
 
 If I store the subcubes in a 3x3x3 matrix, rotations will be more readable (but sacrifice 7 extra subcubes for this - should be viable?)
     Each cube would need to encode it's type (could do with id: 26 cubes > 5 bits, or 12 side cubes > 4 bits and 3 bits for corners)
+    (could also store as the color on specific faces?)
          - leaves 4 bits to store rotations in
     Store rotations in terms of the mirror it reflects from original across: bit 1 is reflection in WY direction, bit 2 in BG, and bit 3 in OR dir
+    Rotation direction can be done in terms of 3 numbers that determine what cubes are modified / the face used?
+    Rotation def also gives convenient translation for displaying original subcube
+    Feasibility:
+        Takes 1 byte per cube in full 3x3x3, so 27 bytes? > **MUCH BETTER THAN 48**
