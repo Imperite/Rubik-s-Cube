@@ -43,3 +43,4 @@ If I store the subcubes in a 3x3x3 matrix, rotations will be more readable (but 
     Rotation def also gives convenient translation for displaying original subcube
     Feasibility:
         Takes 1 byte per cube in full 3x3x3, so 27 bytes? > **MUCH BETTER THAN 48**
+        if store 2 arrays (one of sides and one of corners), could get down to just 20 bytes (excluding 2ish bytes for storing struct in)
