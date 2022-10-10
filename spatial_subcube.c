@@ -30,7 +30,7 @@ char defaultCubeAt(size_t i, size_t j, size_t k);
 
 enum faces colorAlongAxis(char subcube, enum axis axis);
 
-void rotateSubcube(char* subcube, cubeType type, rotation rot, face face);
+char rotateSubcube(char* subcube, cubeType type, rotation rot, face face);
 
 
 cubeType subcubeType(size_t i, size_t j, size_t k)
@@ -122,33 +122,13 @@ enum axis faceToAxis(face face) {
     }
 }
 
-//in-place rotation that updates the subcube to match the applied rotation
-void rotateSubcube(char* subcube, cubeType type, rotation rot, face face) {
-    if (type == CORNER)
-        rotateSubcubeCorner(subcube, rot, faceToAxis(face));
-}
-
 /*
-Adjusts the bits making up the subcube to represent the rotation taking place on them for a Corner subcube.
+In-place rotation that updates the subcube to match the applied rotation.
 
-The rotation of a corner is stored in a very simple way, using three bits:
-Each bit represents whether or not the subcube has been flipped (RECONSIDER AND FULLY EXPLAIN)
-*/
-void rotateSubcubeCorner(char* subcube, rotation rot, enum axis rotAxis) {
-    if (rot == ROT_180)
-        return;
 
-    for (size_t i = 0; i < 3; i++)
-    {
-        if (i != rotAxis)
-            *subcube ^= (1 << (5 + i));
-    }
-}
+The rotation of a corner is stored using three bits, where each bit represents an axis that a cube can be rotated along (WY, BG, OR). So, when rotating, one bit will be flipped each time. A 180 degree rotation is the same as not changing at all, while a reverse 90 and a 90 do the same thing.
 
-/*
-Adjusts the bits making up the subcube to represent the rotation taking place on them for a Side subcube.
-
-The rotation of a side is stored in 4 bits:
+he rotation of a side is stored in 4 bits:
     Bit 0: face on WY axis
     Bit 1: face on BG axis
     Bit 2: face on OR axis
@@ -160,18 +140,21 @@ Bits 0-2 will only have 1 0 in them, as sides will always have one axis they are
     3) flip bit 3
 
 Since bits 0-2 act as the 'positioning' bits, bit 3 acts as a parity bit that determines the orientation of a side in a specific space. Doing UT'L would result in flipping bit 3, represnting how this flips the OW subcube.
-
 */
-void rotateSubcubeSide(char* subcube, rotation rot, enum axis rotAxis) {
-    char newSubCube;
+char rotateSubcube(char* subcube, cubeType type, rotation rot, face face) {
+    enum axis rotAxis = faceToAxis(face);
+    char newSubcube = *subcube;
 
-    size_t mask = 0;
     if (rot != ROT_180) {
-        size_t mask = 15; //00001111
-        mask ^= (1 << rotAxis);
-        mask <<= 4;
+        if (type == CORNER) {
+            newSubcube ^= (1 << (rotAxis + 4));
+        }
+        else if (type == SIDE) {
+            size_t mask = 15 << 4; //00001111
+            mask ^= 1 << (rotAxis + 4);
+            newSubcube ^= mask;
+        }
     }
 
-    newSubCube = *subcube ^ mask;
-    return newSubCube;
+    return newSubcube;
 }
