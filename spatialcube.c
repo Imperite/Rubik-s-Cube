@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include <stdbool.h>
 
 // #include "cube_constants.c"
@@ -24,7 +25,7 @@ sCube* rotate_Cube(sCube* cube, enum faces side, enum rotations rot);
 
 char* subcube(sCube* cube, size_t i, size_t j, size_t k)
 {
-    return &(*cube[i * 9 + j * 3 + k]);
+    return &((*cube)[i * 9 + j * 3 + k]);
 }
 
 
@@ -72,28 +73,85 @@ char faceToChar(face face) {
     }
 }
 
-void print_Cube(sCube* cube)
+void print_subcube_face(sCube* cube, size_t i, size_t j, size_t k, enum axis axis) {
+    face faceColor = colorAlongAxis(*subcube(cube, i, j, k), axis, subcubeType(i, j, k));
+    printf("%c\t", faceToChar(faceColor));
+}
+
+void print_cube_layer(sCube* cube, size_t layer)
 {
     printf("\t");
-    for (size_t n = 0; n < 3; n++)
+    for (size_t i = 0; i < 3; i++)
     {
-        face faceColor = colorAlongAxis(*subcube(cube, 0, 0, n), BG, subcubeType(0, 0, n));
-        printf("%c\t", faceToChar(faceColor));
+        print_subcube_face(cube, layer, 0, i, BG);
     }
     puts("");
 
     for (size_t i = 0; i < 3; i++)
     {
-        /* code */
+        print_subcube_face(cube, layer, i, 0, OR);
+
+        for (size_t j = 0; j < 3; j++)
+        {
+            print_subcube_face(cube, layer, i, j, WY);
+        }
+
+        print_subcube_face(cube, layer, i, 2, OR);
+        puts("");
     }
 
+    printf("\t");
+    for (size_t i = 0; i < 3; i++)
+    {
+        print_subcube_face(cube, layer, 2, i, BG);
+    }
+    puts("");
+
+}
+
+void print_Cube(sCube* cube) {
+    for (size_t i = 0; i < 3; i++)
+    {
+        print_cube_layer(cube, i);
+        puts("\n");
+    }
+
+}
+
+void print_binary(char c) {
+    for (int i = 7; i >= 0; --i)
+    {
+        putchar((c & (1 << i)) ? '1' : '0');
+    }
+    printf("\t");
+
+}
+
+void print_cube_vals(sCube* cube) {
+    for (size_t i = 0; i < 3; i++)
+    {
+        for (size_t j = 0; j < 3; j++)
+        {
+            for (size_t k = 0; k < 3; k++)
+            {
+                printf("%d: ", *subcube(cube, i, j, k));
+                print_binary(*subcube(cube, i, j, k));
+                // printf("%d\t", *subcube(cube, i, j, k));
+            }
+            puts("");
+        }
+        puts("");
+    }
 
 }
 
 int main(int argc, char const* argv[])
 {
     sCube* cube = init_Cube();
+    // print_cube_vals(cube);
+    // puts("");
     print_Cube(cube);
-    // printf("%d\n", (-2 & 7));
+    // puts("");
+    // print_cube_vals(cube);
     return 0;
 }

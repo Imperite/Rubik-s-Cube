@@ -69,10 +69,9 @@ cubeType subcubeType(size_t i, size_t j, size_t k)
 // stores rotations in order (flippedbit) - OR - BG - WY, with the first value being 1 and the second being 0; flipped bit unused for corners
 bool* rotations(char subcube) {
     bool* rots = calloc(4, sizeof(bool));
-    subcube = subcube >> 4;
     for (size_t i = 0; i < 4; i++)
     {
-        rots[i] = subcube & (1 << i);
+        rots[i] = subcube & (1 << (i + 4));
     }
 
     return rots;
@@ -108,6 +107,7 @@ For sides, it's also really simple
 */
 face colorAlongAxis(char subcube, enum axis axis, cubeType type)
 {
+    // printf("%d %d %d\t", subcube, axis, type);
     if (type == CORNER) {
         face* faces = colors(subcube);
         bool* rots = rotations(subcube);
@@ -136,10 +136,10 @@ face colorAlongAxis(char subcube, enum axis axis, cubeType type)
         if (facesShowing[4] == 1)
             correctFace %= 1;
 
-        return sideIDtoFaces[subcube & 7][correctFace];
+        return sideIDtoFaces[subcube & 15][correctFace];
 
     }
-    //since the subcube just stores the literal face for the
+    //since the subcube just stores the literal face as its value
     if (type == CENTER && faceToAxis(subcube) == axis)
         return subcube;
 
@@ -153,12 +153,13 @@ char defaultCubeAt(size_t i, size_t j, size_t k) {
     ignore if 1
     */
 
-    char subcube = 0; //default is the WBO combo
+    char subcube;
     cubeType type = subcubeType(i, j, k);
 
     switch (type)
     {
     case CORNER:
+        subcube = 0;
         if (i == 2) subcube += 1; // change to yellow if on bottom
         if (j == 2) subcube += 2; // change to green if on back
         if (k == 2) subcube += 4; // change to red if on right
@@ -168,21 +169,30 @@ char defaultCubeAt(size_t i, size_t j, size_t k) {
         // sum will never be 14 (repr. hollow block), so fine to use otherwise
         // has a range of 0-5 and 7-12
         subcube = (sum + 1) / 2 - 1;
+
+        //set up rotations - these formula separate out the sides based on their ID and which face they lack by default
+        size_t rot = 5; ///101, lacking
+        if (subcube % 3 == 0)
+            rot = 3; //011, lacking OR
+        else if (subcube > 3 && subcube < 9)
+            rot = 6; //110, lacking BG
+        subcube |= (rot << 4);
         break;
 
-    // center ID stored as the face value, so can easily access
+        // center ID stored as the face value, so can easily access
     case CENTER:
         size_t diff = i;
+        subcube = 0;
 
         //centers will have 2 1 coords and 1 other coord, so just need to determine which is which
         if (diff == 1)
             if (j == 1) {
                 diff = k;
-                subcube = 1;
+                subcube = 2;
             }
             else {
                 diff = j;
-                subcube = 2;
+                subcube = 1;
             }
         //diff will either be 0 or 2 depending on if it's a main face (WBO) or a alternative face (YGR)
         if (diff == 2)
@@ -225,7 +235,7 @@ he rotation of a side is stored in 4 bits:
     Bit 2: face on OR axis
     Bit 3: is this pattern flipped from how it normally would be
 
-Bits 0-2 will only have 1 0 in them, as sides will always have one axis they aren't showing anyhting along. Conveniently, they also can't be rotated along that axis, so transformations amount to:
+Bits 0-2 will only have 1 1 in them, as sides will always have one axis they aren't showing anyhting along. Conveniently, they also can't be rotated along that axis, so transformations amount to:
     1) determining the 'preserved' bit
     2) swapping the other 2 bits (can be done using XOR with 1 on them, mask the preserved bit?)
     3) flip bit 3
@@ -241,7 +251,7 @@ char rotateSubcube(char* subcube, cubeType type, rotation rot, face face) {
             newSubcube ^= (1 << (rotAxis + 4));
         }
         else if (type == SIDE) {
-            size_t mask = 15 << 4; //00001111
+            size_t mask = 15 << 4; //11110000
             mask ^= 1 << (rotAxis + 4);
             newSubcube ^= mask;
         }
