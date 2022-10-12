@@ -9,6 +9,20 @@
 // TODO: try splitting into a 2x2x2 of corners and something for sides?
 typedef char sCube[27];
 
+size_t cornerRotationOrder[4][2] = {
+    {0,0},
+    {0,2},
+    {2,2},
+    {2,0}
+};
+
+size_t sideRotationOrder[4][2] = {
+    {0,1},
+    {1,2},
+    {2,1},
+    {1,0},
+};
+
 char* subcube(sCube* cube, size_t i, size_t j, size_t k);
 
 sCube* init_Cube();
@@ -19,23 +33,30 @@ sCube* randomize_Cube();
 
 char faceToChar(face face);
 
+void print_subcube_face(sCube* cube, size_t i, size_t j, size_t k, enum axis axis);
+
+void print_cube_layer(sCube* cube, size_t layer);
+
 void print_Cube(sCube* cube);
 
-sCube* rotate_Cube(sCube* cube, enum faces side, enum rotations rot);
+void print_binary(char c);
+
+void print_cube_vals(sCube* cube);
+
+sCube* rotate_Cube(sCube* cube, face side, rotation rot);
+
+
 
 char* subcube(sCube* cube, size_t i, size_t j, size_t k)
 {
-    return &((*cube)[i * 9 + j * 3 + k]);
+    return (*cube + i * 9 + j * 3 + k);
 }
-
 
 sCube* init_Cube()
 {
 
     size_t dim = 3;
     sCube* cube = malloc(sizeof(sCube));
-
-    char cornerID = 0, sideID = 0;
 
     for (size_t i = 0; i < dim; i++)
     {
@@ -53,6 +74,27 @@ sCube* init_Cube()
     return cube;
 }
 
+sCube* copy(sCube* cube) {
+    size_t dim = 3;
+    sCube* newCube = malloc(sizeof(sCube));
+
+    for (size_t i = 0; i < dim; i++)
+    {
+
+        for (size_t j = 0; j < dim; j++)
+        {
+
+            for (size_t k = 0; k < dim; k++)
+            {
+                *subcube(newCube, i, j, k) = *subcube(cube, i, j, k);
+            }
+        }
+    }
+
+    return newCube;
+}
+
+//returns a character representing that specific face
 char faceToChar(face face) {
     switch (face)
     {
@@ -109,6 +151,7 @@ void print_cube_layer(sCube* cube, size_t layer)
 
 }
 
+//displays the cube in a layered form
 void print_Cube(sCube* cube) {
     for (size_t i = 0; i < 3; i++)
     {
@@ -127,6 +170,7 @@ void print_binary(char c) {
 
 }
 
+//prints the values and their binary for each subcube; useful for debugging
 void print_cube_vals(sCube* cube) {
     for (size_t i = 0; i < 3; i++)
     {
@@ -145,13 +189,72 @@ void print_cube_vals(sCube* cube) {
 
 }
 
+size_t* pos(face face, size_t index, size_t ordering[4][2]) {
+    size_t* pos = calloc(3, sizeof(size_t));
+
+    enum axis ax = faceToAxis(face);
+    size_t firstIndex = (ax == WY ? 1 : 0);
+    size_t secondIndex = (ax == OR ? 1 : 2);
+
+    pos[ax] = 0;
+    pos[firstIndex] = ordering[index][0];
+    pos[secondIndex] = ordering[index][1];
+    return pos;
+}
+
+
+sCube* rotate_Cube(sCube* cube, face side, rotation rot) {
+
+    /*
+    Plan:
+    finalized algorithm should work no matter the faces
+    Each rotation will correspond to a certain number of 'shifts:' 1(90), 2 (180), or -1(-90/270)
+    YBR faces will need to have their number multiplied by -1
+    each subcube can then be shifted when placed into the new cube by that value along the patterns specified
+    */
+    size_t shift = rot;
+    if (shift == 3) shift == -1;
+    if (side == YELLOW || side == BLUE || side == RED) shift *= -1;
+
+    sCube* newCube = copy(cube);
+
+    //shift the correct faces
+    size_t nextIndex = shift % 4;
+    size_t* curr_c = pos(side, 0, cornerRotationOrder);
+    size_t* next_c = pos(side, nextIndex, cornerRotationOrder);
+    size_t* curr_s = pos(side, 0, sideRotationOrder);
+    size_t* next_s = pos(side, nextIndex, sideRotationOrder);
+    for (size_t i = 0; i < 4; i++)
+    {
+        char* newCorner = subcube(cube, curr_c[0], curr_c[1], curr_c[2]);
+        *subcube(newCube, next_c[0], next_c[1], next_c[2]) = rotateSubcube(newCorner, CORNER, rot, side);
+
+        char* newSide = subcube(cube, curr_s[0], curr_s[1], curr_s[2]);
+        *subcube(newCube, next_s[0], next_s[1], next_s[2]) = rotateSubcube(newSide, SIDE, rot, side);
+
+        nextIndex = (nextIndex + shift) % 4;
+
+        free(curr_c);
+        curr_c = next_c;
+        next_c = pos(side, nextIndex, cornerRotationOrder);
+
+        free(curr_s);
+        curr_s = next_s;
+        next_s = pos(side, nextIndex, sideRotationOrder);
+
+    }
+
+    return newCube;
+}
+
 int main(int argc, char const* argv[])
 {
     sCube* cube = init_Cube();
-    // print_cube_vals(cube);
-    // puts("");
-    print_Cube(cube);
-    // puts("");
-    // print_cube_vals(cube);
+    // print_Cube(cube);
+    sCube* newCube = rotate_Cube(cube, BLUE, ROT_90);
+
+    print_cube_vals(cube);
+    print_Cube(newCube);
+    print_cube_vals(newCube);
     return 0;
 }

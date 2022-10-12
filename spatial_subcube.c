@@ -114,7 +114,7 @@ face colorAlongAxis(char subcube, enum axis axis, cubeType type)
 
         for (size_t i = 0; i < 3; i++)
         {
-            if (rots[i] == 3) {
+            if (rots[i] == 1) {
                 size_t indexA = (i + 1) % 3, indexB = (i + 2) % 3;
                 face temp = faces[indexA];
                 faces[indexA] = faces[indexB];
@@ -134,7 +134,8 @@ face colorAlongAxis(char subcube, enum axis axis, cubeType type)
         if (axis == OR || (facesShowing[OR] == 0 && axis == BG))
             correctFace = 1;
         if (facesShowing[4] == 1)
-            correctFace %= 1;
+            correctFace = (correctFace + 1) % 2;
+            // correctFace += 0;
 
         return sideIDtoFaces[subcube & 15][correctFace];
 
