@@ -196,7 +196,7 @@ size_t* pos(face face, size_t index, size_t ordering[4][2]) {
     size_t firstIndex = (ax == WY ? 1 : 0);
     size_t secondIndex = (ax == OR ? 1 : 2);
 
-    pos[ax] = 0;
+    pos[ax] = (face < 3 ? 0 : 2);
     pos[firstIndex] = ordering[index][0];
     pos[secondIndex] = ordering[index][1];
     return pos;
@@ -204,14 +204,6 @@ size_t* pos(face face, size_t index, size_t ordering[4][2]) {
 
 
 sCube* rotate_Cube(sCube* cube, face side, rotation rot) {
-
-    /*
-    Plan:
-    finalized algorithm should work no matter the faces
-    Each rotation will correspond to a certain number of 'shifts:' 1(90), 2 (180), or -1(-90/270)
-    YBR faces will need to have their number multiplied by -1
-    each subcube can then be shifted when placed into the new cube by that value along the patterns specified
-    */
     size_t shift = rot;
     if (shift == 3) shift == -1;
     if (side == YELLOW || side == BLUE || side == RED) shift *= -1;
@@ -232,14 +224,21 @@ sCube* rotate_Cube(sCube* cube, face side, rotation rot) {
         char* newSide = subcube(cube, curr_s[0], curr_s[1], curr_s[2]);
         *subcube(newCube, next_s[0], next_s[1], next_s[2]) = rotateSubcube(newSide, SIDE, rot, side);
 
-        nextIndex = (nextIndex + shift) % 4;
-
         free(curr_c);
-        curr_c = next_c;
-        next_c = pos(side, nextIndex, cornerRotationOrder);
-
         free(curr_s);
-        curr_s = next_s;
+
+        if (i == 1 && rot == ROT_180) {
+            nextIndex = 3;
+            curr_c = pos(side, 1, cornerRotationOrder);
+            curr_s = pos(side, 1, sideRotationOrder);
+        }
+        else {
+            nextIndex = (nextIndex + shift) % 4;
+            curr_c = next_c;
+            curr_s = next_s;
+        }
+
+        next_c = pos(side, nextIndex, cornerRotationOrder);
         next_s = pos(side, nextIndex, sideRotationOrder);
 
     }
@@ -250,11 +249,8 @@ sCube* rotate_Cube(sCube* cube, face side, rotation rot) {
 int main(int argc, char const* argv[])
 {
     sCube* cube = init_Cube();
-    // print_Cube(cube);
-    sCube* newCube = rotate_Cube(cube, BLUE, ROT_90);
+    sCube* newCube = rotate_Cube(cube, GREEN, ROT_180);
 
-    print_cube_vals(cube);
     print_Cube(newCube);
-    print_cube_vals(newCube);
     return 0;
 }

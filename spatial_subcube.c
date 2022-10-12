@@ -71,7 +71,8 @@ bool* rotations(char subcube) {
     bool* rots = calloc(4, sizeof(bool));
     for (size_t i = 0; i < 4; i++)
     {
-        rots[i] = subcube & (1 << (i + 4));
+        // rots[i] = subcube & (1 << (i + 4));
+        rots[i] = 1 & (subcube >> (i + 4));
     }
 
     return rots;
@@ -133,8 +134,9 @@ face colorAlongAxis(char subcube, enum axis axis, cubeType type)
         //if this is the second face stored
         if (axis == OR || (facesShowing[OR] == 0 && axis == BG))
             correctFace = 1;
-        if (facesShowing[4] == 1)
-            correctFace = (correctFace + 1) % 2;
+        if (facesShowing[3] == 1) {
+            correctFace = !correctFace;
+        }
             // correctFace += 0;
 
         return sideIDtoFaces[subcube & 15][correctFace];
@@ -252,7 +254,13 @@ char rotateSubcube(char* subcube, cubeType type, rotation rot, face face) {
             newSubcube ^= (1 << (rotAxis + 4));
         }
         else if (type == SIDE) {
-            size_t mask = 15 << 4; //11110000
+
+            size_t mask = 7; //11110000
+
+            // because of how the sides work, need to use the flip bit only when rotated on BG axis
+            if (faceToAxis(face) == BG)
+                mask = 15; //01110000;
+            mask <<= 4;
             mask ^= 1 << (rotAxis + 4);
             newSubcube ^= mask;
         }
