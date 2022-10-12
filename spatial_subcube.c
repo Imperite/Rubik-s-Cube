@@ -20,22 +20,42 @@ typedef enum cubeTypes
     HOLLOW = 3
 } cubeType;
 
+face sideIDtoFaces[13][2] = {
+    {WHITE, BLUE},
+    {WHITE, ORANGE},
+    {WHITE, RED},
+    {WHITE, GREEN},
+
+    {BLUE, ORANGE},
+    {BLUE, RED},
+    {BLANK, BLANK},
+    {GREEN, ORANGE},
+    {GREEN, RED},
+
+    {YELLOW, BLUE},
+    {YELLOW, ORANGE},
+    {YELLOW, RED},
+    {YELLOW, GREEN}
+};
+
+
 cubeType subcubeType(size_t i, size_t j, size_t k);
 
-bool* rotations(char subcube, cubeType type);
+bool* rotations(char subcube);
 
-bool* colors(char subcube);
+face* colors(char subcube);
+
+face colorAlongAxis(char subcube, enum axis axis, cubeType type);
 
 char defaultCubeAt(size_t i, size_t j, size_t k);
 
-enum faces colorAlongAxis(char subcube, enum axis axis);
+enum axis faceToAxis(face face);
 
 char rotateSubcube(char* subcube, cubeType type, rotation rot, face face);
 
-
 cubeType subcubeType(size_t i, size_t j, size_t k)
 {
-    size_t numCenter = 0;
+    cubeType numCenter = 0;
     if (i == 1)
         numCenter++;
     if (j == 1)
@@ -46,34 +66,84 @@ cubeType subcubeType(size_t i, size_t j, size_t k)
     return numCenter;
 }
 
-
-// stores rotations in order OR - BG - WY, with the first value being 1 and the second being 0
-bool* rotations(char subcube, cubeType type) {
-    bool* rots;
-    if (type == CORNER || type == SIDE)
-        rots = calloc(3, sizeof(bool));
-    else return NULL;
-
+// stores rotations in order (flippedbit) - OR - BG - WY, with the first value being 1 and the second being 0; flipped bit unused for corners
+bool* rotations(char subcube) {
+    bool* rots = calloc(4, sizeof(bool));
     subcube = subcube >> 4;
-    for (size_t i = 0; i < 3; i++)
+    for (size_t i = 0; i < 4; i++)
     {
-        rots[i] = (subcube & 1);
+        rots[i] = subcube & (1 << i);
     }
 
     return rots;
 }
 
-// stores colors same as rotations: 0 - OR - BG - WY, with first value being 0 and second 1
-bool* colors(char subcube) {
+// stores colors same as rotations: 0 - OR - BG - WY, with first value being 0 and second 1. ASSUMES SUBCUBE IS SIDE OR CORNER
+face* colors(char subcube) {
     bool* rots;
     rots = calloc(3, sizeof(bool));
 
     for (size_t i = 0; i < 3; i++)
     {
-        rots[i] = (subcube & 1);
+        rots[i] = subcube & (1 << i);
     }
 
-    return rots;
+    face* colors = calloc(3, sizeof(face));
+    // because the value for the axis (and i) aligns with the value for the default colors (WBO),  can just add 3 if that bit is true to shift to the opposite facing color
+    for (size_t i = 0; i < 3; i++)
+    {
+        colors[i] = i + (rots[i] * 3);
+    }
+
+    return colors;
+}
+
+/*
+Returns the face of this subcube along the axis, or NULL if one is not specified.
+
+For corners, this is relatively simple:
+First, extract the 3 colors of of the subcube, along with the rotation bits. Then, for each rotation bit, flip the other two faces if it's true. Finally, return the bit at index axis.
+
+For sides, it's also really simple
+*/
+face colorAlongAxis(char subcube, enum axis axis, cubeType type)
+{
+    if (type == CORNER) {
+        face* faces = colors(subcube);
+        bool* rots = rotations(subcube);
+
+        for (size_t i = 0; i < 3; i++)
+        {
+            if (rots[i] == 3) {
+                size_t indexA = (i + 1) % 3, indexB = (i + 2) % 3;
+                face temp = faces[indexA];
+                faces[indexA] = faces[indexB];
+                faces[indexB] = temp;
+            }
+        }
+
+        return faces[axis];
+    }
+    if (type == SIDE) {
+        bool* facesShowing = rotations(subcube);
+        if (facesShowing[axis] != 1)
+            return BLANK;
+
+        size_t correctFace = 0;
+        //if this is the second face stored
+        if (axis == OR || (facesShowing[OR] == 0 && axis == BG))
+            correctFace = 1;
+        if (facesShowing[4] == 1)
+            correctFace %= 1;
+
+        return sideIDtoFaces[subcube & 7][correctFace];
+
+    }
+    //since the subcube just stores the literal face for the
+    if (type == CENTER && faceToAxis(subcube) == axis)
+        return subcube;
+
+    return BLANK;
 }
 
 char defaultCubeAt(size_t i, size_t j, size_t k) {
@@ -84,27 +154,48 @@ char defaultCubeAt(size_t i, size_t j, size_t k) {
     */
 
     char subcube = 0; //default is the WBO combo
-    if (i == 2) subcube += 1; // change to yellow if on bottom
-    if (j == 2) subcube += 2; // change to green if on back
-    if (k == 2) subcube += 4; // change to red if on right
+    cubeType type = subcubeType(i, j, k);
 
-
-    //can ignore rotations as they are relative to the cube's default, so are all 0
-    //TODO: setup default rotations for side subcubes
-    return subcube;
-}
-
-face colorAlongAxis(char subcube, enum axis axis) {
-    bool* cubeColors = colors(subcube);
-    switch (axis)
+    switch (type)
     {
-    case WY:
-        return (cubeColors[axis] ? WHITE : YELLOW);
-    case BG:
-        return (cubeColors[axis] ? BLUE : GREEN);
-    case OR:
-        return (cubeColors[axis] ? ORANGE : RED);
+    case CORNER:
+        if (i == 2) subcube += 1; // change to yellow if on bottom
+        if (j == 2) subcube += 2; // change to green if on back
+        if (k == 2) subcube += 4; // change to red if on right
+        break;
+    case SIDE:
+        size_t sum = 9 * i + 3 * j + k;
+        // sum will never be 14 (repr. hollow block), so fine to use otherwise
+        // has a range of 0-5 and 7-12
+        subcube = (sum + 1) / 2 - 1;
+        break;
+
+    // center ID stored as the face value, so can easily access
+    case CENTER:
+        size_t diff = i;
+
+        //centers will have 2 1 coords and 1 other coord, so just need to determine which is which
+        if (diff == 1)
+            if (j == 1) {
+                diff = k;
+                subcube = 1;
+            }
+            else {
+                diff = j;
+                subcube = 2;
+            }
+        //diff will either be 0 or 2 depending on if it's a main face (WBO) or a alternative face (YGR)
+        if (diff == 2)
+            subcube += 3;
+
+        break;
+    case HOLLOW:
+        //done to use unused bit, but can ignore if needed
+        subcube = 8;
+        break;
     }
+    //TODO: setup default rotations (primarily configure flipped bits) for side subcubes
+    return subcube;
 }
 
 enum axis faceToAxis(face face) {

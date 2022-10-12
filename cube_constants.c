@@ -1,6 +1,7 @@
 // stores index in char array that each face starts
 typedef enum faces
 {
+    BLANK = -1,
     WHITE = 0,
     BLUE = 1,
     ORANGE = 2,
