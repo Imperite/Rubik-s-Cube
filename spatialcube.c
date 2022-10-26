@@ -3,7 +3,6 @@
 #include <math.h>
 #include <stdbool.h>
 
-// #include "cube_constants.c"
 #include "spatial_subcube.c"
 
 // TODO: try splitting into a 2x2x2 of corners and something for sides?
@@ -94,6 +93,15 @@ sCube* copy(sCube* cube) {
     return newCube;
 }
 
+void destroy_Cube(sCube* cube) {
+    free(cube);
+}
+
+sCube* randomize_cube() {
+    sCube cube = init_Cube();
+
+}
+
 //returns a character representing that specific face
 char faceToChar(face face) {
     switch (face)
@@ -120,6 +128,7 @@ void print_subcube_face(sCube* cube, size_t i, size_t j, size_t k, enum axis axi
     printf("%c\t", faceToChar(faceColor));
 }
 
+// prints one 'slice' along the WY axis of the cube, specified by the layer
 void print_cube_layer(sCube* cube, size_t layer)
 {
     printf("\t");
@@ -180,7 +189,6 @@ void print_cube_vals(sCube* cube) {
             {
                 printf("%d: ", *subcube(cube, i, j, k));
                 print_binary(*subcube(cube, i, j, k));
-                // printf("%d\t", *subcube(cube, i, j, k));
             }
             puts("");
         }
@@ -189,6 +197,7 @@ void print_cube_vals(sCube* cube) {
 
 }
 
+//used to get the next position in a sequence when rotating along a face.
 size_t* pos(face face, size_t index, size_t ordering[4][2]) {
     size_t* pos = calloc(3, sizeof(size_t));
 

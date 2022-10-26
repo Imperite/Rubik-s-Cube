@@ -71,7 +71,6 @@ bool* rotations(char subcube) {
     bool* rots = calloc(4, sizeof(bool));
     for (size_t i = 0; i < 4; i++)
     {
-        // rots[i] = subcube & (1 << (i + 4));
         rots[i] = 1 & (subcube >> (i + 4));
     }
 
@@ -137,7 +136,6 @@ face colorAlongAxis(char subcube, enum axis axis, cubeType type)
         if (facesShowing[3] == 1) {
             correctFace = !correctFace;
         }
-            // correctFace += 0;
 
         return sideIDtoFaces[subcube & 15][correctFace];
 
