@@ -261,11 +261,11 @@ Cube* rotate_Cube(Cube* cube, face side, rotation rot) {
     return newCube;
 }
 
-int main(int argc, char const* argv[])
-{
-    Cube* cube = init_Cube();
-    Cube* newCube = rotate_Cube(cube, GREEN, ROT_180);
+// int main(int argc, char const* argv[])
+// {
+//     Cube* cube = init_Cube();
+//     Cube* newCube = rotate_Cube(cube, GREEN, ROT_180);
 
-    print_Cube(newCube);
-    return 0;
-}
+//     print_Cube(newCube);
+//     return 0;
+// }

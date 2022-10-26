@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 
 typedef struct cubeState
 {
@@ -11,3 +11,15 @@ typedef struct cubeState
     short depth;
     unsigned short prev_state_length;
 } CubeState;
+
+//duplicates everything but the cube, leaving it undefined
+CubeState* duplicate(CubeState* original) {
+    CubeState* new = malloc(sizeof(CubeState));
+    new->depth = original->depth;
+    new->prev_state_length = original->prev_state_length;
+    new->prev_states = malloc(new->prev_state_length * sizeof(char));
+    for (size_t i = 0; i < new->prev_state_length; i++)
+    {
+        new->prev_states[i] = original->prev_states[i];
+    }
+}

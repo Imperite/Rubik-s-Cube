@@ -235,7 +235,8 @@ bool solve_cube(Change moves[20], CubeState* initial_state, CubeState* solved)
       printf("\t");
       moves[depth].face = face;
       moves[depth].degree = rot;
-      CubeState* new = rotate_Cube(initial_state->cube, face, rot);
+      CubeState* new = duplicate(initial_state);
+      new->cube = rotate_Cube(initial_state->cube, face, rot);
 
       // check if this is solved -- if so, we'll reset our static variables and attach a marker signifying we found the end before reaching the max of 20 moves.
       if (strcmp(new->cube, solved->cube) == 0)
