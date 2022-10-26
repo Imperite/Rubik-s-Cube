@@ -5,18 +5,8 @@
 
 #include "cube.h"
 #include "arraylist.c"
-// Rubik's Cube Solver, written by David Bradley using Repl.it, CodeBlocks with MinGW, and Microsoft Visual Studio. Also drew on pseudocode from wikipedia.
 
-// Side note: here are a couple of optimizations I plan to do after the final deadline:
-/*
-    1. Change all rubik's simulation functions to work on the compressed state instead of the struct. this will be even harder to understand, but will minimize the amount of space free/alloced at once (maybe also switch to using only chars, no ints? no need in compressed-only to keep color_to_char or color enums)
-    2. Similarly, if I switch from a arraylist to a radix tree for storing the different checked states, it should work out much more effieciently in the long run. -- Prob will implement as a multi-nided tree, and either dynamically resize the child pointers or (more likely) just declare a 6-lebgth array?
-    3. Rewrite the print_cube function; it's pretty repetitive right now, and could use with a little abstraction to make it work
-    4. Find a way to determine if the route taken to get to this cube is the simplest/compress moves after finding the solution.
-    5. AFter all that, I'd love to work on making a simple way of plugging in the current state of the cube -- you currently would have to manually encode it in, but I'd love to change that.
-    6. Finally, I'd love to create a gui for this. so that instead of using text to communicate the solution, I can visually show someone what moves to do.
-    7. also, Compressing the cube down from a char per side to 3 bytes per side would mean a reduction from 50 bytes per state to 30, so could be worth it if running into space issues (but adds a lot to time cost -- now have to isloate each face for operations, making rotations even harder?)
-*/
+// Rubik's Cube Solver, written by David Bradley using Repl.it, CodeBlocks with MinGW, and Microsoft Visual Studio. Also drew on pseudocode from wikipedia.
 
 typedef struct change
 {
@@ -24,38 +14,22 @@ typedef struct change
   enum rotations degree;
 } Change;
 
-// char** faceToDirection = {
-//   "front ",
-//   "top ",
-//   "left ",
-//   "back ",
-//   "bottom ",
-//   "right "
-// };
-
-// IF I HAVE TIME: look into changing base storage and rotations to be only string-based, not number-based
-// actual Search function:
-// use a tree with 18 children -- generate each of the children, then generate their children?
-// create the first child, then recurse into it and repeat until level 20 has been reached or the cube is solved
-// have pointer to previous node, so that once the solved state is found we can return the moves needed. Each index of the connected_states will store one specific move.
-// could I store previous states to reduce time?
-// to do so:
-// need to compress (shrinks storage space from 1664 bits to 54) -- DONE
-//  need a way to compare two rubik's Cube_States/compressed form of two rubik's cube_states -- DONE, use strcmp()
-// need to write an arraylist to store and new vals and check if any old vals exist
-
-// This'll allow me to store all the states efficiently, letting me do a depth-first search while keeping previous states.
 
 // ACTUAL SOLVING FUNCTION:
 void solve(CubeState* initial_state, CubeState* solved);
 bool solve_cube(Change moves[20], CubeState* initial_state, CubeState* solved);
+char* faceToWords(face face);
+char* rotToWords(rotation rot);
+
+
 
 int main()
 {
   Cube* solved = init_Cube();
   print_Cube(solved);
-  solved = rotate_Cube(solved, WHITE, ROT_90);
-  print_Cube(solved);
+  Cube* new = rotate_Cube(solved, WHITE, ROT_90);
+  print_Cube(new);
+  destroy_Cube(new);
   destroy_Cube(solved);
   /*
     //Obviously, I don't have the power to test this function and see if it works fully in 15 min, but here, I've simulated the two main different types of circumstances that could occur, of 3:
@@ -143,53 +117,12 @@ void solve(CubeState* initial_state, CubeState* solved)
 {
   Change* moves = calloc(20, sizeof(Change));
 
-  // first it checks is a FRONT 270 rotation, so the inverse would be a FRON 90 rotation
   bool solve = solve_cube(moves, initial_state, solved);
   printf("solved: %d\n", solve);
 
   for (size_t i = 0; i < 20 && moves[i].degree != NONE; ++i)
   {
-    printf("do a ");
-    switch (moves[i].face)
-    {
-    case WHITE:
-      printf("front ");
-      break;
-    case YELLOW:
-      printf("back ");
-      break;
-    case ORANGE:
-      printf("left ");
-      break;
-    case RED:
-      printf("right ");
-      break;
-    case BLUE:
-      printf("top ");
-      break;
-    case GREEN:
-      printf("bottom ");
-      break;
-    default:
-      printf("ERROR");
-    }
-
-    switch (moves[i].degree)
-    {
-    case ROT_270:
-      printf(" 270 degree turn");
-      break;
-    case ROT_180:
-      printf(" 180 degree turn");
-      break;
-    case ROT_90:
-      printf(" 90 degree turn");
-      break;
-    case NONE:
-      printf(" ERROR");
-      break;
-    }
-    puts("");
+    printf("Do a %s %s\n", faceToWords(moves[i].face), rotToWords(moves[i].degree));
   }
   free(moves);
 }
@@ -253,7 +186,7 @@ bool solve_cube(Change moves[20], CubeState* initial_state, CubeState* solved)
       }
 
       // otherwise, check if this state has already been found, and explored further along
-      if (checked_states->size >= 1 && storage_contains(checked_states, checked_states->size, new))
+      if (checked_states->size >= 1 && storage_contains(checked_states, new))
       {
         printf("\n Already checked, skipping: ");
         //TODO: re-implement for cubeState instead of just cube; otherwise will cause memory leak
@@ -283,4 +216,39 @@ bool solve_cube(Change moves[20], CubeState* initial_state, CubeState* solved)
   }
 
   return false;
+}
+
+
+char* faceToWords(face face) {
+  switch (face)
+  {
+  case WHITE:
+    return "front ";
+  case YELLOW:
+    return "back ";
+  case ORANGE:
+    return "left ";
+  case RED:
+    return "right ";
+  case BLUE:
+    return "top ";
+  case GREEN:
+    return "bottom ";
+  default:
+    return "ERROR ";
+  }
+}
+
+char* rotToWords(rotation rot) {
+  switch (rot)
+  {
+  case ROT_90:
+    return "90 degree turn ";
+  case ROT_180:
+    return "180 degree turn ";
+  case ROT_270:
+    return "270 degree turn ";
+  default:
+    return "ERROR ";
+  }
 }

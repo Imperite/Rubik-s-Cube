@@ -23,7 +23,7 @@ void storage_insert(ArrayListPtr list, CubeState* cube);
 
 void storage_resize(ArrayListPtr list);
 // contains; will use a binary search to find in list.
-bool storage_contains(ArrayListPtr list, size_t end, CubeState* to_find);
+bool storage_contains(ArrayListPtr list, CubeState* to_find);
 
 
 
@@ -76,12 +76,12 @@ void storage_resize(ArrayListPtr list)
 
 // BASED ON PSEUDOCODE FROM WIKIPEDIA; was having trouble getting it to work recursively based on the code I made in class, so gave up and looked up how to do it on wikipedia.
 // storage_contains() a binary search to find out if the current state was already found, and then returns true if we found this state through a longer path than before.
-bool storage_contains(ArrayListPtr list, size_t size, CubeState* to_find)
+bool storage_contains(ArrayListPtr list, CubeState* to_find)
 {
 
     // puts("");
     int left = 0;
-    int right = size - 1;
+    int right = list->size - 1;
     int mid;
     while (left <= right)
     {

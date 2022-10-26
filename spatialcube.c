@@ -21,29 +21,6 @@ size_t sideRotationOrder[4][2] = {
     {1,0},
 };
 
-// //HEADERS
-// char* subcube(Cube* cube, size_t i, size_t j, size_t k);
-
-// Cube* init_Cube();
-
-// void destroy_Cube(Cube* cube);
-
-// Cube* randomize_Cube();
-
-// char faceToChar(face face);
-
-// void print_subcube_face(Cube* cube, size_t i, size_t j, size_t k, enum axis axis);
-
-// void print_cube_layer(Cube* cube, size_t layer);
-
-// void print_Cube(Cube* cube);
-
-// void print_binary(char c);
-
-// void print_cube_vals(Cube* cube);
-
-// Cube* rotate_Cube(Cube* cube, face side, rotation rot);
-
 
 //DEFINITIONS
 char* subcube(Cube* cube, size_t i, size_t j, size_t k)
@@ -246,6 +223,8 @@ Cube* rotate_Cube(Cube* cube, face side, rotation rot) {
             nextIndex = 3;
             curr_c = pos(side, 1, cornerRotationOrder);
             curr_s = pos(side, 1, sideRotationOrder);
+            free(next_c);
+            free(next_s);
         }
         else {
             nextIndex = (nextIndex + shift) % 4;
@@ -257,6 +236,10 @@ Cube* rotate_Cube(Cube* cube, face side, rotation rot) {
         next_s = pos(side, nextIndex, sideRotationOrder);
 
     }
+    free(curr_c);
+    free(curr_s);
+    free(next_c);
+    free(next_s);
 
     return newCube;
 }
