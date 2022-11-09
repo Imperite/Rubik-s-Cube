@@ -5,8 +5,6 @@
 
 #include "cube_state_constant.c"
 
-
-
 typedef struct array_list
 {
     size_t size;
@@ -14,6 +12,7 @@ typedef struct array_list
     CubeState** prev_states;
 } ArrayList;
 typedef ArrayList* ArrayListPtr;
+
 
 ArrayListPtr storage_create();
 
@@ -40,7 +39,7 @@ ArrayListPtr storage_create()
 void storage_destroy(ArrayListPtr* listPtr)
 {
     for (size_t i = 0; i < (*listPtr)->size; ++i)
-        free((*listPtr)->prev_states[i]);
+        destroy_Cube_State((*listPtr)->prev_states[i]);
     free((*listPtr)->prev_states);
     free(*listPtr);
     *listPtr = NULL;
@@ -49,19 +48,14 @@ void storage_destroy(ArrayListPtr* listPtr)
 // insertion, sadly, is linear, and that's what slows down the program the most. Implementing this as a hash would have been better, but I don't have the time for that right now
 void storage_insert(ArrayListPtr list, CubeState* cube)
 {
-  // complete the char storage by updating the depth
-    // cube->cube[48] = cube->depth / 10 + '0';
-    // cube->cube[49] = cube->depth % 10 + '0';
-
     storage_resize(list);
     size_t i;
 
     for (i = list->size++; i > 0 && strcmp(cube->cube, list->prev_states[i - 1]->cube) < 0; --i)
         list->prev_states[i] = list->prev_states[i - 1];
-
     list->prev_states[i] = cube;
     printf("\n\tAdding ");
-    puts(cube->cube);
+    puts(*((Cube*)cube->cube));
 }
 
 void storage_resize(ArrayListPtr list)
@@ -74,7 +68,6 @@ void storage_resize(ArrayListPtr list)
     }
 }
 
-// BASED ON PSEUDOCODE FROM WIKIPEDIA; was having trouble getting it to work recursively based on the code I made in class, so gave up and looked up how to do it on wikipedia.
 // storage_contains() a binary search to find out if the current state was already found, and then returns true if we found this state through a longer path than before.
 bool storage_contains(ArrayListPtr list, CubeState* to_find)
 {
@@ -86,13 +79,17 @@ bool storage_contains(ArrayListPtr list, CubeState* to_find)
     while (left <= right)
     {
         mid = (left + right) / 2;
-        int compare = strcmp((to_find + 2)->cube, (list->prev_states[mid] + 2)->cube);
-        if (compare == 1)
+        int compare = strcmp(to_find->cube, list->prev_states[mid]->cube);
+        printf("%zu %zu %zu, %d\n", left, mid, right, compare);
+        if (compare >= 1)
             left = mid + 1;
-        else if (compare == -1)
+        else if (compare <= -1)
             right = mid - 1;
-        else if (compare == 0 && list->prev_states[mid]->depth < to_find->depth)
-            return true;
+        else if (compare == 0)
+            if (list->prev_states[mid]->depth < to_find->depth)
+                return true;
+            else
+                return false;
     }
     return false;
 }
