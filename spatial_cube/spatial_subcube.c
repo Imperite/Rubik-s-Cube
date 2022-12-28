@@ -93,6 +93,7 @@ face* colors(char subcube) {
     {
         colors[i] = i + (rots[i] * 3);
     }
+    free(rots);
 
     return colors;
 }
@@ -121,13 +122,17 @@ face colorAlongAxis(char subcube, enum axis axis, cubeType type)
                 faces[indexB] = temp;
             }
         }
-
-        return faces[axis];
+        face final = faces[axis];
+        free(faces);
+        free(rots);
+        return final;
     }
     if (type == SIDE) {
         bool* facesShowing = rotations(subcube);
-        if (facesShowing[axis] != 1)
+        if (facesShowing[axis] != 1) {
+            free(facesShowing);
             return BLANK;
+        }
 
         size_t correctFace = 0;
         //if this is the second face stored
@@ -137,6 +142,7 @@ face colorAlongAxis(char subcube, enum axis axis, cubeType type)
             correctFace = !correctFace;
         }
 
+        free(facesShowing);
         return sideIDtoFaces[subcube & 15][correctFace];
 
     }

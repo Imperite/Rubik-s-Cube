@@ -1,12 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <stdbool.h>
+// #include <string.h>
 
 #include "spatial_subcube.c"
 
 // TODO: try splitting into a 2x2x2 of corners and something for sides?
-typedef char sCube[27];
 
 size_t cornerRotationOrder[4][2] = {
     {0,0},
@@ -22,40 +21,18 @@ size_t sideRotationOrder[4][2] = {
     {1,0},
 };
 
-char* subcube(sCube* cube, size_t i, size_t j, size_t k);
 
-sCube* init_Cube();
-
-void destroy_Cube(sCube* cube);
-
-sCube* randomize_Cube();
-
-char faceToChar(face face);
-
-void print_subcube_face(sCube* cube, size_t i, size_t j, size_t k, enum axis axis);
-
-void print_cube_layer(sCube* cube, size_t layer);
-
-void print_Cube(sCube* cube);
-
-void print_binary(char c);
-
-void print_cube_vals(sCube* cube);
-
-sCube* rotate_Cube(sCube* cube, face side, rotation rot);
-
-
-
-char* subcube(sCube* cube, size_t i, size_t j, size_t k)
+//DEFINITIONS
+char* subcube(Cube* cube, size_t i, size_t j, size_t k)
 {
     return (*cube + i * 9 + j * 3 + k);
 }
 
-sCube* init_Cube()
+Cube* init_Cube()
 {
 
     size_t dim = 3;
-    sCube* cube = malloc(sizeof(sCube));
+    Cube* cube = malloc(sizeof(Cube));
 
     for (size_t i = 0; i < dim; i++)
     {
@@ -73,9 +50,9 @@ sCube* init_Cube()
     return cube;
 }
 
-sCube* copy(sCube* cube) {
+Cube* copy(Cube* cube) {
     size_t dim = 3;
-    sCube* newCube = malloc(sizeof(sCube));
+    Cube* newCube = malloc(sizeof(Cube));
 
     for (size_t i = 0; i < dim; i++)
     {
@@ -93,12 +70,12 @@ sCube* copy(sCube* cube) {
     return newCube;
 }
 
-void destroy_Cube(sCube* cube) {
+void destroy_Cube(Cube* cube) {
     free(cube);
 }
 
-sCube* randomize_cube() {
-    sCube cube = init_Cube();
+Cube* randomize_cube() {
+    Cube cube = init_Cube();
 
 }
 
@@ -123,13 +100,13 @@ char faceToChar(face face) {
     }
 }
 
-void print_subcube_face(sCube* cube, size_t i, size_t j, size_t k, enum axis axis) {
+void print_subcube_face(Cube* cube, size_t i, size_t j, size_t k, enum axis axis) {
     face faceColor = colorAlongAxis(*subcube(cube, i, j, k), axis, subcubeType(i, j, k));
     printf("%c\t", faceToChar(faceColor));
 }
 
 // prints one 'slice' along the WY axis of the cube, specified by the layer
-void print_cube_layer(sCube* cube, size_t layer)
+void print_cube_layer(Cube* cube, size_t layer)
 {
     printf("\t");
     for (size_t i = 0; i < 3; i++)
@@ -161,7 +138,7 @@ void print_cube_layer(sCube* cube, size_t layer)
 }
 
 //displays the cube in a layered form
-void print_Cube(sCube* cube) {
+void print_Cube(Cube* cube) {
     for (size_t i = 0; i < 3; i++)
     {
         print_cube_layer(cube, i);
@@ -180,7 +157,7 @@ void print_binary(char c) {
 }
 
 //prints the values and their binary for each subcube; useful for debugging
-void print_cube_vals(sCube* cube) {
+void print_cube_vals(Cube* cube) {
     for (size_t i = 0; i < 3; i++)
     {
         for (size_t j = 0; j < 3; j++)
@@ -212,12 +189,12 @@ size_t* pos(face face, size_t index, size_t ordering[4][2]) {
 }
 
 
-sCube* rotate_Cube(sCube* cube, face side, rotation rot) {
+Cube* rotate_Cube(Cube* cube, face side, rotation rot) {
     size_t shift = rot;
     if (shift == 3) shift == -1;
     if (side == YELLOW || side == BLUE || side == RED) shift *= -1;
 
-    sCube* newCube = copy(cube);
+    Cube* newCube = copy(cube);
 
     //shift the correct faces
     size_t nextIndex = shift % 4;
@@ -240,6 +217,8 @@ sCube* rotate_Cube(sCube* cube, face side, rotation rot) {
             nextIndex = 3;
             curr_c = pos(side, 1, cornerRotationOrder);
             curr_s = pos(side, 1, sideRotationOrder);
+            free(next_c);
+            free(next_s);
         }
         else {
             nextIndex = (nextIndex + shift) % 4;
@@ -251,15 +230,19 @@ sCube* rotate_Cube(sCube* cube, face side, rotation rot) {
         next_s = pos(side, nextIndex, sideRotationOrder);
 
     }
+    free(curr_c);
+    free(curr_s);
+    free(next_c);
+    free(next_s);
 
     return newCube;
 }
 
-int main(int argc, char const* argv[])
-{
-    sCube* cube = init_Cube();
-    sCube* newCube = rotate_Cube(cube, GREEN, ROT_180);
+// int main(int argc, char const* argv[])
+// {
+//     Cube* cube = init_Cube();
+//     Cube* newCube = rotate_Cube(cube, GREEN, ROT_180);
 
-    print_Cube(newCube);
-    return 0;
-}
+//     print_Cube(newCube);
+//     return 0;
+// }
