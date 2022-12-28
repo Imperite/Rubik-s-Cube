@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdbool.h>
 
-#include "spatial_subcube.c"
+#include "subcube.c"
 
 // TODO: try splitting into a 2x2x2 of corners and something for sides?
 typedef char Cube[27];
@@ -29,8 +29,6 @@ Cube* init_Cube();
 void destroy_Cube(Cube* cube);
 
 Cube* randomize_Cube();
-
-char faceToChar(face face);
 
 void print_subcube_face(Cube* cube, size_t i, size_t j, size_t k, enum axis axis);
 
@@ -79,10 +77,8 @@ Cube* copy(Cube* cube) {
 
     for (size_t i = 0; i < dim; i++)
     {
-
         for (size_t j = 0; j < dim; j++)
         {
-
             for (size_t k = 0; k < dim; k++)
             {
                 *subcube(newCube, i, j, k) = *subcube(cube, i, j, k);
@@ -98,29 +94,8 @@ void destroy_Cube(Cube* cube) {
 }
 
 Cube* randomize_cube() {
-    Cube cube = init_Cube();
-
-}
-
-//returns a character representing that specific face
-char faceToChar(face face) {
-    switch (face)
-    {
-    case WHITE:
-        return 'w';
-    case BLUE:
-        return 'b';
-    case ORANGE:
-        return 'o';
-    case YELLOW:
-        return 'y';
-    case GREEN:
-        return 'g';
-    case RED:
-        return 'r';
-    case BLANK:
-        return 'X';
-    }
+    Cube* cube = init_Cube();
+    return cube;
 }
 
 void print_subcube_face(Cube* cube, size_t i, size_t j, size_t k, enum axis axis) {
@@ -259,8 +234,8 @@ Cube* rotate_Cube(Cube* cube, face side, rotation rot) {
 
 // int main(int argc, char const* argv[])
 // {
-//     Cube* cube = init_Cube();
-//     Cube* newCube = rotate_Cube(cube, GREEN, ROT_180);
+//     sCube* cube = init_Cube();
+//     sCube* newCube = rotate_Cube(cube, GREEN, ROT_180);
 
 //     print_Cube(newCube);
 //     return 0;

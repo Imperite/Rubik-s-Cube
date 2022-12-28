@@ -53,6 +53,7 @@ enum axis faceToAxis(face face);
 
 char rotateSubcube(char* subcube, cubeType type, rotation rot, face face);
 
+
 cubeType subcubeType(size_t i, size_t j, size_t k)
 {
     cubeType numCenter = 0;
@@ -156,7 +157,7 @@ char defaultCubeAt(size_t i, size_t j, size_t k) {
 
     char subcube;
     cubeType type = subcubeType(i, j, k);
-
+    size_t diff, sum;
     switch (type)
     {
     case CORNER:
@@ -166,7 +167,7 @@ char defaultCubeAt(size_t i, size_t j, size_t k) {
         if (k == 2) subcube += 4; // change to red if on right
         break;
     case SIDE:
-        size_t sum = 9 * i + 3 * j + k;
+        sum = 9 * i + 3 * j + k;
         // sum will never be 14 (repr. hollow block), so fine to use otherwise
         // has a range of 0-5 and 7-12
         subcube = (sum + 1) / 2 - 1;
@@ -182,7 +183,7 @@ char defaultCubeAt(size_t i, size_t j, size_t k) {
 
         // center ID stored as the face value, so can easily access
     case CENTER:
-        size_t diff = i;
+        diff = i;
         subcube = 0;
 
         //centers will have 2 1 coords and 1 other coord, so just need to determine which is which
@@ -265,4 +266,26 @@ char rotateSubcube(char* subcube, cubeType type, rotation rot, face face) {
     }
 
     return newSubcube;
+}
+
+
+//returns a character representing that specific face
+char faceToChar(face face) {
+    switch (face)
+    {
+    case WHITE:
+        return 'w';
+    case BLUE:
+        return 'b';
+    case ORANGE:
+        return 'o';
+    case YELLOW:
+        return 'y';
+    case GREEN:
+        return 'g';
+    case RED:
+        return 'r';
+    case BLANK:
+        return 'X';
+    }
 }
