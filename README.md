@@ -62,3 +62,9 @@ Side note: here are a couple of optimizations I plan to do after the final deadl
 5. AFter all that, I'd love to work on making a simple way of plugging in the current state of the cube -- you currently would have to manually encode it in, but I'd love to change that.
 6. Finally, I'd love to create a gui for this. so that instead of using text to communicate the solution, I can visually show someone what moves to do.
 7. also, Compressing the cube down from a char per side to 3 bytes per side would mean a reduction from 50 bytes per state to 30, so could be worth it if running into space issues (but adds a lot to time cost -- now have to isloate each face for operations, making rotations even harder?)
+
+# To Run:
+
+Simply type the command
+`gcc main.c ./Cube/cube.c ./Storage/arraylist.c`
+from the top directory.
