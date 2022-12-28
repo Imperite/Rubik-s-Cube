@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "Cube/cube.h"
+#include "Storage/storage.h"
 // Rubik's Cube Solver, written by David Bradley using Repl.it, CodeBlocks with MinGW, and Microsoft Visual Studio. Also drew on pseudocode from wikipedia.
 
 typedef struct change
@@ -11,51 +12,6 @@ typedef struct change
   enum faces face;
   enum rotations degree;
 } Change;
-
-// generates solved cube state. Not needed, but useful for demostrating how everything's stored and rotations
-Cube* init_Cube();
-// destroys cube
-void destroy_Cube(Cube* cube);
-// With the new methods, generating a solved cube is very simple and not costly at all, but randomizing will likely take time.
-Cube* randomize_Cube();
-// will require more work to visualize effectively, but should be doable
-void print_Cube(Cube* cube);
-// returns form that will be put into the heap/radix tree to store and compare for later
-char* to_String(Cube* cube);
-
-Cube* rotate_Cube(Cube* cube, enum faces side, enum rotations rot);
-
-typedef struct array_list
-{
-  size_t size;
-  size_t capacity;
-  char** prev_states;
-} ArrayList;
-typedef ArrayList* ArrayListPtr;
-
-bool cmp_cubes(char* state1, char* state2);
-// create
-ArrayListPtr storage_list_create();
-// destroy
-void storage_list_destroy(ArrayListPtr* listPtr);
-// add
-void storage_list_insert(ArrayListPtr list, Cube* cube);
-// resize
-void storage_list_resize(ArrayListPtr list);
-// contains; will use a binary search to find in list.
-bool storage_list_contains(char** prev_states, size_t end, char* to_find);
-
-// TODO: Delete; unused
-typedef struct tree_node
-{
-  // stores all other nodes that are one rotation away from this current Cube_State
-  struct tree_node* connected_states[18];
-  // stores the index of the previous node pointer inside of the connected_states array
-  size_t prev_index;
-
-  Cube current;
-} Tree_Node;
-typedef Tree_Node* Tree_NodePtr;
 
 // ACTUAL SOLVING FUNCTION:
 void solve(Cube* initial_state, Cube* solved);
@@ -124,7 +80,7 @@ int main()
     puts("Press Enter to Continue");
     scanf("%c", &c);
     //ARRAYLIST TESTING
-    ArrayListPtr storage = storage_list_create();
+    ArrayListPtr storage = storage_create();
     size_t iterations = 42;
     size_t length = 2;
     for(size_t i = 0; i < iterations; ++i)
@@ -133,10 +89,10 @@ int main()
       for(size_t j = 0; j<length; ++j)
         rand_string[j] = color_to_char(WHITE + (rand() % 6));
         printf("size: %zu\n", storage->size);
-      if(i > 0 && !storage_list_contains(storage->prev_states, storage->size, rand_string))
-        storage_list_insert(storage, rand_string);
+      if(i > 0 && !storage_contains(storage->prev_states, storage->size, rand_string))
+        storage_insert(storage, rand_string);
       else if (i == 0)
-        storage_list_insert(storage, rand_string);
+        storage_insert(storage, rand_string);
       else
       {
         printf("FOUND DUPLICATE\n");
@@ -144,7 +100,7 @@ int main()
       }
     }
 
-    storage_list_destroy(&storage);
+    storage_destroy(&storage);
   //*/
   return 0;
 }
@@ -221,9 +177,9 @@ bool solve_cube(Change moves[20], Cube* initial_state, Cube* solved)
     all previous states are compressed down to the least amount of information possible and stored so we can check if we've encountered them before, while also recording the depth they were found at.
   */
   // checked_states keeps track of any states that we've checked before to reduce the number of states to check (so we're not checking duplicate states)
-  static ArrayListPtr checked_states = NULL;
+  static Storage checked_states = NULL;
   if (checked_states == NULL)
-    checked_states = storage_list_create();
+    checked_states = storage_create();
 
   static size_t depth = 0;
   printf("\ndepth: %zu", depth);
@@ -257,13 +213,13 @@ bool solve_cube(Change moves[20], Cube* initial_state, Cube* solved)
           moves[depth + 1].degree = NONE;
         puts("Found solution!");
         destroy_Cube(new);
-        if (checked_states->size > 0)
-          storage_list_destroy(&checked_states);
+        if (storage_size(checked_states) > 0)
+          storage_destroy(&checked_states);
         return true;
       }
 
       // otherwise, check if this state has already been found, and explored further along
-      if (checked_states->size >= 1 && storage_list_contains(checked_states->prev_states, checked_states->size, *new))
+      if (storage_size(checked_states) >= 1 && storage_contains(checked_states, *new))
       {
         printf("\n Already checked, skipping: ");
         destroy_Cube(new);
@@ -271,7 +227,7 @@ bool solve_cube(Change moves[20], Cube* initial_state, Cube* solved)
       }
 
       // record this state so we can access it later
-      storage_list_insert(checked_states, new);
+      storage_insert(checked_states, new, cmp_cubes);
 
       // check the rotations from this state and see if they would solve it, as long as the depth is less or equal to the max moves of 20.
       // if this isn't the final layer
@@ -291,83 +247,5 @@ bool solve_cube(Change moves[20], Cube* initial_state, Cube* solved)
     }
   }
 
-  return false;
-}
-
-bool cmp_cubes(char* state1, char* state2)
-{
-  for (size_t i = 0; i <= 48; ++i)
-    if (state1[i] != state2[i])
-      return false;
-  return true;
-}
-
-// ARRAYLIST FUNCTIONS: most of this will be copied over from the array_list functions we wrote in class, but compare will be of my own design --anything new will be commented
-ArrayListPtr storage_list_create()
-{
-  ArrayListPtr newList = malloc(sizeof(ArrayList));
-  newList->size = 0;
-  newList->capacity = 8;
-  newList->prev_states = calloc(newList->capacity, sizeof(newList->prev_states));
-  return newList;
-}
-
-// this is new in that I free all the previous found states when destroying the arrayList -- I don't copy them over, which saves a small amount of time
-void storage_list_destroy(ArrayListPtr* listPtr)
-{
-  for (size_t i = 0; i < (*listPtr)->size; ++i)
-    free((*listPtr)->prev_states[i]);
-  free((*listPtr)->prev_states);
-  free(*listPtr);
-  *listPtr = NULL;
-}
-
-// insertion, sadly, is linear, and that's what slows down the program the most. Implementing this as a hash would have been better, but I don't have the time for that right now
-void storage_list_insert(ArrayListPtr list, Cube* cube)
-{
-  // complete the char storage by updating the depth
-  // cube->cube[48] = cube->depth / 10 + '0';
-  // cube->cube[49] = cube->depth % 10 + '0';
-
-  storage_list_resize(list);
-  size_t i;
-
-  for (i = list->size++; i > 0 && strcmp(*cube, list->prev_states[i - 1]) < 0; --i)
-    list->prev_states[i] = list->prev_states[i - 1];
-
-  list->prev_states[i] = *cube;
-  printf("\n\tAdding ");
-  puts(*cube);
-}
-
-void storage_list_resize(ArrayListPtr list)
-{
-  if (list->size == list->capacity)
-  {
-    puts("");
-    list->capacity *= 2;
-    list->prev_states = realloc(list->prev_states, list->capacity * sizeof(char*));
-  }
-}
-
-// BASED ON PSEUDOCODE FROM WIKIPEDIA; was having trouble getting it to work recursively based on the code I made in class, so gave up and looked up how to do it on wikipedia.
-// storage_list_contains() a binary search to find out if the current state was already found, and then returns true if we found this state through a longer path than before.
-bool storage_list_contains(char** prev_states, size_t size, char* to_find)
-{
-  puts("");
-  int left = 0;
-  int right = size - 1;
-  int mid;
-  while (left <= right)
-  {
-    mid = (left + right) / 2;
-    int compare = strcmp((to_find + 2), (prev_states[mid] + 2));
-    if (compare == 1)
-      left = mid + 1;
-    else if (compare == -1)
-      right = mid - 1;
-    else if (compare == 0 && prev_states[mid][0] * 10 + prev_states[mid][1] < to_find[0] * 10 + to_find[1])
-      return true;
-  }
   return false;
 }

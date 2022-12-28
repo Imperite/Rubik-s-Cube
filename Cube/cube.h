@@ -15,4 +15,6 @@ void print_Cube(Cube* cube);
 char* to_String(Cube* cube);
 
 Cube* rotate_Cube(Cube* cube, enum faces side, enum rotations rot);
+
+int cmp_cubes(void* state1, void* state2);
 #endif

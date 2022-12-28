@@ -42,6 +42,8 @@ void print_cube_vals(Cube* cube);
 
 Cube* rotate_Cube(Cube* cube, face side, rotation rot);
 
+int cmp_cubes(void* state1, void* state2);
+
 
 
 char* subcube(Cube* cube, size_t i, size_t j, size_t k)
@@ -231,6 +233,18 @@ Cube* rotate_Cube(Cube* cube, face side, rotation rot) {
 
     return newCube;
 }
+
+//TODO: move to cube.h, use as variable passed into storage
+int cmp_cubes(void* cube1, void* cube2)
+{
+    char* s1 = (char*)cube1;
+    char* s2 = (char*)cube2;
+    for (size_t i = 0; i <= 48; ++i)
+        if (s1[i] != s2[i])
+            return s1[i] - s2[i];
+    return 0;
+}
+
 
 // int main(int argc, char const* argv[])
 // {
