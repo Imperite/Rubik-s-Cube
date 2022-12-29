@@ -21,6 +21,6 @@ char* to_String(Cube* cube);
 // returns a new cube representing the input cube rotated on a specific face
 Cube* rotate_Cube(Cube* cube, enum faces side, enum rotations rot);
 
-// Compares 2 cubes; used for both sorting and equality.
+// Compares 2 cubes; used for both sorting and equality. Takes in 2 Cubes, but needed to label them as void * here to allow use with Storage.
 int cmp_cubes(void* state1, void* state2);
 #endif

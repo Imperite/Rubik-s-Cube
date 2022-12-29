@@ -6,7 +6,7 @@ typedef struct array_list
 {
     size_t size;
     size_t capacity;
-    char** prev_states;
+    void** prev_states;
 } ArrayList;
 typedef ArrayList* ArrayListPtr;
 
@@ -19,7 +19,7 @@ void storage_insert(ArrayListPtr list, void* cube, int(*compare)(void*, void*));
 // resize
 void storage_resize(ArrayListPtr list);
 // contains; will use a binary search to find in list.
-bool storage_contains(char** prev_states, size_t end, char* to_find, int(*compare)(void*, void*));
+bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, void*));
 
 int storage_size(ArrayListPtr list);
 
@@ -56,35 +56,32 @@ void storage_insert(ArrayListPtr list, void* cube, int(*compare)(void*, void*))
         list->prev_states[i] = list->prev_states[i - 1];
 
     list->prev_states[i] = cube;
-    // printf("\n\tAdding ");
-    // puts(cube);
 }
 
 void storage_resize(ArrayListPtr list)
 {
     if (list->size == list->capacity)
     {
-        // puts("");
         list->capacity *= 2;
         list->prev_states = realloc(list->prev_states, list->capacity * sizeof(char*));
     }
 }
 
-bool storage_contains(char** prev_states, size_t size, char* to_find, int(*compare)(void*, void*))
+bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, void*))
 {
-    // puts("");
     int left = 0;
-    int right = size - 1;
+    int right = list->size - 1;
     int mid;
     while (left <= right)
     {
         mid = (left + right) / 2;
-        int comp = compare(to_find, prev_states[mid]);
+        int comp = compare(to_find, list->prev_states[mid]);
         if (comp == 1)
             left = mid + 1;
         else if (comp == -1)
             right = mid - 1;
-        else if (comp == 0 && prev_states[mid][0] * 10 + prev_states[mid][1] < to_find[0] * 10 + to_find[1])
+        else
+        // if (comp == 0 && list->prev_states[mid][0] * 10 + list->prev_states[mid][1] < to_find[0] * 10 + to_find[1])
             return true;
     }
     return false;

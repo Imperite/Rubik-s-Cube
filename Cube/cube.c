@@ -42,7 +42,7 @@ void print_cube_vals(Cube* cube);
 
 Cube* rotate_Cube(Cube* cube, face side, rotation rot);
 
-int cmp_cubes(void* state1, void* state2);
+int cmp_cubes(Cube state1, Cube state2);
 
 
 
@@ -231,26 +231,20 @@ Cube* rotate_Cube(Cube* cube, face side, rotation rot) {
 
     }
 
+    free(next_c);
+    free(next_s);
+    free(curr_c);
+    free(curr_c);
+
     return newCube;
 }
 
-//TODO: move to cube.h, use as variable passed into storage
-int cmp_cubes(void* cube1, void* cube2)
+int cmp_cubes(Cube s1, Cube s2)
 {
-    char* s1 = (char*)cube1;
-    char* s2 = (char*)cube2;
+    // char* s1 = (char*)cube1;
+    // char* s2 = (char*)cube2;
     for (size_t i = 0; i <= 48; ++i)
         if (s1[i] != s2[i])
             return s1[i] - s2[i];
     return 0;
 }
-
-
-// int main(int argc, char const* argv[])
-// {
-//     sCube* cube = init_Cube();
-//     sCube* newCube = rotate_Cube(cube, GREEN, ROT_180);
-
-//     print_Cube(newCube);
-//     return 0;
-// }
