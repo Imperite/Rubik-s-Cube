@@ -69,7 +69,7 @@ cubeType subcubeType(size_t i, size_t j, size_t k)
 
 // stores rotations in order (flippedbit) - OR - BG - WY, with the first value being 1 and the second being 0; flipped bit unused for corners
 bool* rotations(char subcube) {
-    bool* rots = calloc(4, sizeof(bool));
+    bool rots[4];
     for (size_t i = 0; i < 4; i++)
     {
         rots[i] = 1 & (subcube >> (i + 4));
@@ -80,7 +80,7 @@ bool* rotations(char subcube) {
 
 // stores colors same as rotations: 0 - OR - BG - WY, with first value being 0 and second 1. ASSUMES SUBCUBE IS SIDE OR CORNER
 face* colors(char subcube) {
-    face* colors = calloc(3, sizeof(face));
+    face colors[3];
 
     // because the value for the axis (and i) aligns with the value for the default colors (WBO),  can just add 3 if that bit is true to shift to the opposite facing color
     for (size_t i = 0; i < 3; i++)
@@ -117,18 +117,13 @@ face colorAlongAxis(char subcube, enum axis axis, cubeType type)
             }
         }
 
-        face result = faces[axis];
-        free(faces);
-        free(rots);
-
         return faces[axis];
     }
     if (type == SIDE) {
         bool* facesShowing = rotations(subcube);
-        if (facesShowing[axis] != 1) {
-            free(facesShowing);
+        if (facesShowing[axis] != 1)
             return BLANK;
-        }
+
         size_t correctFace = 0;
         //if this is the second face stored
         if (axis == OR || (facesShowing[OR] == 0 && axis == BG))
@@ -136,8 +131,6 @@ face colorAlongAxis(char subcube, enum axis axis, cubeType type)
         if (facesShowing[3] == 1) {
             correctFace = !correctFace;
         }
-
-        free(facesShowing);
 
         return sideIDtoFaces[subcube & 15][correctFace];
 
