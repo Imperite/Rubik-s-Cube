@@ -1,6 +1,8 @@
 #ifndef _storage_h_
 #define _storage_h_
 
+#include <stdbool.h>
+
 typedef void* Storage;
 
 // create
@@ -13,5 +15,7 @@ void storage_insert(Storage storage, void* cube, int(*compare)(void*, void*));
 bool storage_contains(Storage storage, void* to_find, int (*compare)(void*, void*));
 
 int storage_size(Storage storage);
+
+void storage_print(Storage storage, void(*print)(void*));
 
 #endif

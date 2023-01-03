@@ -55,14 +55,15 @@ void rotate(char cube[7], face face, rotation rot) {
   int start = (rot == ROT_90 ? 0 : 3);
   int step = (rot == ROT_90 ? 1 : -1);
 
-  char temp = cube[rots[0]];
-  // printf("%d %d: saving '%c'\n", start, step, temp);
+  char temp = cube[rots[start]];
+  // printf("\t%c\n", temp);
   for (size_t i = 0; i < 3; i++)
   {
-    // printf("replacing %c with %c \t", cube[rots[start]], cube[rots[(start + step) % 4]]);
+    // printf("\t%d: %c -> %c\n", start, cube[rots[start]], cube[rots[(start + step) % 4]]);
     cube[rots[start]] = cube[rots[(start + step) % 4]];
     start = (start + step) % 4;
   }
+  // printf("\t%c -> %c\n", cube[rots[start]], temp);
   cube[rots[start]] = temp;
   // printf("%s", cube);
 }
@@ -84,7 +85,8 @@ int cmp(void* c1, void* c2) {
 
 int main()
 {
-
+  //GOAL: want to see how distant states are from the origin - thinking it should be within 3 moves, but want to double check
+  //initial 'default' state, before any rotations done
   char subcube[7] = "wboYGR";
   ArrayListPtr list = storage_create();
   Queue* q = malloc(sizeof(Queue));
@@ -98,10 +100,10 @@ int main()
   while (q->head != NULL) {
     for (face f = WHITE; f <= RED; f++) {
       for (rotation r = ROT_90; r <= 3; r += 2) {
-        char new[7];
+        char* new = calloc(7, sizeof(char));
         strcpy(new, q->head->value);
         rotate(new, f, r);
-        printf("%s: \n", new);
+        printf("%s on %d %d -> %s\n", q->head->value, f, r, new);
         if (!storage_contains(list, new, cmp))
         {
           // printf("new! %c", ' ');
@@ -118,6 +120,7 @@ int main()
     }
     LNode* oldHead = q->head;
     q->head = q->head->next;
+    free(oldHead->value);
     free(oldHead);
   }
 

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 
 typedef struct array_list
@@ -76,11 +77,24 @@ bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, voi
             left = mid + 1;
         else if (comp <= -1)
             right = mid - 1;
-        else
+        else if (comp == 0)
         // if (comp == 0 && list->prev_states[mid][0] * 10 + list->prev_states[mid][1] < to_find[0] * 10 + to_find[1])
             return true;
     }
     return false;
+}
+
+void storage_print(ArrayListPtr list, void(*print)(void*)) {
+    printf("[");
+    for (size_t i = 0; i < list->size; i++)
+    {
+        if (i > 0)
+            printf(", ");
+
+        print(list->prev_states[i]);
+    }
+    puts("]");
+
 }
 
 int storage_size(ArrayListPtr list) {
