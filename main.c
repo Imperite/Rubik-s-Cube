@@ -1,13 +1,136 @@
 // Rubik's Cube Solver, written by David Bradley using Repl.it, CodeBlocks with MinGW, and Microsoft Visual Studio. Also drew on pseudocode from wikipedia.
-#include "solver.c"
+// #include "solver.c"
+#include "Cube/cube_constants.c"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+#include "Storage/arraylist.c"
+
+
+void rotate(char cube[7], face face, rotation rot) {
+  size_t rots[4];
+  switch (face)
+  {
+  case WHITE:
+    rots[0] = 1;
+    rots[1] = 2;
+    rots[2] = 4;
+    rots[3] = 5;
+    break;
+  case BLUE:
+    rots[0] = 0;
+    rots[1] = 5;
+    rots[2] = 3;
+    rots[3] = 2;
+    break;
+  case ORANGE:
+    rots[0] = 0;
+    rots[1] = 1;
+    rots[2] = 3;
+    rots[3] = 4;
+    break;
+  case YELLOW:
+    rots[0] = 1;
+    rots[1] = 5;
+    rots[2] = 4;
+    rots[3] = 2;
+    break;
+  case GREEN:
+    rots[0] = 0;
+    rots[1] = 2;
+    rots[2] = 3;
+    rots[3] = 5;
+    break;
+  case RED:
+    rots[0] = 0;
+    rots[1] = 4;
+    rots[2] = 3;
+    rots[3] = 1;
+    break;
+  default:
+    return;
+  }
+
+  int start = (rot == ROT_90 ? 0 : 3);
+  int step = (rot == ROT_90 ? 1 : -1);
+
+  char temp = cube[rots[0]];
+  // printf("%d %d: saving '%c'\n", start, step, temp);
+  for (size_t i = 0; i < 3; i++)
+  {
+    // printf("replacing %c with %c \t", cube[rots[start]], cube[rots[(start + step) % 4]]);
+    cube[rots[start]] = cube[rots[(start + step) % 4]];
+    start = (start + step) % 4;
+  }
+  cube[rots[start]] = temp;
+  // printf("%s", cube);
+}
+
+typedef struct lnode {
+  struct lnode* next;
+  char* value;
+} LNode;
+
+typedef struct queue {
+  LNode* tail, * head;
+} Queue;
+
+int cmp(void* c1, void* c2) {
+  int result = strcmp(c1, c2);
+  printf("\t cmp %s %s: %d\n", c1, c2, result);
+  return result;
+}
 
 int main()
 {
-  Cube* solved = init_Cube();
-  print_Cube(solved);
-  solved = rotate_Cube(solved, WHITE, ROT_90);
-  print_Cube(solved);
-  destroy_Cube(solved);
+
+  char subcube[7] = "wboYGR";
+  ArrayListPtr list = storage_create();
+  Queue* q = malloc(sizeof(Queue));
+  LNode* start = malloc(sizeof(LNode));
+  start->value = subcube;
+  start->next = NULL;
+  q->head = start;
+  q->tail = start;
+  storage_insert(list, subcube, cmp);
+
+  while (q->head != NULL) {
+    for (face f = WHITE; f <= RED; f++) {
+      for (rotation r = ROT_90; r <= 3; r += 2) {
+        char new[7];
+        strcpy(new, q->head->value);
+        rotate(new, f, r);
+        printf("%s: \n", new);
+        if (!storage_contains(list, new, cmp))
+        {
+          // printf("new! %c", ' ');
+          LNode* next = malloc(sizeof(LNode));
+          next->next = NULL;
+          next->value = new;
+          q->tail->next = next;
+          q->tail = next;
+
+          storage_insert(list, new, cmp);
+        }
+        puts("");
+      }
+    }
+    LNode* oldHead = q->head;
+    q->head = q->head->next;
+    free(oldHead);
+  }
+
+  free(q);
+  storage_destroy(&list);
+
+  // rotate(subcube, WHITE, ROT_90);
+
+  // Cube* solved = init_Cube();
+  // print_Cube(solved);
+  // solved = rotate_Cube(solved, WHITE, ROT_90);
+  // print_Cube(solved);
+  // destroy_Cube(solved);
   /*
     //Obviously, I don't have the power to test this function and see if it works fully in 15 min, but here, I've simulated the two main different types of circumstances that could occur, of 3:
       //a) the cube is some number of rotations away on the front face, in which case this the first and second examples prove that it works

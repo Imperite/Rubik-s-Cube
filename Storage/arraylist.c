@@ -29,7 +29,7 @@ ArrayListPtr storage_create()
     ArrayListPtr newList = malloc(sizeof(ArrayList));
     newList->size = 0;
     newList->capacity = 8;
-    newList->prev_states = calloc(newList->capacity, sizeof(newList->prev_states));
+    newList->prev_states = calloc(newList->capacity, sizeof(void*));
     return newList;
 }
 
@@ -45,10 +45,6 @@ void storage_destroy(ArrayListPtr* listPtr)
 
 void storage_insert(ArrayListPtr list, void* cube, int(*compare)(void*, void*))
 {
-  // complete the char storage by updating the depth
-  // cube->cube[48] = cube->depth / 10 + '0';
-  // cube->cube[49] = cube->depth % 10 + '0';
-
     storage_resize(list);
     size_t i;
 
@@ -76,9 +72,9 @@ bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, voi
     {
         mid = (left + right) / 2;
         int comp = compare(to_find, list->prev_states[mid]);
-        if (comp == 1)
+        if (comp >= 1)
             left = mid + 1;
-        else if (comp == -1)
+        else if (comp <= -1)
             right = mid - 1;
         else
         // if (comp == 0 && list->prev_states[mid][0] * 10 + list->prev_states[mid][1] < to_find[0] * 10 + to_find[1])

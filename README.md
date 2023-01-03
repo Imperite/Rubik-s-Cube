@@ -63,6 +63,15 @@ Side note: here are a couple of optimizations I plan to do after the final deadl
 6. Finally, I'd love to create a gui for this. so that instead of using text to communicate the solution, I can visually show someone what moves to do.
 7. also, Compressing the cube down from a char per side to 3 bytes per side would mean a reduction from 50 bytes per state to 30, so could be worth it if running into space issues (but adds a lot to time cost -- now have to isloate each face for operations, making rotations even harder?)
 
+# Hashing Solver
+
+Working on planning out a solver that works using gradient descent-style optimization. For this to work, I need to 'hash' each cube into a value representing its distance from solved. Then, by seeking out the lowest hash from each rotation, I can (hopefully) create a more efficient solver. I will be very surprised if this works, but it should be possible given the correct hashing function. Ideally, I oculd also combine the hashing with the storage for even more compression, but that's just a pipe dream right now.
+
+## Corner Hashing
+
+The simplest option is to use 3 bits to represent a flip along an axis, as this gives a very easy and light representation, although this has no correlation to distance from starting position, and is identical for any 180 degree rotation.
+In general, each subcube can be in one of 24(?) different positions: choose 1 face to be front, and then it has 4 rotations of that position (6\*4). One option would be to store rotations
+
 # To Run:
 
 Simply type the command
