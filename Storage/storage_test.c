@@ -24,5 +24,7 @@ int main(int argc, char const* argv[])
     storage_insert(s, "aca", cmp);
     storage_print(s, print);
 
+    printf("%d\n", storage_contains(s, "abc", cmp));
+
     return 0;
 }

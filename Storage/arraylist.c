@@ -73,6 +73,7 @@ bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, voi
     {
         mid = (left + right) / 2;
         int comp = compare(to_find, list->prev_states[mid]);
+        // printf("\t%d %d %d: %d from %s vs %s\n", left, mid, right, comp, to_find, list->prev_states[mid]);
         if (comp >= 1)
             left = mid + 1;
         else if (comp <= -1)

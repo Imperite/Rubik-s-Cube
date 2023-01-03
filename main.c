@@ -77,10 +77,24 @@ typedef struct queue {
   LNode* tail, * head;
 } Queue;
 
+void queue_print(Queue* q) {
+  LNode* curr = q->head;
+  while (curr != NULL) {
+    printf("%s, ", curr->value);
+    curr = curr->next;
+  }
+  puts("");
+}
+
 int cmp(void* c1, void* c2) {
   int result = strcmp(c1, c2);
-  printf("\t cmp %s %s: %d\n", c1, c2, result);
+  // printf("\t cmp %s %s: %d\n", c1, c2, result);
   return result;
+}
+
+
+void print(void* s) {
+  printf("%s", s);
 }
 
 int main()
@@ -98,15 +112,16 @@ int main()
   storage_insert(list, subcube, cmp);
 
   while (q->head != NULL) {
-    for (face f = WHITE; f <= RED; f++) {
+    for (face f = WHITE; f <= ORANGE; f++) {
       for (rotation r = ROT_90; r <= 3; r += 2) {
         char* new = calloc(7, sizeof(char));
         strcpy(new, q->head->value);
         rotate(new, f, r);
         printf("%s on %d %d -> %s\n", q->head->value, f, r, new);
+        storage_print(list, print);
         if (!storage_contains(list, new, cmp))
         {
-          // printf("new! %c", ' ');
+          printf("new! %c", ' ');
           LNode* next = malloc(sizeof(LNode));
           next->next = NULL;
           next->value = new;
@@ -115,9 +130,13 @@ int main()
 
           storage_insert(list, new, cmp);
         }
-        puts("");
+        puts("\n");
       }
     }
+    queue_print(q);
+    // q->head = q->head->next;
+    storage_print(list, print);
+    printf("DONE ONE%c\n", '\n');
     LNode* oldHead = q->head;
     q->head = q->head->next;
     free(oldHead->value);
