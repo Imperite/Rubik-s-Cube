@@ -70,7 +70,48 @@ Working on planning out a solver that works using gradient descent-style optimiz
 ## Corner Hashing
 
 The simplest option is to use 3 bits to represent a flip along an axis, as this gives a very easy and light representation, although this has no correlation to distance from starting position, and is identical for any 180 degree rotation.
-In general, each subcube can be in one of 24(?) different positions: choose 1 face to be front, and then it has 4 rotations of that position (6\*4). One option would be to store rotations
+In general, each subcube can be in one of 24(?) different positions: choose 1 face to be front, and then it has 4 rotations of that position (6\*4). Furthermore, choosing one state as default and then exploring how many moves each other state is from that one, I get:
+
+- 1 permutation 0 steps away
+- 6 permutations 1 step away
+- 11 permutations 2 steps away
+- 6 permutations 3 steps away
+
+Taking the default state as 'wboYGR', these are the distances for each permutation:
+
+- 0: wboYGR
+- 1: GwobYR RbwoGY bYoGwR obYRGw wRbYoG woGYRb
+- 2: GRwboY GoYbRw RYbowG RwGoYb YGowbR YbRwGo bRYGow bowGRY oYGRwb owbRYG wGRYbo
+- 3: GYRbwo RGYobw YRGwob YobwRG bwRGYo oGwRbY
+
+This applies to any cube structure, so theoretically I could hash a cube by transforming each individual subcube into its distance from its origin, sum them up, and get a hash. I'm still not sure that this would fully work, but it would treat the sides and corners the exact same way (which may actually be bad, since there are more sides than corners).
+
+Here is the full breakdown of the moves to get to each face:
+
+- wboYGR:
+- woGYRb: White 90
+- wRbYoG: White -90
+- RbwoGY: Blue 90
+- obYRGw: Blue -90
+- bYoGwR: Orange 90
+- GwobYR: Orange -90
+- bowGRY: White 90, Blue 90
+- GoYbRw: White 90, Blue -90
+- GRwboY: White -90, Blue 90
+- bRYGow: White -90, Blue -90
+- oYGRwb: White 90, Orange 90
+- RwGoYb: White 90, Orange -90
+- RYbowG: White -90, Orange 90
+- owbRYG: White -90, Orange -90
+- wGRYbo: White 90, White 90
+- YbRwGo: Blue 90, Blue 90
+- YGowbR: Orange 90, Orange 90
+- oGwRbY: White 90, White 90, Blue 90
+- RGYobw: White 90, White 90, Blue -90
+- GYRbwo: White 90, White 90, Orange 90
+- bwRGYo: White 90, White 90, Orange -90
+- YobwRG: White 90, Blue 90, Blue 90
+- YRGwob: White 90, Orange 90, Orange 90
 
 # To Run:
 

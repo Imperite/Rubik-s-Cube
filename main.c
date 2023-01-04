@@ -68,9 +68,14 @@ void rotate(char cube[7], face face, rotation rot) {
   // printf("%s", cube);
 }
 
+typedef struct state {
+  char value[7];
+  size_t depth;
+} State;
+
 typedef struct lnode {
   struct lnode* next;
-  char* value;
+  State* value;
 } LNode;
 
 typedef struct queue {
@@ -86,42 +91,80 @@ void queue_print(Queue* q) {
   puts("");
 }
 
+
 int cmp(void* c1, void* c2) {
-  int result = strcmp(c1, c2);
+  int result = strcmp(((State*)c1)->value, ((State*)c2)->value);
   // printf("\t cmp %s %s: %d\n", c1, c2, result);
   return result;
 }
 
-
 void print(void* s) {
-  printf("%s", s);
+  State* st = (State*)s;
+  printf("%s %d", st->value, st->depth);
 }
+
+void print_path(void* s) {
+  State* st = s;
+  int depth = st->depth, count = -1;
+  int changes[3];
+
+  while (depth > 0) {
+    count++;
+    changes[count] = depth % 100;
+    depth /= 100;
+  }
+
+  char* face[] = { "White", "Blue", "Orange" };
+  char* rots[] = { "90", "180", "-90" };
+
+  printf("%s: ", st->value);
+  for (;count > -1; count--) {
+    size_t f = changes[count] / 10, r = changes[count] % 10;
+    printf("%s %s, ", face[f - 1], rots[r - 1]);
+  }
+  puts("");
+}
+
 
 int main()
 {
   //GOAL: want to see how distant states are from the origin - thinking it should be within 3 moves, but want to double check
   //initial 'default' state, before any rotations done
-  char subcube[7] = "wboYGR";
+  State* initial = malloc(sizeof(State));
+  initial->depth = 0;
+  initial->value[0] = 'w';
+  initial->value[1] = 'b';
+  initial->value[2] = 'o';
+  initial->value[3] = 'Y';
+  initial->value[4] = 'G';
+  initial->value[5] = 'R';
+  initial->value[6] = '\0';
+
+  // char subcube[7] = "wboYGR";
   ArrayListPtr list = storage_create();
   Queue* q = malloc(sizeof(Queue));
   LNode* start = malloc(sizeof(LNode));
-  start->value = subcube;
+  start->value = initial;
   start->next = NULL;
   q->head = start;
   q->tail = start;
-  storage_insert(list, subcube, cmp);
+  storage_insert(list, initial, cmp);
 
-  while (q->head != NULL) {
+  // for (size_t i = 0; i < 3; i++)
+  while (q->head != NULL)
+  {
     for (face f = WHITE; f <= ORANGE; f++) {
       for (rotation r = ROT_90; r <= 3; r += 2) {
-        char* new = calloc(7, sizeof(char));
-        strcpy(new, q->head->value);
-        rotate(new, f, r);
-        printf("%s on %d %d -> %s\n", q->head->value, f, r, new);
-        storage_print(list, print);
+        State* new = malloc(sizeof(State));
+        new->depth = q->head->value->depth * 100;
+        new->depth += (f + 1) * 10 + r;
+        strcpy(new->value, q->head->value->value);
+        rotate(new->value, f, r);
+        // printf("%s on %d %d -> %s\n", q->head->value->value, f, r, new->value);
+        // storage_print(list, print);
         if (!storage_contains(list, new, cmp))
         {
-          printf("new! %c", ' ');
+          // printf("new! %c", ' ');
           LNode* next = malloc(sizeof(LNode));
           next->next = NULL;
           next->value = new;
@@ -130,18 +173,28 @@ int main()
 
           storage_insert(list, new, cmp);
         }
-        puts("\n");
+        // puts("\n");
       }
     }
-    queue_print(q);
-    // q->head = q->head->next;
-    storage_print(list, print);
-    printf("DONE ONE%c\n", '\n');
+    // queue_print(q);
+    // storage_print(list, print);
+    // printf("DONE ONE%c\n", '\n');
     LNode* oldHead = q->head;
     q->head = q->head->next;
-    free(oldHead->value);
+    // free(oldHead->value);
     free(oldHead);
   }
+  storage_print(list, print);
+  puts("");
+
+  storage_forEach(list, print_path);
+  // storage_forEach(list, printOnes);
+  // puts("");
+  // storage_forEach(list, printTwos);
+  // puts("");
+  // storage_forEach(list, printThrees);
+
+
 
   free(q);
   storage_destroy(&list);

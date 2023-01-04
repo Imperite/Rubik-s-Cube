@@ -18,4 +18,6 @@ int storage_size(Storage storage);
 
 void storage_print(Storage storage, void(*print)(void*));
 
+void storage_forEach(Storage storage, void(*function)(void*));
+
 #endif

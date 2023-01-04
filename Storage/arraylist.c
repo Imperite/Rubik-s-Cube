@@ -85,6 +85,14 @@ bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, voi
     return false;
 }
 
+void storage_forEach(ArrayListPtr list, void(*function)(void*)) {
+    for (size_t i = 0; i < list->size; i++)
+    {
+        function(list->prev_states[i]);
+    }
+
+}
+
 void storage_print(ArrayListPtr list, void(*print)(void*)) {
     printf("[");
     for (size_t i = 0; i < list->size; i++)
