@@ -116,5 +116,5 @@ Here is the full breakdown of the moves to get to each face:
 # To Run:
 
 Simply type the command
-`gcc main.c ./Cube/cube.c ./Storage/arraylist.c`
+`gcc main.c ./Cube/cube.c ./Storage/arraylist.c -o main`
 from the top directory.

@@ -128,84 +128,12 @@ void print_path(void* s) {
 
 int main()
 {
-  //GOAL: want to see how distant states are from the origin - thinking it should be within 3 moves, but want to double check
-  //initial 'default' state, before any rotations done
-  State* initial = malloc(sizeof(State));
-  initial->depth = 0;
-  initial->value[0] = 'w';
-  initial->value[1] = 'b';
-  initial->value[2] = 'o';
-  initial->value[3] = 'Y';
-  initial->value[4] = 'G';
-  initial->value[5] = 'R';
-  initial->value[6] = '\0';
-
-  // char subcube[7] = "wboYGR";
-  ArrayListPtr list = storage_create();
-  Queue* q = malloc(sizeof(Queue));
-  LNode* start = malloc(sizeof(LNode));
-  start->value = initial;
-  start->next = NULL;
-  q->head = start;
-  q->tail = start;
-  storage_insert(list, initial, cmp);
-
-  // for (size_t i = 0; i < 3; i++)
-  while (q->head != NULL)
-  {
-    for (face f = WHITE; f <= ORANGE; f++) {
-      for (rotation r = ROT_90; r <= 3; r += 2) {
-        State* new = malloc(sizeof(State));
-        new->depth = q->head->value->depth * 100;
-        new->depth += (f + 1) * 10 + r;
-        strcpy(new->value, q->head->value->value);
-        rotate(new->value, f, r);
-        // printf("%s on %d %d -> %s\n", q->head->value->value, f, r, new->value);
-        // storage_print(list, print);
-        if (!storage_contains(list, new, cmp))
-        {
-          // printf("new! %c", ' ');
-          LNode* next = malloc(sizeof(LNode));
-          next->next = NULL;
-          next->value = new;
-          q->tail->next = next;
-          q->tail = next;
-
-          storage_insert(list, new, cmp);
-        }
-        // puts("\n");
-      }
-    }
-    // queue_print(q);
-    // storage_print(list, print);
-    // printf("DONE ONE%c\n", '\n');
-    LNode* oldHead = q->head;
-    q->head = q->head->next;
-    // free(oldHead->value);
-    free(oldHead);
-  }
-  storage_print(list, print);
-  puts("");
-
-  storage_forEach(list, print_path);
-  // storage_forEach(list, printOnes);
-  // puts("");
-  // storage_forEach(list, printTwos);
-  // puts("");
-  // storage_forEach(list, printThrees);
-
-
-
-  free(q);
-  storage_destroy(&list);
-
-  // rotate(subcube, WHITE, ROT_90);
-
-  // Cube* solved = init_Cube();
-  // print_Cube(solved);
-  // solved = rotate_Cube(solved, WHITE, ROT_90);
-  // print_Cube(solved);
-  // destroy_Cube(solved);
+  Cube* solved = init_Cube();
+  print_Cube(solved);
+  // Cube* new = rotate_Cube(solved, WHITE, ROT_90);
+  // print_Cube(new);
+  destroy_Cube(solved);
+  // destroy_Cube(new);
   /*
     //Obviously, I don't have the power to test this function and see if it works fully in 15 min, but here, I've simulated the two main different types of circumstances that could occur, of 3:
       //a) the cube is some number of rotations away on the front face, in which case this the first and second examples prove that it works
