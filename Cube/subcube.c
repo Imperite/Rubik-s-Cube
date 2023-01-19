@@ -266,6 +266,29 @@ char rotateSubcube(char* subcube, cubeType type, rotation rot, face face) {
     return newSubcube;
 }
 
+/*
+Should return the (virtual) faces along the W+, B+, and O+ directions. For example, if the cube were rotated 90 degrees clockwise along the White face, this would return 'wog'.
+*/
+void primaryFaces(char* subcube, size_t i, size_t j, size_t k, char result[3]) {
+    cubeType type = subcubeType(i, j, k);
+    size_t pos[3] = { i, j, k };
+    size_t emptySide = 4;
+    for (size_t i = 0; i < 3; i++)
+    {
+        face color = colorAlongAxis(subcube, i, type);
+        if (color == BLANK)
+            emptySide = i;
+
+        if (pos[i] == 2)
+            color = (color + 3) % 6;
+        pos[i] = faceToChar(color);
+    }
+
+    if (type == SIDE) {
+        //need to generate 3rd side from 2 present
+    }
+}
+
 
 //returns a character representing that specific face
 char faceToChar(face face) {
