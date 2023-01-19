@@ -146,6 +146,7 @@ void print_Cube(Cube* cube) {
     print_cube_line(cube, 1, print_center_row);
     print_cube_line(cube, 2, print_center_row);
     print_cube_line(cube, 2, print_top_or_bottom);
+    puts("");
 }
 
 void print_binary(char c) {
