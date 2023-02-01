@@ -21,4 +21,7 @@ void* rotate_Cube(void* cube, int side, int rot);
 
 // Compares 2 cubes; used for both sorting and equality. Takes in 2 Cubes, but needed to label them as void * here to allow use with Storage.
 int cmp_cubes(void* state1, void* state2);
+
+//prints the cubes value and the binary form
+void print_cube_vals(Cube* cube);
 #endif

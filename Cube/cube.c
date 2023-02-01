@@ -6,7 +6,12 @@
 #include "subcube.c"
 
 // TODO: try splitting into a 2x2x2 of corners and something for sides?
-typedef char Cube[27];
+// typedef Subcube Cube[20];
+
+int NUM_CORNERS = 8;
+int NUM_SIDES = 12;
+
+Subcube null = -1;
 
 size_t cornerRotationOrder[4][2] = {
     {0,0},
@@ -22,7 +27,7 @@ size_t sideRotationOrder[4][2] = {
     {1,0},
 };
 
-char* subcube(Cube* cube, size_t i, size_t j, size_t k);
+Subcube* subcube(Cube* cube, size_t i, size_t j, size_t k);
 
 Cube* init_Cube();
 
@@ -52,9 +57,18 @@ void pos(face face, size_t index, size_t ordering[4][2], size_t pos[3]);
 
 
 
-char* subcube(Cube* cube, size_t i, size_t j, size_t k)
+Subcube* subcube(Cube* cube, size_t i, size_t j, size_t k)
 {
-    return (*cube + i * 9 + j * 3 + k);
+    switch (subcubeType(i, j, k))
+    {
+    case CORNER:
+        return (*cube + i * 2 + j + k / 2);
+    case SIDE:
+        return (*cube + NUM_CORNERS + subcubeIndex(i, j, k) + 1);
+    default:
+        return &null;
+    }
+    // return (*cube + i * 9 + j * 3 + k);
 }
 
 Cube* init_Cube()
@@ -71,7 +85,8 @@ Cube* init_Cube()
 
             for (size_t k = 0; k < dim; k++)
             {
-                *subcube(cube, i, j, k) = defaultCubeAt(i, j, k);
+                if (subcube(cube, i, j, k) != &null)
+                    *subcube(cube, i, j, k) = defaultCubeAt(i, j, k);
             }
         }
     }
@@ -89,7 +104,8 @@ Cube* copy(Cube* cube) {
         {
             for (size_t k = 0; k < dim; k++)
             {
-                *subcube(newCube, i, j, k) = *subcube(cube, i, j, k);
+                if (subcube(cube, i, j, k) != &null)
+                    *subcube(newCube, i, j, k) = *subcube(cube, i, j, k);
             }
         }
     }
@@ -150,6 +166,8 @@ void print_Cube(Cube* cube) {
 }
 
 void print_binary(char c) {
+    if (c == null)
+        return;
     for (int i = 7; i >= 0; --i)
     {
         putchar((c & (1 << i)) ? '1' : '0');

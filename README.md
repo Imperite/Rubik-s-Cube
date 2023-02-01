@@ -51,6 +51,11 @@ Feasibility:
 Takes 1 byte per cube in full 3x3x3, so 27 bytes? > **MUCH BETTER THAN 48**
 if store 2 arrays (one of sides and one of corners), could get down to just 20 bytes (excluding 2ish bytes for storing struct in)
 
+# Alternative Algorithms:
+
+- Implement a parallelized form of the brute forcing method - would allow for massive speed-up
+- Use hashing to do gradient descent/modified A\*
+
 # Original Goals:
 
 Side note: here are a couple of optimizations I plan to do after the final deadline:

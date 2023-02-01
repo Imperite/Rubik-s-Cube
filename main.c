@@ -130,11 +130,13 @@ void print_path(void* s) {
 int main()
 {
   Cube* solved = init_Cube();
+  // print_cube_vals(solved);
+
   print_Cube(solved);
-  Cube* new = rotate_Cube(solved, WHITE, ROT_90);
-  print_Cube(new);
+  // Cube* new = rotate_Cube(solved, WHITE, ROT_90);
+  // print_Cube(new);
   destroy_Cube(solved);
-  destroy_Cube(new);
+  // destroy_Cube(new);
   /*
     //Obviously, I don't have the power to test this function and see if it works fully in 15 min, but here, I've simulated the two main different types of circumstances that could occur, of 3:
       //a) the cube is some number of rotations away on the front face, in which case this the first and second examples prove that it works
