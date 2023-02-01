@@ -19,7 +19,17 @@ For both the Side and Corner subcubes, a rotation will change at least the posit
 
 ## Current Implementation:
 
-In the current data structure, the cube is stored as a series of 48 bytes, with each byte representing one face of a subcube. There are 2 extra bytes; these are used for storing the depth of the cube from the starting position (used in solving). Each face is indexed by position in the primary structure, and stores what its current color is. Then, a set of arrays handles how each face changes with an alteration, allowing the program to just swap faces each time it wants to do a rotate.
+A Cube, at its most basic point, requires 20 subcubes to represent it: 12 for the side(edge) cubes, and 8 for the corner cubes.
+In the current implementation, a Cube is just a char array with length 20. The first 8 indices are used for indexing the corners, and can be treated as a 2x2x2 array of the corners. Meanwhile, the sides are assigned a specific id and stored in the remaining 12 indices. This allows for all necessary cubes to be stored in a convenient fashion, with the specific indices hidden under the subcube(cube, i, j, k) function that accesses cubes based on their coordiante location instead of the physical location. By hiding under this relative coordinate system, I can easily rotate along any face through a series of constants. During a rotate, the cube automtatically stores its current rotation orientation, allowing it to know it has been rotated.
+
+### Specific Subcube Implementation:
+
+If I store the subcubes in a 3x3x3 matrix, rotations will be more readable (but sacrifice 7 extra subcubes for this - should be viable?)
+Each cube would need to encode it's type (could do with id: 26 cubes > 5 bits, or 12 side cubes > 4 bits and 3 bits for corners)
+(could also store as the color on specific faces?) - leaves 4 bits to store rotations in
+Store rotations in terms of the mirror it reflects from original across: bit 1 is reflection in WY direction, bit 2 in BG, and bit 3 in OR dir
+Rotation direction can be done in terms of 3 numbers that determine what cubes are modified / the face used?
+Rotation def also gives convenient translation for displaying original subcube
 
 # TO-DO:
 
@@ -32,24 +42,6 @@ In the current data structure, the cube is stored as a series of 48 bytes, with 
 - Data Structure Optimizations:
   - Change the depth storage to use one byte (as a number) instead of two (the letter representation)?
   - Change data structure to work off only the rotations of the cubes from the original position - may allow for solving using linear algebra?
-
-# Planning new Data structure:
-
-Store each cube as a transform from it's original position?
-To do so, I'd need 6 things: xyz pos and rotation
-Can represent rotation using 2 bits (final 2 for type?)
-24 orientations for 1 cube (6 faces up, each with 4 rotations for 'front' face)
-8 for side cubes
-
-If I store the subcubes in a 3x3x3 matrix, rotations will be more readable (but sacrifice 7 extra subcubes for this - should be viable?)
-Each cube would need to encode it's type (could do with id: 26 cubes > 5 bits, or 12 side cubes > 4 bits and 3 bits for corners)
-(could also store as the color on specific faces?) - leaves 4 bits to store rotations in
-Store rotations in terms of the mirror it reflects from original across: bit 1 is reflection in WY direction, bit 2 in BG, and bit 3 in OR dir
-Rotation direction can be done in terms of 3 numbers that determine what cubes are modified / the face used?
-Rotation def also gives convenient translation for displaying original subcube
-Feasibility:
-Takes 1 byte per cube in full 3x3x3, so 27 bytes? > **MUCH BETTER THAN 48**
-if store 2 arrays (one of sides and one of corners), could get down to just 20 bytes (excluding 2ish bytes for storing struct in)
 
 # Alternative Algorithms:
 
