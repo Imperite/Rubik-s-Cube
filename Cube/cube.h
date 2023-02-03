@@ -23,5 +23,5 @@ void* rotate_Cube(void* cube, int side, int rot);
 int cmp_cubes(void* state1, void* state2);
 
 //prints the cubes value and the binary form
-void print_cube_vals(Cube* cube);
+void print_cube_vals(void* cube);
 #endif
