@@ -37,10 +37,11 @@ int cmpCubeStateWithDepth(void* c1, void* c2);
 // Solve acts as a wrapper function to print out the results of cube_solve.
 void solve(Cube* initial_state)
 {
+    printf("test %d", 1);
     Cube* solved = init_Cube();
-    // Change* moves = calloc(20, sizeof(Change));
 
     void* queue = init_Queue();
+
     Storage storage = storage_create();
 
     CubeState* current = malloc(sizeof(CubeState));
@@ -48,8 +49,8 @@ void solve(Cube* initial_state)
     current->depth = 0;
     current->moves = NULL;
     storage_insert(storage, current, cmpCubeState);
-
-    check_state(current, storage, queue, solved);
+    bool isSolved = check_state(current, storage, queue, solved);
+    // printf("test %d", 2);
 
     while (!empty_Queue(queue)) {
         current = pop_Queue(queue);
@@ -58,18 +59,18 @@ void solve(Cube* initial_state)
 
     // first it checks is a FRONT 270 rotation, so the inverse would be a FRONT 90 rotation
     // bool solve = solve_cube(moves, initial_state, solved);
-    printf("solved: %d\n", solve);
+    printf("solved: %d\n", isSolved);
 
     for (size_t i = 0; i < current->depth; ++i)
     {
         printf("do a %s %s degree turn\n", face_to_string[current->moves[i].face + 1], rotation_to_string[current->moves[i].degree]);
     }
 
-    for_each_Queue(queue, destroyCubeState);
-    destroy_Queue(queue);
+    // for_each_Queue(queue, destroyCubeState);
+    // destroy_Queue(queue);
 
-    storage_forEach(storage, destroyCubeState);
-    storage_destroy(storage);
+    // storage_forEach(storage, destroyCubeState);
+    // storage_destroy(storage);
 }
 
 int cmpCubeState(void* c1, void* c2) {
@@ -122,7 +123,7 @@ bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved
             if (storage_contains(storage, new, cmpCubeStateWithDepth))
                 continue;
 
-            void* previous = storage_replace(storage, to_check, cmpCubeState);
+            void* previous = storage_replace(storage, new, cmpCubeState);
             if (previous != NULL)
                 destroyCubeState(previous);
             push_Queue(queue, new);
