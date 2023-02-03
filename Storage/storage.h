@@ -6,21 +6,21 @@
 typedef void* Storage;
 
 // create
-Storage storage_create();
+Storage init_Storage();
 // destroy
-void storage_destroy(Storage* storagePtr);
+void destroy_Storage(Storage storage);
 // add
-void storage_insert(Storage storage, void* obj, int(*compare)(void*, void*));
+void insert_Storage(Storage storage, void* obj, int(*compare)(void*, void*));
 // contains; will use a binary search to find in storage.
-bool storage_contains(Storage storage, void* to_find, int (*compare)(void*, void*));
+bool contains_Storage(Storage storage, void* to_find, int (*compare)(void*, void*));
 
 //removes the object from the storage and returns it
-void* storage_replace(Storage storage, void* obj, int(*compare)(void*, void*));
+void* replace_Storage(Storage storage, void* obj, int(*compare)(void*, void*));
 
-int storage_size(Storage storage);
+int size_Storage(Storage storage);
 
-void storage_print(Storage storage, void(*print)(void*));
+void print_Storage(Storage storage, void(*print)(void*));
 
-void storage_forEach(Storage storage, void(*function)(void*));
+void forEach_Storage(Storage storage, void(*function)(void*));
 
 #endif

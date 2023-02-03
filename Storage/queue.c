@@ -11,11 +11,11 @@ typedef struct queue {
 } Queue;
 
 Queue* init_Queue();
-void destroy_Queue(Queue** queuePtr);
+void destroy_Queue(Queue* queue);
 void push_Queue(Queue* queue, void* obj);
 void* pop_Queue(Queue* queue);
 void print_Queue(Queue* q);
-void for_each_Queue(Queue* queue, void(*toDo)(void*));
+void forEach_Queue(Queue* queue, void(*toDo)(void*));
 int empty_Queue(Queue* queue);
 
 
@@ -25,12 +25,11 @@ Queue* init_Queue() {
     queue->head = NULL;
 }
 
-void destroy_Queue(Queue** queuePtr) {
-    Queue* queue = *queuePtr;
-    while (queue->head != NULL) {
+void destroy_Queue(Queue* queue) {
+    while (!empty_Queue(queue)) {
         pop_Queue(queue);
     }
-    free(*queuePtr);
+    free(queue);
 }
 
 void push_Queue(Queue* queue, void* obj) {
@@ -64,17 +63,8 @@ void* pop_Queue(Queue* queue) {
     return obj;
 }
 
-void print_Queue(Queue* q) {
-    Node* curr = q->head;
-    while (curr != NULL) {
-        printf("%s, ", curr->value);
-        curr = curr->next;
-    }
-    puts("");
-}
 
-
-void for_each_Queue(Queue* queue, void(*toDo)(void*)) {
+void forEach_Queue(Queue* queue, void(*toDo)(void*)) {
     Node* curr = queue->head;
     while (curr != NULL) {
         toDo(curr->value);
@@ -83,5 +73,5 @@ void for_each_Queue(Queue* queue, void(*toDo)(void*)) {
 }
 
 int empty_Queue(Queue* queue) {
-    return queue->head != NULL;
+    return queue->head == NULL;
 }

@@ -2,52 +2,33 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../Cube/cube.h"
-#include "../Cube/cube_constants.c"
+// #include "../Cube/cube_constants.c"
 #include "../Storage/storage.h"
 #include "../Storage/queue.h"
+#include "cubestate.c"
 
-typedef struct change
-{
-    face face;
-    rotation degree;
-} Change;
-
-typedef struct cubestate {
-    Cube* cube;
-    Change* moves;
-    size_t depth;
-} CubeState;
 
 char* face_to_string[7] = { "ERROR", "front", "top", "left", "back", "bottom", "right" };
 char* rotation_to_string[4] = { "ERROR", "90", "180", "-90" };
 
-// ACTUAL SOLVING FUNCTION:
 void solve(Cube* initial_state);
 bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved);
 
-//cubestate helper functions
-CubeState* nextCubeState(CubeState* start, face side, rotation rot);
-void destroyCubeState(void* c1);
-int cmpCubeState(void* c1, void* c2);
-int cmpCubeStateWithDepth(void* c1, void* c2);
-
-
-
-// Solve acts as a wrapper function to print out the results of cube_solve.
+// Solve acts as a wrapper function to print out the results of cube_solve. Creates a Storage and Queue in order to remember traversed nodes and boundary nodes.
+// Currently only works in one thread, but programmatically is ready for multi-threading (though storage needs locks)
 void solve(Cube* initial_state)
 {
-    printf("test %d", 1);
     Cube* solved = init_Cube();
 
     void* queue = init_Queue();
 
-    Storage storage = storage_create();
+    Storage storage = init_Storage();
 
     CubeState* current = malloc(sizeof(CubeState));
     current->cube = initial_state;
     current->depth = 0;
     current->moves = NULL;
-    storage_insert(storage, current, cmpCubeState);
+    insert_Storage(storage, current, cmp_CubeState);
     bool isSolved = check_state(current, storage, queue, solved);
     // printf("test %d", 2);
 
@@ -56,7 +37,6 @@ void solve(Cube* initial_state)
         check_state(current, storage, queue, solved);
     }
 
-    // first it checks is a FRONT 270 rotation, so the inverse would be a FRONT 90 rotation
     printf("solved: %d\n", isSolved);
 
     for (size_t i = 0; i < current->depth; ++i)
@@ -64,45 +44,16 @@ void solve(Cube* initial_state)
         printf("do a %s %s degree turn\n", face_to_string[current->moves[i].face + 1], rotation_to_string[current->moves[i].degree]);
     }
 
-    //TODO: something here causes segfault
-    // for_each_Queue(queue, destroyCubeState);
-    // destroy_Queue(queue);
+    forEach_Queue(queue, print_CubeState);
+    puts("");
+    print_Storage(storage, print_CubeState);
 
-    // storage_forEach(storage, destroyCubeState);
-    // storage_destroy(storage);
-}
+    // TODO: something here causes segfault
+    forEach_Queue(queue, destroy_CubeState);
+    destroy_Queue(queue);
 
-int cmpCubeState(void* c1, void* c2) {
-    return cmp_cubes(((CubeState*)c1)->cube, ((CubeState*)c2)->cube);
-}
-
-int cmpCubeStateWithDepth(void* c1, void* c2) {
-    int cubeCmp = cmpCubeState(c1, c2);
-    if (cubeCmp != 0)
-        return cubeCmp;
-    return ((CubeState*)c1)->depth >= ((CubeState*)c2)->depth;
-}
-
-void destroyCubeState(void* c1) {
-    CubeState* state = ((CubeState*)c1);
-    destroy_Cube(state->cube);
-    free(state->moves);
-    free(state);
-}
-
-CubeState* nextCubeState(CubeState* start, face side, rotation rot) {
-    CubeState* cs = malloc(sizeof(CubeState));
-    cs->depth = start->depth + 1;
-    cs->moves = calloc(cs->depth, sizeof(Change));
-    for (size_t i = 0; i < start->depth; i++)
-    {
-        cs->moves[i] = start->moves[i];
-    }
-
-    cs->cube = rotate_Cube(start->cube, side, rot);
-
-    return cs;
-
+    forEach_Storage(storage, destroy_CubeState);
+    destroy_Storage(storage);
 }
 
 /*
@@ -118,13 +69,13 @@ bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved
 
     for (size_t side = WHITE; side <= RED; side++) {
         for (size_t rot = ROT_90;rot <= ROT_270; rot++) {
-            CubeState* new = nextCubeState(to_check, side, rot);
-            if (storage_contains(storage, new, cmpCubeStateWithDepth))
+            CubeState* new = next_CubeState(to_check, side, rot);
+            if (contains_Storage(storage, new, cmpWithDepth_CubeState))
                 continue;
 
-            void* previous = storage_replace(storage, new, cmpCubeState);
+            void* previous = replace_Storage(storage, new, cmp_CubeState);
             if (previous != NULL)
-                destroyCubeState(previous);
+                destroy_CubeState(previous);
             push_Queue(queue, new);
         }
     }

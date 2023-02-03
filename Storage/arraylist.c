@@ -12,20 +12,20 @@ typedef struct array_list
 typedef ArrayList* ArrayListPtr;
 
 // create
-ArrayListPtr storage_create();
+ArrayListPtr init_Storage();
 // destroy
-void storage_destroy(ArrayListPtr* listPtr);
+void destroy_Storage(ArrayListPtr list);
 // add
-void storage_insert(ArrayListPtr list, void* cube, int(*compare)(void*, void*));
+void insert_Storage(ArrayListPtr list, void* cube, int(*compare)(void*, void*));
 // resize
-void storage_resize(ArrayListPtr list);
+void resize_Storage(ArrayListPtr list);
 // contains; will use a binary search to find in list.
-bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, void*));
+bool contains_Storage(ArrayListPtr list, void* to_find, int(*compare)(void*, void*));
 
-int storage_size(ArrayListPtr list);
+int size_Storage(ArrayListPtr list);
 
 
-ArrayListPtr storage_create()
+ArrayListPtr init_Storage()
 {
     ArrayListPtr newList = malloc(sizeof(ArrayList));
     newList->size = 0;
@@ -35,18 +35,18 @@ ArrayListPtr storage_create()
 }
 
 // this is new in that I free all the previous found states when destroying the arrayList -- I don't copy them over, which saves a small amount of time
-void storage_destroy(ArrayListPtr* listPtr)
+
+void destroy_Storage(ArrayListPtr list)
 {
-    for (size_t i = 0; i < (*listPtr)->size; ++i)
-        free((*listPtr)->prev_states[i]);
-    free((*listPtr)->prev_states);
-    free(*listPtr);
-    *listPtr = NULL;
+    // for (size_t i = 0; i < (*listPtr)->size; ++i)
+    //     free((*listPtr)->prev_states[i]);
+    free((list)->prev_states);
+    free(list);
 }
 
-void storage_insert(ArrayListPtr list, void* cube, int(*compare)(void*, void*))
+void insert_Storage(ArrayListPtr list, void* cube, int(*compare)(void*, void*))
 {
-    storage_resize(list);
+    resize_Storage(list);
     size_t i;
 
     for (i = list->size++; i > 0 && compare(cube, list->prev_states[i - 1]) < 0; --i)
@@ -55,7 +55,7 @@ void storage_insert(ArrayListPtr list, void* cube, int(*compare)(void*, void*))
     list->prev_states[i] = cube;
 }
 
-void storage_resize(ArrayListPtr list)
+void resize_Storage(ArrayListPtr list)
 {
     if (list->size == list->capacity)
     {
@@ -64,7 +64,7 @@ void storage_resize(ArrayListPtr list)
     }
 }
 
-bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, void*))
+bool contains_Storage(ArrayListPtr list, void* to_find, int(*compare)(void*, void*))
 {
     int left = 0;
     int right = list->size - 1;
@@ -85,7 +85,7 @@ bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, voi
     return false;
 }
 
-void* storage_replace(ArrayListPtr list, void* obj, int(*compare)(void*, void*)) {
+void* replace_Storage(ArrayListPtr list, void* obj, int(*compare)(void*, void*)) {
     int left = 0;
     int right = list->size - 1;
     int mid;
@@ -108,7 +108,7 @@ void* storage_replace(ArrayListPtr list, void* obj, int(*compare)(void*, void*))
     return NULL;
 }
 
-void storage_forEach(ArrayListPtr list, void(*function)(void*)) {
+void forEach_Storage(ArrayListPtr list, void(*function)(void*)) {
     for (size_t i = 0; i < list->size; i++)
     {
         function(list->prev_states[i]);
@@ -116,19 +116,13 @@ void storage_forEach(ArrayListPtr list, void(*function)(void*)) {
 
 }
 
-void storage_print(ArrayListPtr list, void(*print)(void*)) {
+void print_Storage(ArrayListPtr list, void(*print)(void*)) {
     printf("[");
-    for (size_t i = 0; i < list->size; i++)
-    {
-        if (i > 0)
-            printf(", ");
-
-        print(list->prev_states[i]);
-    }
+    forEach_Storage(list, print);
     puts("]");
 
 }
 
-int storage_size(ArrayListPtr list) {
+int size_Storage(ArrayListPtr list) {
     return list->size;
 }

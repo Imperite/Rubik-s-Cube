@@ -13,9 +13,6 @@ void* pop_Queue(void* queue);
 //pushes the object onto the queue
 void push_Queue(void* queue, void* obj);
 
-//prints the queue
-void print_Queue(void* queue);
-
-void for_each_Queue(void* queue, void(*toDo)(void*));
+void forEach_Queue(void* queue, void(*toDo)(void*));
 
 int empty_Queue(void* queue);
