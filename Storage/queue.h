@@ -15,3 +15,7 @@ void push_Queue(void* queue, void* obj);
 
 //prints the queue
 void print_Queue(void* queue);
+
+void for_each_Queue(void* queue, void(*toDo)(void*));
+
+int empty_Queue(void* queue);

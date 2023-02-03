@@ -85,6 +85,29 @@ bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, voi
     return false;
 }
 
+void* storage_replace(ArrayListPtr list, void* obj, int(*compare)(void*, void*)) {
+    int left = 0;
+    int right = list->size - 1;
+    int mid;
+    while (left <= right)
+    {
+        mid = (left + right) / 2;
+        int comp = compare(obj, list->prev_states[mid]);
+        if (comp >= 1)
+            left = mid + 1;
+        else if (comp <= -1)
+            right = mid - 1;
+        else if (comp == 0) {
+            void* toReturn = list->prev_states[mid];
+            list->prev_states[mid] = obj;
+            return toReturn;
+        }
+    }
+
+
+    return NULL;
+}
+
 void storage_forEach(ArrayListPtr list, void(*function)(void*)) {
     for (size_t i = 0; i < list->size; i++)
     {

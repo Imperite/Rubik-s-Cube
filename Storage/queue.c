@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <queue.h>
+#include <stdio.h>
 
 typedef struct node {
     struct node* next;
@@ -9,6 +9,14 @@ typedef struct node {
 typedef struct queue {
     Node* tail, * head;
 } Queue;
+
+Queue* init_Queue();
+void destroy_Queue(Queue** queuePtr);
+void push_Queue(Queue* queue, void* obj);
+void* pop_Queue(Queue* queue);
+void print_Queue(Queue* q);
+void for_each_Queue(Queue* queue, void(*toDo)(void*));
+int empty_Queue(Queue* queue);
 
 
 Queue* init_Queue() {
@@ -63,4 +71,17 @@ void print_Queue(Queue* q) {
         curr = curr->next;
     }
     puts("");
+}
+
+
+void for_each_Queue(Queue* queue, void(*toDo)(void*)) {
+    Node* curr = queue->head;
+    while (curr != NULL) {
+        toDo(curr->value);
+        curr = curr->next;
+    }
+}
+
+int empty_Queue(Queue* queue) {
+    return queue->head != NULL;
 }
