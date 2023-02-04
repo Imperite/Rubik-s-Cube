@@ -2,17 +2,17 @@
 //Allows me to change the underlying code (i.e. hopefully add locks to allow for concurrency) without changing the interface.
 
 //Initializes a Queue, returning the stuct used.
-void* init_Queue();
+void* queue_create();
 
 //destroys the queue
-void destroy_Queue(void** queue);
+void queue_destroy(void** queue);
 
 //pops the top object from the queue
-void* pop_Queue(void* queue);
+void* queue_pop(void* queue);
 
 //pushes the object onto the queue
-void push_Queue(void* queue, void* obj);
+void queue_push(void* queue, void* obj);
 
-void forEach_Queue(void* queue, void(*toDo)(void*));
+void queue_for_each(void* queue, void(*toDo)(void*));
 
-int empty_Queue(void* queue);
+int queue_is_empty(void* queue);

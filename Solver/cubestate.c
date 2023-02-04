@@ -16,46 +16,46 @@ typedef struct cubestate {
 
 //cubestate helper functions
 
-CubeState* next_CubeState(CubeState* start, face side, rotation rot);
-void destroy_CubeState(void* c1);
-int cmp_CubeState(void* c1, void* c2);
-int cmpWithDepth_CubeState(void* c1, void* c2);
-void print_CubeState(void* cs);
+CubeState* cube_state_next(CubeState* start, face side, rotation rot);
+void cube_state_destroy(void* c1);
+int cube_state_compare(void* c1, void* c2);
+int cube_state_compare_with_depth(void* c1, void* c2);
+void cube_state_print(void* cs);
 
-void print_Change(Change* c);
+void change_print(Change* c);
 
 
-int cmp_CubeState(void* c1, void* c2) {
-    return cmp_cubes(((CubeState*)c1)->cube, ((CubeState*)c2)->cube);
+int cube_state_compare(void* c1, void* c2) {
+    return cube_compare(((CubeState*)c1)->cube, ((CubeState*)c2)->cube);
 }
 
-int cmpWithDepth_CubeState(void* c1, void* c2) {
-    int cubeCmp = cmp_CubeState(c1, c2);
+int cube_state_compare_with_depth(void* c1, void* c2) {
+    int cubeCmp = cube_state_compare(c1, c2);
     if (cubeCmp != 0)
         return cubeCmp;
     return ((CubeState*)c1)->depth >= ((CubeState*)c2)->depth;
 }
 
-void destroy_CubeState(void* c1) {
+void cube_state_destroy(void* c1) {
     CubeState* state = ((CubeState*)c1);
-    destroy_Cube(state->cube);
+    cube_destroy(state->cube);
     free(state->moves);
     free(state);
 }
 
-void print_CubeState(void* cs) {
+void cube_state_print(void* cs) {
     CubeState* cube = (CubeState*)cs;
     printf("Depth %d: ", cube->depth);
     for (size_t i = 0; i < cube->depth; i++)
     {
-        print_Change(&cube->moves[i]);
+        change_print(&cube->moves[i]);
     }
     puts("");
-    print_Cube(cube->cube);
+    cube_print(cube->cube);
 }
 
 //Gets the CubeState for a cube rotated along face by amount rot.
-CubeState* next_CubeState(CubeState* start, face side, rotation rot) {
+CubeState* cube_state_next(CubeState* start, face side, rotation rot) {
     CubeState* cs = malloc(sizeof(CubeState));
     cs->depth = start->depth + 1;
     cs->moves = calloc(cs->depth, sizeof(Change));
@@ -65,7 +65,7 @@ CubeState* next_CubeState(CubeState* start, face side, rotation rot) {
     }
     cs->moves[cs->depth - 1].degree = rot;
     cs->moves[cs->depth - 1].face = side;
-    cs->cube = rotate_Cube(start->cube, side, rot);
+    cs->cube = cube_rotate(start->cube, side, rot);
 
     return cs;
 
@@ -73,7 +73,7 @@ CubeState* next_CubeState(CubeState* start, face side, rotation rot) {
 
 char* face_to_char = "Xwboygr";
 char* rot_to_char = "X123";
-void print_Change(Change* c) {
+void change_print(Change* c) {
     printf("%d %d, ", c->face, c->degree);
     // printf("%c%c, ", face_to_char[c->face + 1], rot_to_char[c->degree]);
 }

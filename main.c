@@ -130,21 +130,21 @@ void print_path(void* s) {
 
 int main()
 {
-  // Cube* solved = init_Cube();
-  // print_cube_vals(solved);
+  // Cube* solved = cube_create();
+  // cube_print_vals(solved);
 
-  // print_Cube(solved);
-  // Cube* new = rotate_Cube(solved, WHITE, ROT_90);
-  // print_Cube(new);
-  // destroy_Cube(solved);
-  // destroy_Cube(new);
+  // cube_print(solved);
+  // Cube* new = cube_rotate(solved, WHITE, ROT_90);
+  // cube_print(new);
+  // cube_destroy(solved);
+  // cube_destroy(new);
   // /*
     //Obviously, I don't have the power to test this function and see if it works fully in 15 min, but here, I've simulated the two main different types of circumstances that could occur, of 3:
       //a) the cube is some number of rotations away on the front face, in which case this the first and second examples prove that it works
       //b) the cube is some number of rotations away on a different face, in which case the third example demostrates that this works
       //c) the cube is not 1 move away, and so should be rotated again. this is proven by the 4th one, which is two different moves away from a solve.
   srand(42);
-  Cube* solved = init_Cube();
+  Cube* solved = cube_create();
 
 /*
   //1st EXAMPLE:
@@ -158,7 +158,7 @@ int main()
 */
 
   puts("2:\nTo solve a front 90 rotation:");
-  Cube* rotated = rotate_Cube(solved, WHITE, ROT_90);
+  Cube* rotated = cube_rotate(solved, WHITE, ROT_90);
   solve(rotated);
 
   puts("DONE");
@@ -167,7 +167,7 @@ int main()
   scanf("%c", &c);
 
   //2nd EXAMPLE:
-  rotated = rotate_Cube(solved, WHITE, ROT_270);
+  rotated = cube_rotate(solved, WHITE, ROT_270);
   puts("3:\nTo solve a cube rotated on front face 270:");
   solve(rotated);
   puts("DONE");
@@ -178,7 +178,7 @@ int main()
 
   //3rd EXAMPLE:
   printf("\n\n\t");
-  rotated = rotate_Cube(solved, YELLOW, ROT_270);
+  rotated = cube_rotate(solved, YELLOW, ROT_270);
   puts("\n\nTo solve a cube rotated on Back face 270:");
   solve(rotated);
 
@@ -188,14 +188,14 @@ int main()
 
   //4th EXAMPLE:
   puts("\n\nTo solve a cube rotated on front face 90 and the back 180:");
-  Cube* rotatedtmp = rotate_Cube(solved, WHITE, ROT_90);
-  rotated = rotate_Cube(rotatedtmp, YELLOW, ROT_180);
-  destroy_Cube(rotatedtmp);
+  Cube* rotatedtmp = cube_rotate(solved, WHITE, ROT_90);
+  rotated = cube_rotate(rotatedtmp, YELLOW, ROT_180);
+  cube_destroy(rotatedtmp);
   solve(rotated);
   puts("DONE");
 
 //*/
 
-  destroy_Cube(solved);
+  cube_destroy(solved);
   return 0;
 }

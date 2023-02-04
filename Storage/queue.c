@@ -12,34 +12,34 @@ typedef struct queue {
     Node* tail, * head;
 } Queue;
 
-Queue* init_Queue();
-void destroy_Queue(Queue* queue);
-void push_Queue(Queue* queue, Item* obj);
-Item* pop_Queue(Queue* queue);
-void print_Queue(Queue* q);
-void forEach_Queue(Queue* queue, void(*toDo)(Item*));
-int empty_Queue(Queue* queue);
+Queue* queue_create();
+void queue_destroy(Queue* queue);
+void queue_push(Queue* queue, Item* obj);
+Item* queue_pop(Queue* queue);
+void queue_print(Queue* q);
+void queue_for_each(Queue* queue, void(*toDo)(Item*));
+int queue_is_empty(Queue* queue);
 
 
-Queue* init_Queue() {
+Queue* queue_create() {
     Queue* queue = malloc(sizeof(Queue));
     queue->tail = NULL;
     queue->head = NULL;
 }
 
-void destroy_Queue(Queue* queue) {
-    while (!empty_Queue(queue)) {
-        pop_Queue(queue);
+void queue_destroy(Queue* queue) {
+    while (!queue_is_empty(queue)) {
+        queue_pop(queue);
     }
     free(queue);
 }
 
-void push_Queue(Queue* queue, Item* obj) {
+void queue_push(Queue* queue, Item* obj) {
     Node* n = malloc(sizeof(Node));
     n->next = NULL;
     n->value = obj;
 
-    if (empty_Queue(queue)) {
+    if (queue_is_empty(queue)) {
         queue->head = n;
     }
     else {
@@ -48,8 +48,8 @@ void push_Queue(Queue* queue, Item* obj) {
     queue->tail = n;
 }
 
-Item* pop_Queue(Queue* queue) {
-    if (empty_Queue(queue))
+Item* queue_pop(Queue* queue) {
+    if (queue_is_empty(queue))
         return NULL;
 
     Node* head = queue->head;
@@ -66,7 +66,7 @@ Item* pop_Queue(Queue* queue) {
 }
 
 
-void forEach_Queue(Queue* queue, void(*toDo)(Item*)) {
+void queue_for_each(Queue* queue, void(*toDo)(Item*)) {
     Node* curr = queue->head;
     while (curr != NULL) {
         toDo(curr->value);
@@ -74,6 +74,6 @@ void forEach_Queue(Queue* queue, void(*toDo)(Item*)) {
     }
 }
 
-int empty_Queue(Queue* queue) {
+int queue_is_empty(Queue* queue) {
     return queue->head == NULL;
 }

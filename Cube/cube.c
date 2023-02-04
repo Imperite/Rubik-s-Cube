@@ -29,11 +29,11 @@ size_t sideRotationOrder[4][2] = {
 
 Subcube* subcube(Cube* cube, size_t i, size_t j, size_t k);
 
-Cube* init_Cube();
+Cube* cube_create();
 
-void destroy_Cube(Cube* cube);
+void cube_destroy(Cube* cube);
 
-Cube* randomize_Cube();
+Cube* cube_randomized();
 
 void print_subcube_face(Cube* cube, size_t i, size_t j, size_t k, enum axis axis);
 
@@ -43,15 +43,15 @@ void print_center_row(Cube* cube, size_t layer, size_t row);
 
 void print_cube_line(Cube* cube, size_t row, void(*printer)(Cube* cube, size_t layer, size_t row));
 
-void print_Cube(Cube* cube);
+void cube_print(Cube* cube);
 
 void print_binary(char c);
 
-void print_cube_vals(Cube* cube);
+void cube_print_vals(Cube* cube);
 
-Cube* rotate_Cube(Cube* cube, face side, rotation rot);
+Cube* cube_rotate(Cube* cube, face side, rotation rot);
 
-int cmp_cubes(Cube state1, Cube state2);
+int cube_compare(Cube state1, Cube state2);
 
 void pos(face face, size_t index, size_t ordering[4][2], size_t pos[3]);
 
@@ -71,7 +71,7 @@ Subcube* subcube(Cube* cube, size_t i, size_t j, size_t k)
     // return (*cube + i * 9 + j * 3 + k);
 }
 
-Cube* init_Cube()
+Cube* cube_create()
 {
 
     size_t dim = 3;
@@ -113,12 +113,12 @@ Cube* copy(Cube* cube) {
     return newCube;
 }
 
-void destroy_Cube(Cube* cube) {
+void cube_destroy(Cube* cube) {
     free(cube);
 }
 
 Cube* randomize_cube() {
-    Cube* cube = init_Cube();
+    Cube* cube = cube_create();
     return cube;
 }
 
@@ -156,7 +156,7 @@ void print_cube_line(Cube* cube, size_t row, void(*printer)(Cube* cube, size_t l
     puts("");
 }
 
-void print_Cube(Cube* cube) {
+void cube_print(Cube* cube) {
     print_cube_line(cube, 0, print_top_or_bottom);
     print_cube_line(cube, 0, print_center_row);
     print_cube_line(cube, 1, print_center_row);
@@ -177,7 +177,7 @@ void print_binary(char c) {
 }
 
 //prints the values and their binary for each subcube; useful for debugging
-void print_cube_vals(Cube* cube) {
+void cube_print_vals(Cube* cube) {
     for (size_t i = 0; i < 3; i++)
     {
         for (size_t j = 0; j < 3; j++)
@@ -206,7 +206,7 @@ void pos(face face, size_t index, size_t ordering[4][2], size_t pos[3]) {
 }
 
 
-Cube* rotate_Cube(Cube* cube, face side, rotation rot) {
+Cube* cube_rotate(Cube* cube, face side, rotation rot) {
     size_t shift = rot;
     if (shift == 3) shift == -1;
     if (side == YELLOW || side == BLUE || side == RED) shift *= -1;
@@ -252,7 +252,7 @@ Cube* rotate_Cube(Cube* cube, face side, rotation rot) {
     return newCube;
 }
 
-int cmp_cubes(Cube s1, Cube s2)
+int cube_compare(Cube s1, Cube s2)
 {
     // char* s1 = (char*)cube1;
     // char* s2 = (char*)cube2;

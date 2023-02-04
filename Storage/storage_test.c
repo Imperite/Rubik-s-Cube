@@ -14,17 +14,17 @@ void print(void* s) {
 
 int main(int argc, char const* argv[])
 {
-    Storage s = init_Storage();
-    print_Storage(s, print);
-    insert_Storage(s, "baa", cmp);
-    print_Storage(s, print);
+    Storage s = storage_create();
+    storage_print(s, print);
+    storage_insert(s, "baa", cmp);
+    storage_print(s, print);
 
-    insert_Storage(s, "aba", cmp);
-    print_Storage(s, print);
-    insert_Storage(s, "aca", cmp);
-    print_Storage(s, print);
+    storage_insert(s, "aba", cmp);
+    storage_print(s, print);
+    storage_insert(s, "aca", cmp);
+    storage_print(s, print);
 
-    printf("%d\n", contains_Storage(s, "abc", cmp));
+    printf("%d\n", storage_contains(s, "abc", cmp));
 
     return 0;
 }

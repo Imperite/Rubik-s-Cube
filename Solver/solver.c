@@ -18,23 +18,20 @@ bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved
 // Currently only works in one thread, but programmatically is ready for multi-threading (though storage needs locks)
 void solve(Cube* initial_state)
 {
-    Cube* solved = init_Cube();
+    Cube* solved = cube_create();
 
-    void* queue = init_Queue();
-    Storage storage = init_Storage();
+    void* queue = queue_create();
+    Storage storage = storage_create();
 
     CubeState* current = malloc(sizeof(CubeState));
     current->cube = initial_state;
     current->depth = 0;
     current->moves = NULL;
-    insert_Storage(storage, current, cmp_CubeState);
+    storage_insert(storage, current, cube_state_compare);
     bool isSolved = check_state(current, storage, queue, solved);
-    // printf("test %d", 1);
 
-    while (!empty_Queue(queue) && !isSolved) {
-        // forEach_Queue(queue, print_CubeState);
-        current = pop_Queue(queue);
-        // print_CubeState(current);
+    while (!queue_is_empty(queue) && !isSolved) {
+        current = queue_pop(queue);
         isSolved = check_state(current, storage, queue, solved);
     }
 
@@ -45,15 +42,15 @@ void solve(Cube* initial_state)
         printf("do a %s %s degree turn\n", face_to_string[current->moves[i].face + 1], rotation_to_string[current->moves[i].degree]);
     }
 
-    // forEach_Queue(queue, print_CubeState);
+    // queue_forEach(queue, cube_state_print);
     // puts("");
-    // print_Storage(storage, print_CubeState);
+    // storage_print(storage, cube_state_print);
 
-    forEach_Queue(queue, destroy_CubeState);
-    destroy_Queue(queue);
+    queue_for_each(queue, cube_state_destroy);
+    queue_destroy(queue);
 
-    forEach_Storage(storage, destroy_CubeState);
-    destroy_Storage(storage);
+    storage_for_each(storage, cube_state_destroy);
+    storage_destroy(storage);
     free(solved);
 }
 
@@ -65,20 +62,20 @@ Returns true if this is the solved state, and false otherwise.
 Notably, this should be thread-safe, as long as the Storage and Queue used are also such.
 */
 bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved) {
-    if (cmp_cubes(to_check->cube, solved) == 0)
+    if (cube_compare(to_check->cube, solved) == 0)
         return true;
 
     for (size_t side = WHITE; side <= RED; side++) {
         for (size_t rot = ROT_90;rot <= ROT_270; rot++) {
-            CubeState* new = next_CubeState(to_check, side, rot);
+            CubeState* new = cube_state_next(to_check, side, rot);
 
-            void* previous = replace_Storage(storage, new, cmp_CubeState);
+            void* previous = storage_replace(storage, new, cube_state_compare);
             if (previous != NULL) {
-                destroy_CubeState(previous);
-                push_Queue(queue, new);
+                cube_state_destroy(previous);
+                queue_push(queue, new);
             }
             else {
-                destroy_CubeState(new);
+                cube_state_destroy(new);
             }
         }
     }
