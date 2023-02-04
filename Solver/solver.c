@@ -49,11 +49,12 @@ void solve(Cube* initial_state)
     // puts("");
     // print_Storage(storage, print_CubeState);
 
-    forEach_Queue(queue, print_CubeState);
+    forEach_Queue(queue, destroy_CubeState);
     destroy_Queue(queue);
 
     forEach_Storage(storage, destroy_CubeState);
     destroy_Storage(storage);
+    free(solved);
 }
 
 /*
@@ -70,13 +71,15 @@ bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved
     for (size_t side = WHITE; side <= RED; side++) {
         for (size_t rot = ROT_90;rot <= ROT_270; rot++) {
             CubeState* new = next_CubeState(to_check, side, rot);
-            if (contains_Storage(storage, new, cmpWithDepth_CubeState))
-                continue;
 
             void* previous = replace_Storage(storage, new, cmp_CubeState);
-            if (previous != NULL)
+            if (previous != NULL) {
                 destroy_CubeState(previous);
-            push_Queue(queue, new);
+                push_Queue(queue, new);
+            }
+            else {
+                destroy_CubeState(new);
+            }
         }
     }
     return false;
