@@ -145,6 +145,7 @@ int main()
       //c) the cube is not 1 move away, and so should be rotated again. this is proven by the 4th one, which is two different moves away from a solve.
   srand(42);
   Cube* solved = cube_create();
+  Cube* rotated;
 
 /*
   //1st EXAMPLE:
@@ -155,17 +156,17 @@ int main()
   puts("Press Enter to Continue");
   char c;
   scanf("%c", &c);
-*/
+
 
   puts("2:\nTo solve a front 90 rotation:");
-  Cube* rotated = cube_rotate(solved, WHITE, ROT_90);
+  rotated = cube_rotate(solved, WHITE, ROT_90);
   solve(rotated);
 
   puts("DONE");
-/*
+
   puts("Press Enter to Continue");
   scanf("%c", &c);
-
+*/
   //2nd EXAMPLE:
   rotated = cube_rotate(solved, WHITE, ROT_270);
   puts("3:\nTo solve a cube rotated on front face 270:");
@@ -173,9 +174,9 @@ int main()
   puts("DONE");
 
 
+/*
   puts("Press Enter to Continue");
   scanf("%c", &c);
-
   //3rd EXAMPLE:
   printf("\n\n\t");
   rotated = cube_rotate(solved, YELLOW, ROT_270);

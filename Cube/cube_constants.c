@@ -18,4 +18,6 @@ typedef enum rotations
     ROT_270 = 3
 } rotation;
 
-typedef char Cube[20];
+#define CUBE_STORAGE_SIZE 20
+
+typedef char Cube[CUBE_STORAGE_SIZE];
