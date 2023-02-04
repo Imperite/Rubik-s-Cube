@@ -146,27 +146,31 @@ int main()
   srand(42);
   Cube* solved = init_Cube();
 
+/*
   //1st EXAMPLE:
-  printf("\t1:");
-  Cube* rotated = rotate_Cube(solved, WHITE, ROT_270);
-  // Cube_State* rotated = rotate(solved, FRONT, ROT_90);
-  //right now, the cube has stored the previous move that it just did, so I need to remove that from it's memory:
-  // rotated->prev_change.degree = NONE;
-  puts("\nTo solve a front 90 rotation:");
+  puts("1:\nTo solve a solved cube:");
+  solve(solved);
+  puts("DONE");
+
+  puts("Press Enter to Continue");
+  char c;
+  scanf("%c", &c);
+*/
+
+  puts("2:\nTo solve a front 90 rotation:");
+  Cube* rotated = rotate_Cube(solved, WHITE, ROT_90);
   solve(rotated);
 
   puts("DONE");
 /*
   puts("Press Enter to Continue");
-  char c;
   scanf("%c", &c);
 
   //2nd EXAMPLE:
-  printf("\n\n\t");
-  rotated = rotate(rotated, FRONT, ROT_90);
-  rotated->prev_change.degree = NONE;
-  puts("\n\nTo solve a cube rotated on front face 180:");
-  solve(rotated, solved);
+  rotated = rotate_Cube(solved, WHITE, ROT_270);
+  puts("3:\nTo solve a cube rotated on front face 270:");
+  solve(rotated);
+  puts("DONE");
 
 
   puts("Press Enter to Continue");
@@ -174,48 +178,24 @@ int main()
 
   //3rd EXAMPLE:
   printf("\n\n\t");
-  rotated = rotate(solved, BACK, ROT_90);
-  rotated->prev_change.degree = NONE;
-  puts("\n\nTo solve a cube rotated on Back face 90:");
-  solve(rotated, solved);
+  rotated = rotate_Cube(solved, YELLOW, ROT_270);
+  puts("\n\nTo solve a cube rotated on Back face 270:");
+  solve(rotated);
 
   puts("Press Enter to Continue");
   scanf("%c", &c);
+
 
   //4th EXAMPLE:
-  printf("\n\n\t");
-  rotated = rotate(solved, FRONT, ROT_90);
-  rotated = rotate(rotated, BACK, ROT_180);
-  //right now, the cube has stored the previous move that it just did, so I need to remove that from it's memory:
-  rotated->prev_change.degree = NONE;
   puts("\n\nTo solve a cube rotated on front face 90 and the back 180:");
-  solve(rotated, solved);
+  Cube* rotatedtmp = rotate_Cube(solved, WHITE, ROT_90);
+  rotated = rotate_Cube(rotatedtmp, YELLOW, ROT_180);
+  destroy_Cube(rotatedtmp);
+  solve(rotated);
+  puts("DONE");
 
-
-  puts("Press Enter to Continue");
-  scanf("%c", &c);
-  //ARRAYLIST TESTING
-  ArrayListPtr storage = init_Storage();
-  size_t iterations = 42;
-  size_t length = 2;
-  for (size_t i = 0; i < iterations; ++i)
-  {
-    char* rand_string = malloc(sizeof(char*) * length); //need to get there to be duplicates, so I made it
-    for (size_t j = 0; j < length; ++j)
-      rand_string[j] = color_to_char(WHITE + (rand() % 6));
-    printf("size: %zu\n", storage->size);
-    if (i > 0 && !contains_Storage(storage->prev_states, storage->size, rand_string))
-      insert_Storage(storage, rand_string);
-    else if (i == 0)
-      insert_Storage(storage, rand_string);
-    else
-    {
-      printf("FOUND DUPLICATE\n");
-      free(rand_string);
-    }
-  }
-
-  storage_destroy(&storage);
 //*/
+
+  destroy_Cube(solved);
   return 0;
 }

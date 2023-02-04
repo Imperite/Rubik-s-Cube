@@ -21,7 +21,6 @@ void solve(Cube* initial_state)
     Cube* solved = init_Cube();
 
     void* queue = init_Queue();
-
     Storage storage = init_Storage();
 
     CubeState* current = malloc(sizeof(CubeState));
@@ -30,11 +29,13 @@ void solve(Cube* initial_state)
     current->moves = NULL;
     insert_Storage(storage, current, cmp_CubeState);
     bool isSolved = check_state(current, storage, queue, solved);
-    // printf("test %d", 2);
+    // printf("test %d", 1);
 
-    while (!empty_Queue(queue)) {
+    while (!empty_Queue(queue) && !isSolved) {
+        // forEach_Queue(queue, print_CubeState);
         current = pop_Queue(queue);
-        check_state(current, storage, queue, solved);
+        // print_CubeState(current);
+        isSolved = check_state(current, storage, queue, solved);
     }
 
     printf("solved: %d\n", isSolved);
@@ -44,12 +45,11 @@ void solve(Cube* initial_state)
         printf("do a %s %s degree turn\n", face_to_string[current->moves[i].face + 1], rotation_to_string[current->moves[i].degree]);
     }
 
-    forEach_Queue(queue, print_CubeState);
-    puts("");
-    print_Storage(storage, print_CubeState);
+    // forEach_Queue(queue, print_CubeState);
+    // puts("");
+    // print_Storage(storage, print_CubeState);
 
-    // TODO: something here causes segfault
-    forEach_Queue(queue, destroy_CubeState);
+    // forEach_Queue(queue, print_CubeState);
     destroy_Queue(queue);
 
     forEach_Storage(storage, destroy_CubeState);

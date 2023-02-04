@@ -256,7 +256,7 @@ int cmp_cubes(Cube s1, Cube s2)
 {
     // char* s1 = (char*)cube1;
     // char* s2 = (char*)cube2;
-    for (size_t i = 0; i <= 48; ++i)
+    for (size_t i = 0; i <= 20; ++i)
         if (s1[i] != s2[i])
             return s1[i] - s2[i];
     return 0;

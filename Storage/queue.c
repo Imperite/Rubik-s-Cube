@@ -37,29 +37,29 @@ void push_Queue(Queue* queue, void* obj) {
     n->next = NULL;
     n->value = obj;
 
-    if (queue->head == NULL) {
+    if (empty_Queue(queue)) {
         queue->head = n;
-        queue->tail = n;
-        return;
     }
-
-    queue->tail->next = n;
+    else {
+        queue->tail->next = n;
+    }
     queue->tail = n;
 }
 
 void* pop_Queue(Queue* queue) {
-    if (queue->head = NULL)
+    if (empty_Queue(queue))
         return NULL;
 
-    Node* n = queue->head;
+    Node* head = queue->head;
 
-    Node* next = n->next;
-    if (next == NULL)
+    // Node* next = n->next;
+    if (head->next == NULL)
         queue->tail = NULL;
-    queue->head = next;
 
-    void* obj = n->value;
-    free(n);
+    queue->head = head->next;
+
+    void* obj = head->value;
+    free(head);
     return obj;
 }
 
