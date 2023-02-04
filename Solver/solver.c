@@ -1,10 +1,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../Cube/cube.h"
-// #include "../Cube/cube_constants.c"
-#include "../Storage/storage.h"
-#include "../Storage/queue.h"
+#include "../cube.h"
+#include "../storage.h"
+#include "../queue.h"
 #include "cubestate.c"
 
 

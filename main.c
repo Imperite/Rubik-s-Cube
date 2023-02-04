@@ -5,9 +5,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "Cube/cube.h"
-#include "Storage/storage.h"
-#include "Solver/solver.h"
+#include "cube.h"
+#include "storage.h"
+#include "solver.h"
 
 
 void rotate(char cube[7], face face, rotation rot) {
