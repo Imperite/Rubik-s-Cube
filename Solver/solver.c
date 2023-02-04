@@ -49,7 +49,7 @@ void solve(Cube* initial_state)
     // puts("");
     // print_Storage(storage, print_CubeState);
 
-    // forEach_Queue(queue, print_CubeState);
+    forEach_Queue(queue, print_CubeState);
     destroy_Queue(queue);
 
     forEach_Storage(storage, destroy_CubeState);

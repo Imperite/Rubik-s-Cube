@@ -45,10 +45,10 @@ void destroy_CubeState(void* c1) {
 
 void print_CubeState(void* cs) {
     CubeState* cube = (CubeState*)cs;
-    printf("Depth %d: ", (cube->depth));
+    printf("Depth %d: ", cube->depth);
     for (size_t i = 0; i < cube->depth; i++)
     {
-        print_Change(&cube->moves[i]);
+        print_Change(&(cube->moves[i]));
     }
     puts("");
     print_Cube(cube->cube);
@@ -74,5 +74,5 @@ CubeState* next_CubeState(CubeState* start, face side, rotation rot) {
 char* face_to_char = "Xwboygr";
 char* rot_to_char = "X123";
 void print_Change(Change* c) {
-    printf("%c%c ", face_to_char[c->face + 1], rot_to_char[c->degree]);
+    printf("%c%c, ", face_to_char[c->face + 1], rot_to_char[c->degree]);
 }

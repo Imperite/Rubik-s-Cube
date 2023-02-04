@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+typedef void Item;
+
 typedef struct node {
     struct node* next;
-    void* value;
+    Item* value;
 } Node;
 
 typedef struct queue {
@@ -12,10 +14,10 @@ typedef struct queue {
 
 Queue* init_Queue();
 void destroy_Queue(Queue* queue);
-void push_Queue(Queue* queue, void* obj);
-void* pop_Queue(Queue* queue);
+void push_Queue(Queue* queue, Item* obj);
+Item* pop_Queue(Queue* queue);
 void print_Queue(Queue* q);
-void forEach_Queue(Queue* queue, void(*toDo)(void*));
+void forEach_Queue(Queue* queue, void(*toDo)(Item*));
 int empty_Queue(Queue* queue);
 
 
@@ -32,7 +34,7 @@ void destroy_Queue(Queue* queue) {
     free(queue);
 }
 
-void push_Queue(Queue* queue, void* obj) {
+void push_Queue(Queue* queue, Item* obj) {
     Node* n = malloc(sizeof(Node));
     n->next = NULL;
     n->value = obj;
@@ -46,7 +48,7 @@ void push_Queue(Queue* queue, void* obj) {
     queue->tail = n;
 }
 
-void* pop_Queue(Queue* queue) {
+Item* pop_Queue(Queue* queue) {
     if (empty_Queue(queue))
         return NULL;
 
@@ -64,7 +66,7 @@ void* pop_Queue(Queue* queue) {
 }
 
 
-void forEach_Queue(Queue* queue, void(*toDo)(void*)) {
+void forEach_Queue(Queue* queue, void(*toDo)(Item*)) {
     Node* curr = queue->head;
     while (curr != NULL) {
         toDo(curr->value);
