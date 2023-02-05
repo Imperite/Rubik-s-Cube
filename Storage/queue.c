@@ -16,7 +16,6 @@ Queue* queue_create();
 void queue_destroy(Queue* queue);
 void queue_push(Queue* queue, Item* obj);
 Item* queue_pop(Queue* queue);
-void queue_print(Queue* q);
 void queue_for_each(Queue* queue, void(*toDo)(Item*));
 int queue_is_empty(Queue* queue);
 
