@@ -24,6 +24,7 @@ Queue* queue_create() {
     Queue* queue = malloc(sizeof(Queue));
     queue->tail = NULL;
     queue->head = NULL;
+    return queue;
 }
 
 void queue_destroy(Queue* queue) {
