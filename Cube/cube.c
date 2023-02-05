@@ -208,7 +208,7 @@ void pos(face face, size_t index, size_t ordering[4][2], size_t pos[3]) {
 
 Cube* cube_rotate(Cube* cube, face side, rotation rot) {
     size_t shift = rot;
-    if (shift == 3) shift == -1;
+    if (shift == 3) shift = -1;
     if (side == YELLOW || side == BLUE || side == RED) shift *= -1;
 
     Cube* newCube = copy(cube);

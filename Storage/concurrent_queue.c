@@ -29,10 +29,10 @@ int queue_is_empty(Queue* queue);
 
 
 Queue* queue_create() {
-    Node* node = malloc(sizeof(*node));
+    Node* node = malloc(sizeof(Node));
     node->next.ptr = NULL;
 
-    Queue* queue = malloc(sizeof(*queue));
+    Queue* queue = malloc(sizeof(Queue));
     queue->head.ptr = node;
     queue->tail.ptr = node;
     return queue;
@@ -47,10 +47,10 @@ void queue_destroy(Queue* queue) {
 
 //same as enqueue
 void queue_push(Queue* queue, Item* obj) {
-    Node* node = malloc(sizeof(*node));
+    Node* node = malloc(sizeof(Node));
     *node = (Node){
         .value = obj,
-        .next = {.ptr = NULL}
+        .next = {.ptr = NULL, .count = 0}
     };
 
     NodePointer tail;
@@ -58,7 +58,7 @@ void queue_push(Queue* queue, Item* obj) {
         tail = queue->tail;
         NodePointer next = tail.ptr->next;
 
-        if (tail.count == queue->tail.count && tail.ptr == queue->tail.ptr)
+        if (tail.count == queue->tail.count && tail.ptr == queue->tail.ptr) {
             if (next.ptr == NULL) {
                 if (atomic_compare_exchange_strong(&tail.ptr->next, &next, ((NodePointer) { node, next.count + 1 }))) {
                     break;
@@ -67,7 +67,7 @@ void queue_push(Queue* queue, Item* obj) {
             else {
                 atomic_compare_exchange_strong(&queue->tail, &tail, ((NodePointer) { next.ptr, tail.count + 1 }));
             }
-
+        }
     }
     atomic_compare_exchange_strong(&queue->tail, &tail, ((NodePointer) { node, tail.count + 1 }));
 }
@@ -75,6 +75,7 @@ void queue_push(Queue* queue, Item* obj) {
 
 Item* queue_pop(Queue* queue) {
     NodePointer head;
+    Item* obj;
     while (1) {
         head = queue->head;
         NodePointer tail = queue->tail;
@@ -86,7 +87,7 @@ Item* queue_pop(Queue* queue) {
 
                 atomic_compare_exchange_strong(&queue->tail, &tail, ((NodePointer){ next.ptr, tail.count + 1 }));
             }
-            Item* obj = next.ptr->value;
+            obj = next.ptr->value;
 
             if (atomic_compare_exchange_strong(&queue->head, &head, ((NodePointer) {next.ptr, head.count + 1 })))
                 break;
@@ -94,6 +95,7 @@ Item* queue_pop(Queue* queue) {
     }
     free(head.ptr);
     //TODO: do something to free the head
+    return obj;
 }
 
 //TODO: check if threadsafe

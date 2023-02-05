@@ -45,7 +45,7 @@ void cube_state_destroy(void* c1) {
 
 void cube_state_print(void* cs) {
     CubeState* cube = (CubeState*)cs;
-    printf("Depth %d: ", cube->depth);
+    printf("Depth %zu: ", cube->depth);
     for (size_t i = 0; i < cube->depth; i++)
     {
         change_print(&cube->moves[i]);

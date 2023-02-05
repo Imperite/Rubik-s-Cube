@@ -165,7 +165,7 @@ Subcube subcube_default_at(size_t i, size_t j, size_t k) {
     */
     Subcube subcube;
     cubeType type = subcube_type(i, j, k);
-    size_t diff, sum;
+    size_t sum;
     switch (type)
     {
     case CORNER:
@@ -206,6 +206,8 @@ enum axis faceToAxis(face face) {
     case ORANGE:
     case RED:
         return OR;
+    default:
+        return -1;
     }
 }
 
@@ -258,12 +260,12 @@ Should return the (virtual) faces along the W+, B+, and O+ directions. For examp
 void subcube_primary_faces(Subcube* subcube, size_t i, size_t j, size_t k, char result[3]) {
     cubeType type = subcube_type(i, j, k);
     size_t pos[3] = { i, j, k };
-    size_t emptySide = 4;
+    // size_t emptySide = 4;
     for (size_t i = 0; i < 3; i++)
     {
         face color = subcube_color_along_axis(*subcube, i, type);
-        if (color == BLANK)
-            emptySide = i;
+        // if (color == BLANK)
+        //     emptySide = i;
 
         if (pos[i] == 2)
             color = (color + 3) % 6;
@@ -292,7 +294,7 @@ char faceToChar(face face) {
         return 'g';
     case RED:
         return 'r';
-    case BLANK:
+    default:
         return 'X';
     }
 }

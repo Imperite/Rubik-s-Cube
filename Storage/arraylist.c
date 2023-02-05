@@ -31,7 +31,7 @@ ArrayListPtr storage_create()
     *newList = (ArrayList){
         .size = 0,
         .capacity = 8,
-        .data = calloc(newList->capacity, sizeof(void*))
+        .data = calloc(8, sizeof(void*))
     };
     return newList;
 }

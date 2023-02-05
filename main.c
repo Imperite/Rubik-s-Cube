@@ -75,34 +75,10 @@ typedef struct state {
   size_t depth;
 } State;
 
-typedef struct lnode {
-  struct lnode* next;
-  State* value;
-} LNode;
-
-typedef struct queue {
-  LNode* tail, * head;
-} Queue;
-
-void queue_print(Queue* q) {
-  LNode* curr = q->head;
-  while (curr != NULL) {
-    printf("%s, ", curr->value);
-    curr = curr->next;
-  }
-  puts("");
-}
-
-
-int cmp(void* c1, void* c2) {
-  int result = strcmp(((State*)c1)->value, ((State*)c2)->value);
-  // printf("\t cmp %s %s: %d\n", c1, c2, result);
-  return result;
-}
 
 void print(void* s) {
   State* st = (State*)s;
-  printf("%s %d", st->value, st->depth);
+  printf("%s %zu", st->value, st->depth);
 }
 
 void print_path(void* s) {
