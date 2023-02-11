@@ -26,6 +26,7 @@ bool storage_contains(ArrayListPtr list, Item* to_find, int(*compare)(Item*, Ite
 
 Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*));
 
+bool storage_do(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*), bool(*do_on)(ArrayListPtr, Item*, Item**));
 
 int storage_size(ArrayListPtr list);
 
@@ -142,6 +143,11 @@ Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, It
         }
     }
     return NULL;
+}
+
+
+bool storage_do(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*), bool(*do_on)(ArrayListPtr, Item*, Item**)) {
+    return do_on(list, obj, storage_location_of(list, obj, compare));
 }
 
 

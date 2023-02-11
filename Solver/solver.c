@@ -13,6 +13,10 @@ char* rotation_to_string[4] = { "ERROR", "90", "180", "-90" };
 void solve(Cube* initial_state);
 bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved);
 
+//returns true if the cube has been updated/inserted inside the storage, otherwise returns false.
+bool solver_update_cubestate(Storage storage, void* new, void** loc);
+
+
 // Solve acts as a wrapper function to print out the results of cube_solve. Creates a Storage and Queue in order to remember traversed nodes and boundary nodes.
 // Currently only works in one thread, but programmatically is ready for multi-threading (though storage needs locks)
 void solve(Cube* initial_state)
@@ -69,30 +73,31 @@ bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved
         for (size_t rot = ROT_90;rot <= ROT_270; rot++) {
             CubeState* new = cube_state_next(to_check, side, rot);
 
-            CubeState** storage_loc = (CubeState**)storage_location_of(storage, new, cube_state_compare);
-            if (storage_loc != NULL) {// Found match in storage
-                if ((*storage_loc)->depth <= new->depth) {
-                    cube_state_destroy(new);
-                    continue;
-                }
-                cube_state_destroy(*storage_loc);
-                *storage_loc = new;
+            if (storage_do(storage, new, cube_state_compare, solver_update_cubestate)) { // try to add/modify existing version in storage
+                queue_push(queue, new);
+            }
+            else //delete state since already checked
+                cube_state_destroy(new);
 
-            }
-            else {
-                storage_insert(storage, new, cube_state_compare);
-            }
-            queue_push(queue, new);
-            // CubeState* previous = (CubeState*)storage_replace(storage, new, cube_state_compare_with_depth);
-            // if (previous != NULL) { //if we're replacing a node in storage and so need to recheck it
-            //     cube_state_destroy(previous);
-            //     cube_state_print(new);
-            //     queue_push(queue, new);
-            // }
-            // else { // if this is not a new node
-            //     cube_state_destroy(new);
-            // }
         }
     }
     return false;
+}
+
+
+bool solver_update_cubestate(Storage storage, void* new, void** loc) {
+    CubeState* newState = (CubeState*) new;
+    CubeState** storage_loc = (CubeState**)loc;
+    if (storage_loc != NULL && (*storage_loc)->depth <= newState->depth) { // failure case: storage has this but has already traversed this state
+        return false;
+    }
+
+    if (storage_loc != NULL) {// Found match in storage
+        cube_state_destroy(*storage_loc);
+        *storage_loc = newState;
+    }
+    else {
+        storage_insert(storage, newState, cube_state_compare);
+    }
+    return true;
 }

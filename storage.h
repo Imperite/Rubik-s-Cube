@@ -17,7 +17,11 @@ bool storage_contains(Storage storage, void* to_find, int (*compare)(void*, void
 //removes the object from the storage and returns it
 void* storage_replace(Storage storage, void* obj, int(*compare)(void*, void*));
 
+//returns a pointer to the location of obj in memory using binary search.
 void** storage_location_of(Storage storage, void* obj, int(*compare)(void*, void*));
+
+// calls function do_on on the location in memory provided. Does not guarantee location is not null.
+bool storage_do(Storage storage, void* obj, int(*compare)(void*, void*), bool(*do_on)(Storage, void*, void**));
 
 int storage_size(Storage storage);
 
