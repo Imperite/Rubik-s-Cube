@@ -123,12 +123,12 @@ int main()
   Cube* solved = cube_create();
   Cube* rotated;
 
-/*
   //1st EXAMPLE:
   puts("1:\nTo solve a solved cube:");
   solve(solved);
   puts("DONE");
 
+/*
   puts("Press Enter to Continue");
   char c;
   scanf("%c", &c);

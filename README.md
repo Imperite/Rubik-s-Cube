@@ -35,12 +35,11 @@ Rotation def also gives convenient translation for displaying original subcube
 
 - Add visualization gui for the solution/exploration process
 - Refactor solver to use hash table instead of array
+- Optimize brute force by storing states generated off this one to allow for less re-checking
 - Change solver to use an algorithm instead of just brute force breadth-first search
   - Use hashes of state to turn solving into gradient descent problem?
-- refactor print_Cube to be intuitive and easy to understand
 - clean up comments (sheesh, so many!)
 - Data Structure Optimizations:
-  - Change the depth storage to use one byte (as a number) instead of two (the letter representation)?
   - Change data structure to work off only the rotations of the cubes from the original position - may allow for solving using linear algebra?
 
 # Alternative Algorithms:
@@ -53,12 +52,16 @@ Rotation def also gives convenient translation for displaying original subcube
 Side note: here are a couple of optimizations I plan to do after the final deadline:
 
 1. Change all rubik's simulation functions to work on the compressed state instead of the struct. this will be even harder to understand, but will minimize the amount of space free/alloced at once (maybe also switch to using only chars, no ints? no need in compressed-only to keep color_to_char or color enums)
-2. Similarly, if I switch from a arraylist to a radix tree for storing the different checked states, it should work out much more effieciently in the long run. -- Prob will implement as a multi-nided tree, and either dynamically resize the child pointers or (more likely) just declare a 6-lebgth array?
+   - DONE
+2. Similarly, if I switch from a arraylist to a radix tree for storing the different checked states, it should work out much more effieciently in the long run. -- Prob will implement as a multi-sided tree, and either dynamically resize the child pointers or (more likely) just declare a 6-lebgth array?
+
 3. Rewrite the print_cube function; it's pretty repetitive right now, and could use with a little abstraction to make it work
+   - DONE
 4. Find a way to determine if the route taken to get to this cube is the simplest/compress moves after finding the solution.
-5. AFter all that, I'd love to work on making a simple way of plugging in the current state of the cube -- you currently would have to manually encode it in, but I'd love to change that.
-6. Finally, I'd love to create a gui for this. so that instead of using text to communicate the solution, I can visually show someone what moves to do.
-7. also, Compressing the cube down from a char per side to 3 bytes per side would mean a reduction from 50 bytes per state to 30, so could be worth it if running into space issues (but adds a lot to time cost -- now have to isloate each face for operations, making rotations even harder?)
+5. Work on making a simple way of plugging in the current state of the cube -- you currently would have to manually encode it in, but I'd love to change that.
+6. Create a gui for this. so that instead of using text to communicate the solution, I can visually show someone what moves to do.
+7. Compressing the cube down from a char per side to 3 bytes per side would mean a reduction from 50 bytes per state to 30, so could be worth it if running into space issues (but adds a lot to time cost -- now have to isloate each face for operations, making rotations even harder?)
+   - DONE (and then some)
 
 # Hashing Solver
 

@@ -93,8 +93,8 @@ Item* queue_pop(Queue* queue) {
                 break;
         }
     }
+    //This may cause issues
     free(head.ptr);
-    //TODO: do something to free the head
     return obj;
 }
 
