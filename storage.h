@@ -17,6 +17,8 @@ bool storage_contains(Storage storage, void* to_find, int (*compare)(void*, void
 //removes the object from the storage and returns it
 void* storage_replace(Storage storage, void* obj, int(*compare)(void*, void*));
 
+void** storage_location_of(Storage storage, void* obj, int(*compare)(void*, void*));
+
 int storage_size(Storage storage);
 
 void storage_print(Storage storage, void(*print)(void*));

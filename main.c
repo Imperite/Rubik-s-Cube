@@ -128,16 +128,16 @@ int main()
   solve(solved);
   puts("DONE");
 
-/*
-  puts("Press Enter to Continue");
-  char c;
-  scanf("%c", &c);
+  // puts("Press Enter to Continue");
+  // char c;
+  // scanf("%c", &c);
 
 
   puts("2:\nTo solve a front 90 rotation:");
   rotated = cube_rotate(solved, WHITE, ROT_90);
   solve(rotated);
 
+/*
   puts("DONE");
 
   puts("Press Enter to Continue");

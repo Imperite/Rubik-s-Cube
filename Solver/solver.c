@@ -41,16 +41,17 @@ void solve(Cube* initial_state)
         printf("do a %s %s degree turn\n", face_to_string[current->moves[i].face + 1], rotation_to_string[current->moves[i].degree]);
     }
 
+    // puts("Queue:");
     // queue_for_each(queue, cube_state_print);
-    // puts("");
-    storage_print(storage, cube_state_print);
+    // puts("\nStorage:");
+    // storage_print(storage, cube_state_print);
 
-    queue_for_each(queue, cube_state_destroy);
-    queue_destroy(queue);
+    // queue_for_each(queue, cube_state_destroy);
+    // queue_destroy(queue);
 
-    storage_for_each(storage, cube_state_destroy);
-    storage_destroy(storage);
-    free(solved);
+    // storage_for_each(storage, cube_state_destroy);
+    // storage_destroy(storage);
+    // free(solved);
 }
 
 /*
@@ -68,14 +69,29 @@ bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved
         for (size_t rot = ROT_90;rot <= ROT_270; rot++) {
             CubeState* new = cube_state_next(to_check, side, rot);
 
-            void* previous = storage_replace(storage, new, cube_state_compare);
-            if (previous != NULL) { //if we're replacing a node in storage and so need to recheck it
-                cube_state_destroy(previous);
-                queue_push(queue, new);
+            CubeState** storage_loc = (CubeState**)storage_location_of(storage, new, cube_state_compare);
+            if (storage_loc != NULL) {// Found match in storage
+                if ((*storage_loc)->depth <= new->depth) {
+                    cube_state_destroy(new);
+                    continue;
+                }
+                cube_state_destroy(*storage_loc);
+                *storage_loc = new;
+
             }
-            else { // if this is not a new node
-                cube_state_destroy(new);
+            else {
+                storage_insert(storage, new, cube_state_compare);
             }
+            queue_push(queue, new);
+            // CubeState* previous = (CubeState*)storage_replace(storage, new, cube_state_compare_with_depth);
+            // if (previous != NULL) { //if we're replacing a node in storage and so need to recheck it
+            //     cube_state_destroy(previous);
+            //     cube_state_print(new);
+            //     queue_push(queue, new);
+            // }
+            // else { // if this is not a new node
+            //     cube_state_destroy(new);
+            // }
         }
     }
     return false;

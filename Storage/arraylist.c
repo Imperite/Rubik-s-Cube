@@ -3,11 +3,13 @@
 #include <stdio.h>
 
 
+typedef void Item;
+
 typedef struct array_list
 {
     size_t size;
     size_t capacity;
-    void** data;
+    Item** data;
 } ArrayList;
 typedef ArrayList* ArrayListPtr;
 
@@ -16,11 +18,14 @@ ArrayListPtr storage_create();
 // destroy
 void storage_destroy(ArrayListPtr list);
 // add
-void storage_insert(ArrayListPtr list, void* cube, int(*compare)(void*, void*));
+void storage_insert(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*));
 // resize
 void resize_Storage(ArrayListPtr list);
 // contains; will use a binary search to find in list.
-bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, void*));
+bool storage_contains(ArrayListPtr list, Item* to_find, int(*compare)(Item*, Item*));
+
+Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*));
+
 
 int storage_size(ArrayListPtr list);
 
@@ -43,15 +48,15 @@ void storage_destroy(ArrayListPtr list)
     free(list);
 }
 
-void storage_insert(ArrayListPtr list, void* cube, int(*compare)(void*, void*))
+void storage_insert(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*))
 {
     resize_Storage(list);
     size_t i;
 
-    for (i = list->size++; i > 0 && compare(cube, list->data[i - 1]) < 0; --i)
+    for (i = list->size++; i > 0 && compare(obj, list->data[i - 1]) < 0; --i)
         list->data[i] = list->data[i - 1];
 
-    list->data[i] = cube;
+    list->data[i] = obj;
 }
 
 void resize_Storage(ArrayListPtr list)
@@ -59,12 +64,14 @@ void resize_Storage(ArrayListPtr list)
     if (list->size == list->capacity)
     {
         list->capacity *= 2;
-        list->data = realloc(list->data, list->capacity * sizeof(void*));
+        list->data = realloc(list->data, list->capacity * sizeof(Item*));
     }
 }
 
-bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, void*))
+bool storage_contains(ArrayListPtr list, Item* to_find, int(*compare)(Item*, Item*))
 {
+    return storage_location_of(list, to_find, compare) != NULL;
+    /*
     int left = 0;
     int right = list->size - 1;
     int mid;
@@ -82,9 +89,19 @@ bool storage_contains(ArrayListPtr list, void* to_find, int(*compare)(void*, voi
             return true;
     }
     return false;
+    */
 }
 
-void* storage_replace(ArrayListPtr list, void* obj, int(*compare)(void*, void*)) {
+void* storage_replace(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*)) {
+    Item** itemLoc = storage_location_of(list, obj, compare);
+    if (itemLoc == NULL)
+        return NULL;
+
+    Item* prevStored = *itemLoc;
+    *itemLoc = obj;
+    return prevStored;
+
+    /*
     int left = 0;
     int right = list->size - 1;
     int mid;
@@ -105,9 +122,30 @@ void* storage_replace(ArrayListPtr list, void* obj, int(*compare)(void*, void*))
 
 
     return NULL;
+    */
 }
 
-void storage_for_each(ArrayListPtr list, void(*function)(void*)) {
+Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*)) {
+    int left = 0;
+    int right = list->size - 1;
+    int mid;
+    while (left <= right)
+    {
+        mid = (left + right) / 2;
+        int comp = compare(obj, list->data[mid]);
+        if (comp >= 1)
+            left = mid + 1;
+        else if (comp <= -1)
+            right = mid - 1;
+        else if (comp == 0) {
+            return (list->data + mid);
+        }
+    }
+    return NULL;
+}
+
+
+void storage_for_each(ArrayListPtr list, void(*function)(Item*)) {
     for (size_t i = 0; i < list->size; i++)
     {
         function(list->data[i]);
@@ -115,7 +153,7 @@ void storage_for_each(ArrayListPtr list, void(*function)(void*)) {
 
 }
 
-void storage_print(ArrayListPtr list, void(*print)(void*)) {
+void storage_print(ArrayListPtr list, void(*print)(Item*)) {
     printf("[");
     storage_for_each(list, print);
     puts("]");
