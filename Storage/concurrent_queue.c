@@ -31,6 +31,7 @@ int queue_is_empty(Queue* queue);
 Queue* queue_create() {
     Node* node = malloc(sizeof(Node));
     node->next.ptr = NULL;
+    node->value = NULL;
 
     Queue* queue = malloc(sizeof(Queue));
     queue->head.ptr = node;
@@ -42,6 +43,7 @@ Queue* queue_create() {
 void queue_destroy(Queue* queue) {
     while (!queue_is_empty(queue))
         queue_pop(queue);
+    free(queue->head.ptr);
     free(queue);
 }
 
@@ -93,7 +95,7 @@ Item* queue_pop(Queue* queue) {
                 break;
         }
     }
-    //This may cause issues
+    //This may(aka will) cause issues
     free(head.ptr);
     return obj;
 }
@@ -102,7 +104,7 @@ Item* queue_pop(Queue* queue) {
 //probably not threadsafe, but I don't plan to run **during** any other threads - this is only for after the threaded operation has completed, ideally.
 void queue_for_each(Queue* queue, void(*toDo)(Item*)) {
     Node* curr = queue->head.ptr;
-    while (curr != NULL) {
+    while (curr != NULL && curr->value != NULL) {
         toDo(curr->value);
         curr = curr->next.ptr;
     }

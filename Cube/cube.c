@@ -254,7 +254,7 @@ Cube* cube_rotate(Cube* cube, face side, rotation rot) {
 
 int cube_compare(Cube s1, Cube s2)
 {
-    for (size_t i = 0; i <= 20; ++i)
+    for (size_t i = 0; i <= CUBE_STORAGE_SIZE; ++i)
         if (s1[i] != s2[i])
             return s1[i] - s2[i];
     return 0;

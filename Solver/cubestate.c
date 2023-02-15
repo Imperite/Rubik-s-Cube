@@ -38,6 +38,7 @@ int cube_state_compare_with_depth(void* c1, void* c2) {
 
 void cube_state_destroy(void* c1) {
     CubeState* state = ((CubeState*)c1);
+    // cube_state_print(state);
     cube_destroy(state->cube);
     free(state->moves);
     free(state);
@@ -72,8 +73,8 @@ CubeState* cube_state_next(CubeState* start, face side, rotation rot) {
 }
 
 char* face_to_char = "Xwboygr";
-char* rot_to_char = "X123";
+char* rot_to_char[] = { "NaN", " 90", "180", "-90" };
 void change_print(Change* c) {
-    printf("%d %d, ", c->face, c->degree);
-    // printf("%c%c, ", face_to_char[c->face + 1], rot_to_char[c->degree]);
+    // printf("%d %d, ", c->face, c->degree);
+    printf("%c%s, ", face_to_char[c->face + 1], rot_to_char[c->degree]);
 }

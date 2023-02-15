@@ -124,55 +124,50 @@ int main()
   Cube* rotated;
 
   //1st EXAMPLE:
-  puts("1:\nTo solve a solved cube:");
+  puts("1:To solve a solved cube:");
   solve(solved);
-  puts("DONE");
+  puts("DONE\n");
 
-  // puts("Press Enter to Continue");
-  // char c;
-  // scanf("%c", &c);
-
-
-  puts("2:\nTo solve a front 90 rotation:");
-  rotated = cube_rotate(solved, WHITE, ROT_90);
-  solve(rotated);
-
-/*
-  puts("DONE");
-
-  puts("Press Enter to Continue");
-  scanf("%c", &c);
-*/
-  //2nd EXAMPLE:
+  //2nd EXAMPLE
   rotated = cube_rotate(solved, WHITE, ROT_270);
-  puts("3:\nTo solve a cube rotated on front face 270:");
+  puts("2:To solve a front -90 rotation:");
   solve(rotated);
-  puts("DONE");
-
+  cube_destroy(rotated);
+  puts("DONE\n");
 
 /*
-  puts("Press Enter to Continue");
-  scanf("%c", &c);
   //3rd EXAMPLE:
-  printf("\n\n\t");
-  rotated = cube_rotate(solved, YELLOW, ROT_270);
-  puts("\n\nTo solve a cube rotated on Back face 270:");
+  rotated = cube_rotate(solved, WHITE, ROT_90);
+  puts("3:To solve a cube rotated on front face 90:");
   solve(rotated);
-
-  puts("Press Enter to Continue");
-  scanf("%c", &c);
-
+  cube_destroy(rotated);
+  puts("DONE\n");
 
   //4th EXAMPLE:
-  puts("\n\nTo solve a cube rotated on front face 90 and the back 180:");
+  rotated = cube_rotate(solved, YELLOW, ROT_270);
+  puts("4:To solve a cube rotated on Back face 270:");
+  solve(rotated);
+  cube_destroy(rotated);
+  puts("DONE\n");
+
+  //5th EXAMPLE:
   Cube* rotatedtmp = cube_rotate(solved, WHITE, ROT_90);
   rotated = cube_rotate(rotatedtmp, YELLOW, ROT_180);
+  puts("5:To solve a cube rotated on front face 90 and the back 180:");
   cube_destroy(rotatedtmp);
   solve(rotated);
-  puts("DONE");
+  cube_destroy(rotated);
+  puts("DONE\n");
 
-//*/
-
+  //6th EXAMPLE:
+  rotatedtmp = cube_rotate(solved, WHITE, ROT_90);
+  rotated = cube_rotate(rotatedtmp, ORANGE, ROT_180);
+  puts("6:To solve a cube rotated on front face 90 and the left 180:");
+  cube_destroy(rotatedtmp);
+  solve(rotated);
+  cube_destroy(rotated);
+  puts("DONE\n");
+  //*/
   cube_destroy(solved);
   return 0;
 }
