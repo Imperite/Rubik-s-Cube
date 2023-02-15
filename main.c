@@ -123,16 +123,29 @@ int main()
   Cube* solved = cube_create();
   Cube* rotated;
 
+  /*
   //1st EXAMPLE:
   puts("1:To solve a solved cube:");
   solve(solved);
   puts("DONE\n");
-
+//*/
   //2nd EXAMPLE
-  rotated = cube_rotate(solved, WHITE, ROT_270);
+  // solved = cube_create();
+  rotated = cube_rotate(solved, YELLOW, ROT_270);
+  Cube* rotated2 = cube_rotate(rotated, RED, ROT_180);
+  cube_destroy(rotated);
+  rotated = cube_rotate(rotated2, GREEN, ROT_90);
+  cube_destroy(rotated2);
+  rotated2 = cube_rotate(rotated, RED, ROT_270);
+  cube_destroy(rotated);
+  rotated = cube_rotate(rotated2, WHITE, ROT_180);
+
+
   puts("2:To solve a front -90 rotation:");
+  cube_print(rotated);
   solve(rotated);
   cube_destroy(rotated);
+  cube_destroy(rotated2);
   puts("DONE\n");
 
 /*

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdatomic.h>
-//Based on the Michael and Scott paper,"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms"/
+//Based on the Michael and Scott paper,"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms"
+//Meant to be non-blocking for fastest operation
 
 typedef void Item;
 
@@ -84,9 +85,10 @@ Item* queue_pop(Queue* queue) {
         NodePointer next = head.ptr->next;
         if (head.count == queue->head.count && head.ptr == queue->head.ptr) {
             if (head.ptr == tail.ptr) {
-                if (next.ptr == NULL)
+                if (next.ptr == NULL)       // only one element in queue (the extra)
                     return NULL;
 
+                //help tail swap along, since tail has fallen behind
                 atomic_compare_exchange_strong(&queue->tail, &tail, ((NodePointer){ next.ptr, tail.count + 1 }));
             }
             obj = next.ptr->value;
@@ -103,7 +105,7 @@ Item* queue_pop(Queue* queue) {
 //TODO: check if threadsafe
 //probably not threadsafe, but I don't plan to run **during** any other threads - this is only for after the threaded operation has completed, ideally.
 void queue_for_each(Queue* queue, void(*toDo)(Item*)) {
-    Node* curr = queue->head.ptr;
+    Node* curr = queue->head.ptr->next.ptr;
     while (curr != NULL && curr->value != NULL) {
         toDo(curr->value);
         curr = curr->next.ptr;
@@ -112,4 +114,15 @@ void queue_for_each(Queue* queue, void(*toDo)(Item*)) {
 
 int queue_is_empty(Queue* queue) {
     return queue->head.ptr->next.ptr == NULL;
+}
+
+int queue_size(Queue* queue) {
+    Node* curr = queue->head.ptr->next.ptr;
+    int size = 0;
+    while (curr != NULL && curr->value != NULL) {
+        curr = curr->next.ptr;
+        size++;
+    }
+    return size;
+
 }

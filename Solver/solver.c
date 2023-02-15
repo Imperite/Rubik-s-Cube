@@ -16,26 +16,41 @@ bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved
 //returns true if the cube has been updated/inserted inside the storage, otherwise returns false.
 bool solver_update_cubestate(Storage storage, void* new, void** loc);
 
+void solver_cleanup(Storage storage, Queue queue, Cube* solved);
+
+
 
 // Solve acts as a wrapper function to print out the results of cube_solve. Creates a Storage and Queue in order to remember traversed nodes and boundary nodes.
 // Currently only works in one thread, but programmatically is ready for multi-threading (though storage needs locks)
 void solve(Cube* initial_state)
 {
     Cube* solved = cube_create();
+    puts("initial:");
+    cube_print(initial_state);
 
     Queue queue = queue_create();
     Storage storage = storage_create();
 
     CubeState* current = malloc(sizeof(CubeState));
-    current->cube = initial_state;
-    current->depth = 0;
-    current->moves = NULL;
+    *current = (CubeState){
+        .cube = initial_state,
+        .depth = 0,
+        .moves = NULL
+    };
+
+
     storage_insert(storage, current, cube_state_compare);
     bool isSolved = check_state(current, storage, queue, solved);
+    // size_t count = 0;
+    // size_t limit = 2;
 
     while (!queue_is_empty(queue) && !isSolved) {
         current = queue_pop(queue);
+        // printf("comp: %d\n", cube_compare(current->cube, solved));
+        // cube_state_print(current);
+        // cube_print(solved);
         isSolved = check_state(current, storage, queue, solved);
+        // puts("");
     }
 
     printf("solved: %d\n", isSolved);
@@ -49,13 +64,19 @@ void solve(Cube* initial_state)
     // puts("\nStorage:");
     // storage_print(storage, cube_state_print);
 
-    printf("SIZE: %d\n", storage_size(storage));
-    queue_for_each(queue, cube_state_destroy);
+    printf("STORAGE SIZE: %d\n", storage_size(storage));
+    printf("QUEUE SIZE: %d\n", queue_size(queue));
+
+    // queue_for_each(queue, cube_state_destroy);
+    CubeState* popped = queue_pop(queue);
+    while (popped != NULL)
+        popped = queue_pop(queue);
     queue_destroy(queue);
 
     storage_for_each(storage, cube_state_destroy);
     storage_destroy(storage);
-    free(solved);
+
+    cube_destroy(solved);
 }
 
 /*
@@ -71,12 +92,12 @@ bool check_state(CubeState* to_check, Storage storage, Queue queue, Cube* solved
 
     for (size_t side = WHITE; side <= RED; side++) {
         for (size_t rot = ROT_90;rot <= ROT_270; rot++) {
-            CubeState* new = cube_state_next(to_check, side, (rot % 3) + 1); //shift the rotation to check the 180 rotation first
+            CubeState* new = cube_state_next(to_check, side, rot);
+            //shift the rotation to check the 180 rotation first
             // storage_print(storage, cube_state_print);
 
             if (storage_do(storage, new, cube_state_compare, solver_update_cubestate)) { // try to add/modify existing version in storage
                 queue_push(queue, new);
-
             }
             else //delete state since already checked
             {
@@ -99,7 +120,6 @@ bool solver_update_cubestate(Storage storage, void* new, void** loc) {
 
     if (storage_loc != NULL) {// Found match in storage
         cube_state_destroy(*storage_loc);
-        // printf("\treplacing\n");
 
         **storage_loc = *newState;
     }

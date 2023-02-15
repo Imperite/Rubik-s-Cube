@@ -18,3 +18,5 @@ void queue_push(Queue queue, void* obj);
 void queue_for_each(Queue queue, void(*toDo)(void*));
 
 int queue_is_empty(Queue queue);
+
+int queue_size(Queue queue);
