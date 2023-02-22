@@ -64,8 +64,9 @@ CubeState* cube_state_next(CubeState* start, face side, rotation rot) {
     {
         cs->moves[i] = start->moves[i];
     }
-    cs->moves[cs->depth - 1].degree = rot;
-    cs->moves[cs->depth - 1].face = side;
+    cs->moves[cs->depth - 1] = (Change){
+        side, rot
+    };
     cs->cube = cube_rotate(start->cube, side, rot);
 
     return cs;

@@ -64,7 +64,7 @@ Subcube* subcube(Cube* cube, size_t i, size_t j, size_t k)
     case CORNER:
         return (*cube + i * 2 + j + k / 2);
     case SIDE:
-        return (*cube + NUM_CORNERS + subcube_index(i, j, k) + 1);
+        return (*cube + NUM_CORNERS + subcube_index(i, j, k));
     default:
         return &null;
     }

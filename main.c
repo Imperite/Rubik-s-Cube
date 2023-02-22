@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdatomic.h>
 
 #include "cube.h"
 #include "storage.h"
@@ -132,20 +133,19 @@ int main()
   //2nd EXAMPLE
   // solved = cube_create();
   rotated = cube_rotate(solved, YELLOW, ROT_270);
-  Cube* rotated2 = cube_rotate(rotated, RED, ROT_180);
-  cube_destroy(rotated);
-  rotated = cube_rotate(rotated2, GREEN, ROT_90);
-  cube_destroy(rotated2);
-  rotated2 = cube_rotate(rotated, RED, ROT_270);
-  cube_destroy(rotated);
-  rotated = cube_rotate(rotated2, WHITE, ROT_180);
+  // Cube* rotated2 = cube_rotate(rotated, RED, ROT_180);
+  // cube_destroy(rotated);
+  // rotated = cube_rotate(rotated2, GREEN, ROT_90);
+  // cube_destroy(rotated2);
+  // rotated2 = cube_rotate(rotated, RED, ROT_270);
+  // cube_destroy(rotated);
+  // rotated = cube_rotate(rotated2, WHITE, ROT_180);
 
 
   puts("2:To solve a front -90 rotation:");
-  cube_print(rotated);
   solve(rotated);
-  cube_destroy(rotated);
-  cube_destroy(rotated2);
+  // cube_destroy(rotated);
+  // cube_destroy(rotated2);
   puts("DONE\n");
 
 /*
