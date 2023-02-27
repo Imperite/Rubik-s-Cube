@@ -41,8 +41,6 @@ void solve(Cube* initial_state)
 
     storage_insert(storage, current, cube_state_compare);
     bool isSolved = check_state(current, storage, queue, solved);
-    // size_t count = 0;
-    // size_t limit = 2;
 
     while (!queue_is_empty(queue) && !isSolved) {
         current = queue_pop(queue);

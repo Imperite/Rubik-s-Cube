@@ -10,100 +10,9 @@
 #include "storage.h"
 #include "solver.h"
 
+void print_solved() {
 
-void rotate(char cube[7], face face, rotation rot) {
-  size_t rots[4];
-  switch (face)
-  {
-  case WHITE:
-    rots[0] = 1;
-    rots[1] = 2;
-    rots[2] = 4;
-    rots[3] = 5;
-    break;
-  case BLUE:
-    rots[0] = 0;
-    rots[1] = 5;
-    rots[2] = 3;
-    rots[3] = 2;
-    break;
-  case ORANGE:
-    rots[0] = 0;
-    rots[1] = 1;
-    rots[2] = 3;
-    rots[3] = 4;
-    break;
-  case YELLOW:
-    rots[0] = 1;
-    rots[1] = 5;
-    rots[2] = 4;
-    rots[3] = 2;
-    break;
-  case GREEN:
-    rots[0] = 0;
-    rots[1] = 2;
-    rots[2] = 3;
-    rots[3] = 5;
-    break;
-  case RED:
-    rots[0] = 0;
-    rots[1] = 4;
-    rots[2] = 3;
-    rots[3] = 1;
-    break;
-  default:
-    return;
-  }
-
-  int start = (rot == ROT_90 ? 0 : 3);
-  int step = (rot == ROT_90 ? 1 : -1);
-
-  char temp = cube[rots[start]];
-  // printf("\t%c\n", temp);
-  for (size_t i = 0; i < 3; i++)
-  {
-    // printf("\t%d: %c -> %c\n", start, cube[rots[start]], cube[rots[(start + step) % 4]]);
-    cube[rots[start]] = cube[rots[(start + step) % 4]];
-    start = (start + step) % 4;
-  }
-  // printf("\t%c -> %c\n", cube[rots[start]], temp);
-  cube[rots[start]] = temp;
-  // printf("%s", cube);
 }
-
-typedef struct state {
-  char value[7];
-  size_t depth;
-} State;
-
-
-void print(void* s) {
-  State* st = (State*)s;
-  printf("%s %zu", st->value, st->depth);
-}
-
-void print_path(void* s) {
-  State* st = s;
-  int depth = st->depth, count = -1;
-  int changes[3];
-
-  while (depth > 0) {
-    count++;
-    changes[count] = depth % 100;
-    depth /= 100;
-  }
-
-  char* face[] = { "White", "Blue", "Orange" };
-  char* rots[] = { "90", "180", "-90" };
-
-  printf("%s: ", st->value);
-  for (;count > -1; count--) {
-    size_t f = changes[count] / 10, r = changes[count] % 10;
-    printf("%s %s, ", face[f - 1], rots[r - 1]);
-  }
-  puts("");
-}
-
 
 int main()
 {
@@ -126,29 +35,31 @@ int main()
 
   /*
   //1st EXAMPLE:
+  Cube* rotated = cube_create();
   puts("1:To solve a solved cube:");
-  solve(solved);
+  solve(rotated);
   puts("DONE\n");
-//*/
+  // */
+
+
   //2nd EXAMPLE
   // solved = cube_create();
-  rotated = cube_rotate(solved, YELLOW, ROT_270);
-  // Cube* rotated2 = cube_rotate(rotated, RED, ROT_180);
-  // cube_destroy(rotated);
-  // rotated = cube_rotate(rotated2, GREEN, ROT_90);
-  // cube_destroy(rotated2);
-  // rotated2 = cube_rotate(rotated, RED, ROT_270);
-  // cube_destroy(rotated);
+  rotated = cube_rotate(solved, WHITE, ROT_270);
+  Cube* rotated2 = cube_rotate(rotated, RED, ROT_180);
+  cube_destroy(rotated);
+  rotated = cube_rotate(rotated2, GREEN, ROT_90);
+  cube_destroy(rotated2);
+  rotated2 = cube_rotate(rotated, RED, ROT_270);
+  cube_destroy(rotated);
   // rotated = cube_rotate(rotated2, WHITE, ROT_180);
-
+  // cube_destroy(rotated2);
 
   puts("2:To solve a front -90 rotation:");
-  solve(rotated);
+  solve(rotated2);
   // cube_destroy(rotated);
-  // cube_destroy(rotated2);
   puts("DONE\n");
 
-/*
+  /*
   //3rd EXAMPLE:
   rotated = cube_rotate(solved, WHITE, ROT_90);
   puts("3:To solve a cube rotated on front face 90:");
@@ -160,7 +71,6 @@ int main()
   rotated = cube_rotate(solved, YELLOW, ROT_270);
   puts("4:To solve a cube rotated on Back face 270:");
   solve(rotated);
-  cube_destroy(rotated);
   puts("DONE\n");
 
   //5th EXAMPLE:
@@ -169,16 +79,14 @@ int main()
   puts("5:To solve a cube rotated on front face 90 and the back 180:");
   cube_destroy(rotatedtmp);
   solve(rotated);
-  cube_destroy(rotated);
   puts("DONE\n");
 
   //6th EXAMPLE:
-  rotatedtmp = cube_rotate(solved, WHITE, ROT_90);
+  Cube* rotatedtmp = cube_rotate(solved, WHITE, ROT_90);
   rotated = cube_rotate(rotatedtmp, ORANGE, ROT_180);
   puts("6:To solve a cube rotated on front face 90 and the left 180:");
   cube_destroy(rotatedtmp);
   solve(rotated);
-  cube_destroy(rotated);
   puts("DONE\n");
   //*/
   cube_destroy(solved);
