@@ -19,9 +19,9 @@ int main()
   // Cube* solved = cube_create();
   // cube_print_vals(solved);
 
-  // cube_print(solved);
+  // cube_string(solved);
   // Cube* new = cube_rotate(solved, WHITE, ROT_90);
-  // cube_print(new);
+  // cube_string(new);
   // cube_destroy(solved);
   // cube_destroy(new);
   // /*
@@ -35,13 +35,13 @@ int main()
 
   /*
   //1st EXAMPLE:
-  Cube* rotated = cube_create();
+  rotated = cube_create();
   puts("1:To solve a solved cube:");
   solve(rotated);
   puts("DONE\n");
   // */
 
-
+  // /*
   //2nd EXAMPLE
   // solved = cube_create();
   rotated = cube_rotate(solved, WHITE, ROT_270);
@@ -49,13 +49,13 @@ int main()
   cube_destroy(rotated);
   rotated = cube_rotate(rotated2, GREEN, ROT_90);
   cube_destroy(rotated2);
-  rotated2 = cube_rotate(rotated, RED, ROT_270);
-  cube_destroy(rotated);
+  // rotated2 = cube_rotate(rotated, RED, ROT_270);
+  // cube_destroy(rotated);
   // rotated = cube_rotate(rotated2, WHITE, ROT_180);
   // cube_destroy(rotated2);
 
   puts("2:To solve a front -90 rotation:");
-  solve(rotated2);
+  solve(rotated);
   // cube_destroy(rotated);
   puts("DONE\n");
 

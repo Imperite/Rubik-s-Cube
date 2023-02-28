@@ -13,6 +13,8 @@ void* cube_randomized();
 // will require more work to visualize effectively, but should be doable
 void cube_print(void* cube);
 
+char* cube_string(void* cube);
+
 // returns form that will be put into the heap/radix tree to store and compare for later
 char* cube_to_string(void* cube);
 

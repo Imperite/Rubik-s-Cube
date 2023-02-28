@@ -130,7 +130,7 @@ void* thread_solve(void* info) {
         cube_state_print(current);
         // printf("comp: %d\n", cube_compare(current->cube, solved));
         // cube_state_print(current);
-        // cube_print(solved);
+        // puts(cube_string(solved));
         if (check_state(current, storage, queue, tInfo->solved)) {
             *isSolved = true;
             // printf("returning not null\n");

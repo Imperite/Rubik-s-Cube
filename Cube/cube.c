@@ -35,15 +35,15 @@ void cube_destroy(Cube* cube);
 
 Cube* cube_randomized();
 
-void subcube_print_face(Cube* cube, size_t i, size_t j, size_t k, enum axis axis);
+void subcube_print_face(Cube* cube, char* output, size_t* cursor, size_t i, size_t j, size_t k, enum axis axis);
 
-void print_top_or_bottom(Cube* cube, size_t layer, size_t row);
+void print_top_or_bottom(Cube* cube, char* output, size_t* cursor, size_t layer, size_t row);
 
-void print_center_row(Cube* cube, size_t layer, size_t row);
+void print_center_row(Cube* cube, char* output, size_t* cursor, size_t layer, size_t row);
 
-void cube_print_line(Cube* cube, size_t row, void(*printer_func)(Cube* cube, size_t layer, size_t row));
+void cube_print_line(Cube* cube, char* output, size_t* cursor, size_t row, void(*printer_func)(Cube* cube, char* output, size_t* cursor, size_t layer, size_t row));
 
-void cube_print(Cube* cube);
+char* cube_string(Cube* cube);
 
 void print_binary(char c);
 
@@ -122,47 +122,66 @@ Cube* randomize_cube() {
     return cube;
 }
 
-void subcube_print_face(Cube* cube, size_t i, size_t j, size_t k, enum axis axis) {
+void subcube_print_face(Cube* cube, char* output, size_t* cursor, size_t i, size_t j, size_t k, enum axis axis) {
     face faceColor = subcube_color_along_axis(*subcube(cube, i, j, k), axis, subcube_type(i, j, k));
-    printf("%c ", faceToChar(faceColor));
+    output[(*cursor)++] = faceToChar(faceColor);
+    output[(*cursor)++] = ' ';
+    // printf("%c ", faceToChar(faceColor));
 }
 
-void print_top_or_bottom(Cube* cube, size_t layer, size_t row) {
-    printf("  ");
+void print_top_or_bottom(Cube* cube, char* output, size_t* cursor, size_t layer, size_t row) {
+    output[(*cursor)++] = ' ';
+    output[(*cursor)++] = ' ';
+    // printf("  ");
     for (size_t i = 0; i < 3; i++)
     {
-        subcube_print_face(cube, layer, row, i, BG);
+        subcube_print_face(cube, output, cursor, layer, row, i, BG);
     }
-    printf("  ");
+    output[(*cursor)++] = ' ';
+    output[(*cursor)++] = ' ';
+    // printf("  ");
 }
 
-void print_center_row(Cube* cube, size_t layer, size_t row) {
-    subcube_print_face(cube, layer, row, 0, OR);
+void print_center_row(Cube* cube, char* output, size_t* cursor, size_t layer, size_t row) {
+    subcube_print_face(cube, output, cursor, layer, row, 0, OR);
 
     for (size_t j = 0; j < 3; j++)
     {
-        subcube_print_face(cube, layer, row, j, WY);
+        subcube_print_face(cube, output, cursor, layer, row, j, WY);
     }
 
-    subcube_print_face(cube, layer, row, 2, OR);
+    subcube_print_face(cube, output, cursor, layer, row, 2, OR);
 }
 
-void cube_print_line(Cube* cube, size_t row, void(*printer_func)(Cube* cube, size_t layer, size_t row)) {
+void cube_print_line(Cube* cube, char* output, size_t* cursor, size_t row, void(*printer_func)(Cube* cube, char* output, size_t* cursor, size_t layer, size_t row)) {
     for (size_t i = 0; i < 3; i++)
     {
-        printer_func(cube, i, row);
-        printf("\t");
+        printer_func(cube, output, cursor, i, row);
+        output[(*cursor)++] = '\t';
     }
-    puts("");
+    output[(*cursor)++] = '\n';
 }
 
+char* cube_string(Cube* cube) {
+    size_t* cursor = malloc(sizeof(size_t));
+    *cursor = 0;
+    char* output = calloc(171, sizeof(char));
+    cube_print_line(cube, output, cursor, 0, print_top_or_bottom);
+    cube_print_line(cube, output, cursor, 0, print_center_row);
+    cube_print_line(cube, output, cursor, 1, print_center_row);
+    cube_print_line(cube, output, cursor, 2, print_center_row);
+    cube_print_line(cube, output, cursor, 2, print_top_or_bottom);
+    // output[*cursor++] = '\n';
+    output[(*cursor)++] = '\0';
+    free(cursor);
+    return output;
+}
+
+
 void cube_print(Cube* cube) {
-    cube_print_line(cube, 0, print_top_or_bottom);
-    cube_print_line(cube, 0, print_center_row);
-    cube_print_line(cube, 1, print_center_row);
-    cube_print_line(cube, 2, print_center_row);
-    cube_print_line(cube, 2, print_top_or_bottom);
-    puts("");
+    char* s = cube_string(cube);
+    puts(s);
+    free(s);
 }
 
 void print_binary(char c) {

@@ -26,7 +26,7 @@ void solve(Cube* initial_state)
 {
     Cube* solved = cube_create();
     puts("initial:");
-    cube_print(initial_state);
+    cube_string(initial_state);
 
     Queue queue = queue_create();
     Storage storage = storage_create();
@@ -46,7 +46,7 @@ void solve(Cube* initial_state)
         current = queue_pop(queue);
         // printf("comp: %d\n", cube_compare(current->cube, solved));
         // cube_state_print(current);
-        // cube_print(solved);
+        // cube_string(solved);
         isSolved = check_state(current, storage, queue, solved);
         // puts("");
     }
