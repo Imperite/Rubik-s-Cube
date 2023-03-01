@@ -1,6 +1,6 @@
 # Rubik's Cube Project
 
-Originally done as a final project for my Data Structures class, with the primary focus on creating something that could theoretically work. Focus currently is on optimizing the data structure used to represent the cube's state, although I eventually would like to program it to solve a cube.
+Originally done as a final project for my Data Structures class, with the primary focus on creating something that could theoretically work. Focus currently is on optimizing the data structure used to represent the cube's state, although I eventually would like to program it to solve a cube. It currently works by creating a queue that threads then pull a cube from, check, and add it's unchecked connections to the queue and an arraylist.
 
 # Data Structure Description:
 
@@ -38,13 +38,13 @@ Rotation def also gives convenient translation for displaying original subcube
 - Optimize brute force by storing states generated off this one to allow for less re-checking
 - Change solver to use an algorithm instead of just brute force breadth-first search
   - Use hashes of state to turn solving into gradient descent problem?
-- clean up comments (sheesh, so many!)
 - Data Structure Optimizations:
   - Change data structure to work off only the rotations of the cubes from the original position - may allow for solving using linear algebra?
+  - use Hash table instead of arraylist for storing states
 
 # Alternative Algorithms:
 
-- Implement a parallelized form of the brute forcing method - would allow for massive speed-up
+- Implement a parallelized form of the brute forcing method - would allow for massive speed-up -- **DONE**; still not super fast, but limited more by space complexity than time at the momement
 - Use hashing to do gradient descent/modified A\*
 
 # Original Goals:
@@ -116,5 +116,5 @@ Here is the full breakdown of the moves to get to each face:
 # To Run:
 
 Simply type the command
-`gcc main.c ./Cube/cube.c ./Storage/arraylist.c ./Solver/solver.c ./Storage/queue.c -o main`
+`gcc main.c ./Cube/cube.c ./Storage/concurrent_arraylist.c ./Solver/concurrent_solver.c ./Storage/concurrent_queue.c -o main -g`
 from the top directory.

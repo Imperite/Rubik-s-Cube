@@ -8,7 +8,7 @@
 
 char* face_to_string[7] = { "ERROR", "front", "top", "left", "back", "bottom", "right" };
 char* rotation_to_string[4] = { "ERROR", "90", "180", "-90" };
-size_t THREADS = 4;
+size_t THREADS = 10;
 
 typedef struct threadInfo {
     bool* isSolved;
