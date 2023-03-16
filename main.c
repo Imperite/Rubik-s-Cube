@@ -9,6 +9,7 @@
 #include "cube.h"
 #include "storage.h"
 #include "solver.h"
+#include <pthread.h>
 
 void print_solved() {
 
@@ -56,7 +57,7 @@ int main()
 
   puts("2:To solve a front -90 rotation:");
   solve(rotated);
-  // cube_destroy(rotated);
+  cube_destroy(rotated);
   puts("DONE\n");
 
   /*

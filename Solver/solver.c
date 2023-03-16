@@ -16,45 +16,37 @@ bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved
 //returns true if the cube has been updated/inserted inside the storage, otherwise returns false.
 bool solver_update_cubestate(Storage storage, void* new, void** loc);
 
-void solver_cleanup(Storage storage, Queue queue, Cube* solved);
-
-
 
 // Solve acts as a wrapper function to print out the results of cube_solve. Creates a Storage and Queue in order to remember traversed nodes and boundary nodes.
 // Currently only works in one thread, but programmatically is ready for multi-threading (though storage needs locks)
 void solve(Cube* initial_state)
 {
     Cube* solved = cube_create();
-    puts("initial:");
-    cube_string(initial_state);
 
     Queue queue = queue_create();
     Storage storage = storage_create();
 
     CubeState* current = malloc(sizeof(CubeState));
     *current = (CubeState){
-        .cube = initial_state,
         .depth = 0,
         .moves = NULL
     };
-
+    for (size_t i = 0; i < 20; i++)
+    {
+        current->cube[i] = (*initial_state)[i];
+    }
 
     storage_insert(storage, current, cube_state_compare);
-    bool isSolved = check_state(current, storage, queue, solved);
 
+    bool isSolved = check_state(current, storage, queue, solved);
     while (!queue_is_empty(queue) && !isSolved) {
         current = queue_pop(queue);
-        // printf("comp: %d\n", cube_compare(current->cube, solved));
-        // cube_state_print(current);
-        // cube_string(solved);
         isSolved = check_state(current, storage, queue, solved);
-        // puts("");
     }
 
     printf("solved: %d\n", isSolved);
-    // cube_state_print(current);
     for (size_t i = 0; i < current->depth; ++i) {
-        printf("do a %s %s degree turn\n", face_to_string[current->moves[i].face + 1], rotation_to_string[current->moves[i].degree]);
+        printf("do a %s turn\n", id_to_str[current->moves[i].change_id]);
     }
 
     // puts("Queue:");
@@ -65,10 +57,6 @@ void solve(Cube* initial_state)
     printf("STORAGE SIZE: %d\n", storage_size(storage));
     printf("QUEUE SIZE: %d\n", queue_size(queue));
 
-    // queue_for_each(queue, cube_state_destroy);
-    CubeState* popped = queue_pop(queue);
-    while (popped != NULL)
-        popped = queue_pop(queue);
     queue_destroy(queue);
 
     storage_for_each(storage, cube_state_destroy);
