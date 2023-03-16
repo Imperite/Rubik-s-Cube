@@ -4,6 +4,7 @@
 #include "../queue.h"
 #include "cubestate.c"
 #include <pthread.h>
+#include <stdatomic.h>
 #include <stdlib.h>
 
 char* face_to_string[7] = { "ERROR", "front", "top", "left", "back", "bottom", "right" };
@@ -28,7 +29,7 @@ void* thread_solve(void* info);
 bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved);
 
 //returns true if the cube has been updated/inserted inside the storage, otherwise returns false.
-bool solver_update_cubestate(Storage storage, void* new, void** loc);
+void* solver_update_cubestate(Storage storage, void* new, void** loc);
 
 
 void solve(Cube* initial_state) {
@@ -39,10 +40,14 @@ void solve(Cube* initial_state) {
 
     CubeState* current = malloc(sizeof(CubeState));
     *current = (CubeState){
-        .cube = initial_state,
         .depth = 0,
         .moves = NULL
     };
+    for (size_t i = 0; i < 20; i++)
+    {
+        current->cube[i] = (*initial_state)[i];
+    }
+
 
     CubeState* finalState;
 
@@ -58,9 +63,9 @@ void solve(Cube* initial_state) {
         free(isSolved);
     }
 
-    // cube_state_print(current);
     for (size_t i = 0; i < finalState->depth; ++i) {
-        printf("do a %s %s degree turn\n", face_to_string[finalState->moves[i].face + 1], rotation_to_string[finalState->moves[i].degree]);
+        printf("do a %s turn\n", id_to_str[finalState->moves[i].change_id]);
+        // printf("do a %s %s degree turn\n", face_to_string[finalState->moves[i].face + 1], rotation_to_string[finalState->moves[i].degree]);
     }
     // free(finalState);
     // free(result);
@@ -123,11 +128,11 @@ void* thread_solve(void* info) {
     Queue queue = tInfo->queue;
     Storage storage = tInfo->storage;
 
-    printf("%zu starting\n", tInfo->id);
+    // printf("%zu starting\n", tInfo->id);
     while (!queue_is_empty(queue) && !*isSolved) {
         CubeState* current = queue_pop(queue);
-        printf("%zu checking new state:\n", tInfo->id);
-        cube_state_print(current);
+        printf("Thread %zu: depth %zu\n", tInfo->id, current->depth);
+        // cube_state_print(current);
         // printf("comp: %d\n", cube_compare(current->cube, solved));
         // cube_state_print(current);
         // puts(cube_string(solved));
@@ -158,9 +163,9 @@ bool check_state(CubeState* to_check, Storage storage, Queue queue, Cube* solved
             CubeState* new = cube_state_next(to_check, side, rot);
             //shift the rotation to check the 180 rotation first
             // storage_print(storage, cube_state_print);
-
-            if (storage_do(storage, new, cube_state_compare, solver_update_cubestate)) { // try to add/modify existing version in storage
-                queue_push(queue, new);
+            CubeState* result = storage_do(storage, new, cube_state_compare, solver_update_cubestate);
+            if (result != NULL) { // try to add/modify existing version in storage
+                queue_push(queue, result);
             }
             else //delete state since already checked
             {
@@ -172,23 +177,30 @@ bool check_state(CubeState* to_check, Storage storage, Queue queue, Cube* solved
 }
 
 
-bool solver_update_cubestate(Storage storage, void* new, void** loc) {
+void* solver_update_cubestate(Storage storage, void* new, void** loc) {
     CubeState* newState = (CubeState*) new;
 
     CubeState** storage_loc = (CubeState**)loc;
-    if (storage_loc != NULL && (*storage_loc)->depth <= newState->depth) { // failure case: storage has this but has already traversed this state
-        // printf("\treturning bc null or traversed\n");
-        return false;
-    }
+    // if (storage_loc != NULL && (*storage_loc)->depth <= newState->depth) { // failure case: storage has this but has already traversed this state
+    //     // printf("\treturning bc null or traversed\n");
+    //     return false;
+    // }
 
     if (storage_loc != NULL) {// Found match in storage
-        cube_state_destroy(*storage_loc);
-
-        **storage_loc = *newState;
+        // cube_state_destroy(*storage_loc);
+        while (1) {
+            size_t depth = (*storage_loc)->depth;
+            if (depth <= newState->depth)
+                return NULL;
+            atomic_compare_exchange_strong(&(*storage_loc)->depth, &depth, newState->depth);
+        }
+        cube_state_destroy(newState);
+        return *storage_loc;
+        // **storage_loc = *newState;
     }
     else {
         // printf("\tinserting\n");
         storage_insert(storage, newState, cube_state_compare);
+        return newState;
     }
-    return true;
 }

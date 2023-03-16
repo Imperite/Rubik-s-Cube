@@ -44,7 +44,7 @@ Rotation def also gives convenient translation for displaying original subcube
 
 # Alternative Algorithms:
 
-- Implement a parallelized form of the brute forcing method - would allow for massive speed-up -- **DONE**; still not super fast, but limited more by space complexity than time at the momement (currently ~23M bytes for W-90 R180 G9 as starting point)
+- Implement a parallelized form of the brute forcing method - would allow for massive speed-up -- **DONE**; still not super fast, but limited more by space complexity than time at the momement (currently ~8M bytes for W-90 R180 G9 as starting point)
 - Use hashing to do gradient descent/modified A\*
 
 # Original Goals:

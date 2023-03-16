@@ -21,7 +21,7 @@ void* storage_replace(Storage storage, void* obj, int(*compare)(void*, void*));
 void** storage_location_of(Storage storage, void* obj, int(*compare)(void*, void*));
 
 // calls function do_on on the location in memory provided. Does not guarantee location is not null.
-bool storage_do(Storage storage, void* obj, int(*compare)(void*, void*), bool(*do_on)(Storage, void*, void**));
+void* storage_do(Storage storage, void* obj, int(*compare)(void*, void*), void* (*do_on)(Storage, void*, void**));
 
 int storage_size(Storage storage);
 

@@ -8,7 +8,7 @@ typedef void Item;
 
 typedef struct container {
     Item* item;
-    pthread_mutex_t lock;
+    // pthread_mutex_t lock;
 
 } Container;
 
@@ -19,7 +19,7 @@ typedef struct array_list
     size_t size;
     size_t capacity;
     pthread_mutex_t lock;
-    Container** data;
+    Item** data;
 } ArrayList;
 typedef ArrayList* ArrayListPtr;
 
@@ -34,7 +34,7 @@ void resize_Storage(ArrayListPtr list);
 
 Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*));
 
-bool storage_do(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*), bool(*do_on)(ArrayListPtr, Item*, Item**));
+void* storage_do(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*), void* (*do_on)(ArrayListPtr, Item*, Item**));
 
 int storage_size(ArrayListPtr list);
 
@@ -55,11 +55,11 @@ ArrayListPtr storage_create()
 void storage_destroy(ArrayListPtr list)
 {
     pthread_mutex_lock(&list->lock);
-    for (size_t i = 0; i < list->size; i++)
-    {
-        pthread_mutex_destroy(&list->data[i]->lock);
-        free(list->data[i]);
-    }
+    // for (size_t i = 0; i < list->size; i++)
+    // {
+    //     // pthread_mutex_destroy(&list->data[i]->lock);
+    //     free(list->data[i]);
+    // }
     pthread_mutex_unlock(&list->lock);
     pthread_mutex_destroy(&list->lock);
     free(list->data);
@@ -75,10 +75,10 @@ void storage_insert(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*))
     for (i = list->size++; i > 0 && compare(obj, list->data[i - 1]) < 0; --i)
         list->data[i] = list->data[i - 1];
 
-    Container* newContainer = malloc(sizeof(Container));
-    *newContainer = (Container){ .item = obj };
-    pthread_mutex_init(&newContainer->lock, NULL);
-    list->data[i] = newContainer;
+    // Container* newContainer = malloc(sizeof(Container));
+    // *newContainer = (Container){ .item = obj };
+    // pthread_mutex_init(&newContainer->lock, NULL);
+    list->data[i] = obj;
     pthread_mutex_unlock(&list->lock);
 
 }
@@ -101,13 +101,13 @@ Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, It
     while (left <= right)
     {
         mid = (left + right) / 2;
-        int comp = compare(obj, list->data[mid]->item);
+        int comp = compare(obj, list->data[mid]);
         if (comp >= 1)
             left = mid + 1;
         else if (comp <= -1)
             right = mid - 1;
         else if (comp == 0) {
-            value = (Item**)*(list->data + mid);
+            value = (list->data + mid);
             break;
         }
     }
@@ -116,19 +116,19 @@ Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, It
 }
 
 
-bool storage_do(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*), bool(*do_on)(ArrayListPtr, Item*, Item**)) {
+void* storage_do(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*), void* (*do_on)(ArrayListPtr, Item*, Item**)) {
     Container* c = (Container*)storage_location_of(list, obj, compare);
 
-    pthread_mutex_t* lock = NULL;
-    if (c != NULL)
-        lock = &c->lock;
+    // pthread_mutex_t* lock = NULL;
+    // if (c != NULL)
+    //     lock = &c->lock;
 
-    if (lock != NULL)
-        pthread_mutex_lock(lock);
+    // if (lock != NULL)
+    //     pthread_mutex_lock(lock);
 
-    bool result = do_on(list, obj, (Item**)c);
-    if (lock != NULL)
-        pthread_mutex_unlock(lock);
+    void* result = do_on(list, obj, (Item**)c);
+    // if (lock != NULL)
+    //     pthread_mutex_unlock(lock);
 
     return result;
 }
@@ -138,7 +138,7 @@ void storage_for_each(ArrayListPtr list, void(*function)(Item*)) {
     for (size_t i = 0; i < list->size; i++)
     {
         // pthread_mutex_lock(&(list->data[i])->lock);
-        function(list->data[i]->item);
+        function(list->data[i]);
         // pthread_mutex_unlock(&list->data[i]->lock);
     }
 
