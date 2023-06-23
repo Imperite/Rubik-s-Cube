@@ -1,3 +1,10 @@
+/**
+ * @file cube.c
+ * @author David  B (dsbradle)
+ *
+ * Implementation of the cube as a 20-byte array. Each subcube is represented as one byte.
+ *
+ */
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -6,20 +13,21 @@
 #include "cube.h"
 #include "subcube.c"
 
-// TODO: try splitting into a 2x2x2 of corners and something for sides?
-// typedef Subcube Cube[20];
 
-#define NUM_CORNERS 8
-#define NUM_SIDES 12
+// Size of the cube being stored
+const size_t CUBE_STORAGE_SIZE = 20;
 
-size_t CUBE_STORAGE_SIZE = 20;
-
+/**
+ * Current implementation of cube - just a 20-byte array.
+ */
 struct cube {
     char cubes[20];
 };
 
-Subcube null = -1;
+/** Null subcube*/
+const Subcube null = -1;
 
+/**Array used for knowing where the rotation goes to next for corners*/
 size_t cornerRotationOrder[4][2] = {
     {0,0},
     {0,2},
@@ -27,6 +35,7 @@ size_t cornerRotationOrder[4][2] = {
     {2,0}
 };
 
+/**Array used for knowing where the rotation goes to next for sides*/
 size_t sideRotationOrder[4][2] = {
     {0,1},
     {1,2},
@@ -34,32 +43,72 @@ size_t sideRotationOrder[4][2] = {
     {1,0},
 };
 
+/**
+ * Returns a pointer to the location of the subcube in the cube structure based on a 3D coordinate.
+ * @param cube  the cube the subcube is in
+ * @param i the x-coordinate of the subcube
+ * @param j the y-coordinate of the subcube
+ * @param k the z-coordinate of the subcube
+ * @return Subcube*  the pointer to the subcube in memory
+ */
 Subcube* subcube(const Cube* cube, size_t i, size_t j, size_t k);
 
-Cube* cube_create();
 
-void cube_destroy(Cube* cube);
-
-Cube* cube_randomized();
-
+/**
+ * Adds the face color of the specified subcube to the output
+ * @param cube the cube to pull from
+ * @param output the output to place to
+ * @param cursor the cursor to place the color at
+ * @param i the x coord of the subcube
+ * @param j the y coord of the subcube
+ * @param k the z coord of the subcube
+ * @param axis the axis to get the color of the subcube from
+ */
 void subcube_print_face(const Cube* cube, char* output, size_t* cursor, size_t i, size_t j, size_t k, enum axis axis);
 
+/**
+ * Prints the top or bottom surface of a cube slice
+ * @param cube the cube to pull from
+ * @param output the output to print into
+ * @param cursor the index to place the output at
+ * @param layer the layer of the cube being printed
+ * @param row the row of the cube to print
+ */
 void print_top_or_bottom(const Cube* cube, char* output, size_t* cursor, size_t layer, size_t row);
 
+/**
+ * Prints a center row of the cube slice
+ * @param cube the cube to pull from
+ * @param output the output to print into
+ * @param cursor the index to place the output at
+ * @param layer the layer of the cube being printed
+ * @param row the row of the cube to print
+ */
 void print_center_row(const Cube* cube, char* output, size_t* cursor, size_t layer, size_t row);
 
+/**
+ * Prints a line of all slices to the output.
+ * @param cube the cube to pull from
+ * @param output the output to print to
+ * @param cursor the index to place the output at
+ * @param row the row to print
+ * @param printer_func the function to use for printing
+ */
 void cube_print_line(const Cube* cube, char* output, size_t* cursor, size_t row, void(*printer_func)(const Cube* cube, char* output, size_t* cursor, size_t layer, size_t row));
 
-char* cube_string(const Cube* cube);
-
+/**
+ * Prints the binary form of the character(byte)
+ * @param c the byte to print out
+ */
 void print_binary(char c);
 
-void cube_print_vals(const Cube* cube);
-
-Cube* cube_rotate(const Cube* cube, const face side, const rotation rot);
-
-int cube_compare(const Cube* state1, const Cube* state2);
-
+/**
+ * Used to get the next position in a sequence when rotating along a face.
+ * @param face the face rotating along
+ * @param index  the current index of the subcube being rotated
+ * @param ordering the ordering used for rotation
+ * @param pos the position to return
+ */
 void pos(face face, size_t index, size_t ordering[4][2], size_t pos[3]);
 
 
@@ -97,7 +146,7 @@ Cube* cube_create()
     return cube;
 }
 
-Cube* copy(const Cube* cube)
+Cube* cube_copy(const Cube* cube)
 {
     size_t dim = 3;
     Cube* newCube = malloc(sizeof(Cube));
@@ -119,7 +168,7 @@ void cube_destroy(Cube* cube)
     free(cube);
 }
 
-Cube* randomize_cube()
+Cube* cube_randomized()
 {
     Cube* cube = cube_create();
     return cube;
@@ -217,7 +266,6 @@ void cube_print_vals(const Cube* cube)
 
 }
 
-//used to get the next position in a sequence when rotating along a face.
 void pos(face face, size_t index, size_t ordering[4][2], size_t pos[3])
 {
     enum axis ax = faceToAxis(face);
@@ -236,7 +284,7 @@ Cube* cube_rotate(const Cube* cube, face side, rotation rot)
     if (shift == 3) shift = -1;
     if (side == YELLOW || side == BLUE || side == RED) shift *= -1;
 
-    Cube* newCube = copy(cube);
+    Cube* newCube = cube_copy(cube);
 
     //shift the correct faces
     size_t nextIndex = shift % 4;

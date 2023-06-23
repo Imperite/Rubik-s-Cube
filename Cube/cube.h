@@ -1,10 +1,24 @@
+/**
+ * @file cube.h
+ * @author David  B (dsbradle)
+ *
+ * Provides an interface for modifying, storing and accessing cubes.
+ *
+ */
 #ifndef _cube_h
 
 #define _cube_h
 
 #include <stddef.h>
-// #include "cube_constants.c"
 
+
+/** Cosntant for the number of corner subcubes in a cube*/
+#define NUM_CORNERS 8
+
+/** Constant for the number of side subcubes in a cube*/
+#define NUM_SIDES 12
+
+/** Types of faces used for orienting cube*/
 typedef enum faces
 {
   BLANK = -1,
@@ -16,6 +30,7 @@ typedef enum faces
   RED = 5
 } face;
 
+/** Possible rotations of a side of the cube*/
 typedef enum rotations
 {
   NONE = 0,
@@ -24,39 +39,99 @@ typedef enum rotations
   ROT_270 = 3
 } rotation;
 
-extern size_t CUBE_STORAGE_SIZE;
+/**Different axes of for a*/
+enum axis
+{
+  WY = 0,
+  BG = 1,
+  OR = 2
+};
 
+/** Size used for storage of a cube*/
+extern const size_t CUBE_STORAGE_SIZE;
+
+/**Struct used for storing cube*/
 typedef struct cube Cube;
 
 
-// generates solved cube state. Not needed, but useful for demostrating how everything's stored and rotations
+/**
+ * Creates a default cube.
+ * @return Cube* the new cube
+ */
 Cube* cube_create();
 
 // destroys cube
+/**
+ * Destroys the cube, freeing its memory.
+ * @param cube the cube to free
+ */
 void cube_destroy(Cube* cube);
 
+/**
+ *  Copies the cube into a new address.
+ * @param cube the cube to copy
+ * @return Cube* the new instance of the cube
+ */
 Cube* cube_copy(const Cube* cube);
 
 // With the new methods, generating a solved cube is very simple and not costly at all, but randomizing will likely take time.
+/**
+ * UNIMPLEMENTED
+ * Creates a new cube and randomizes it.
+ * @return Cube*
+ */
 Cube* cube_randomized();
 
 // will require more work to visualize effectively, but should be doable
+/**
+ * Prints the cube in a formatted fashion
+ * @param cube  the cube to print
+ */
 void cube_print(const Cube* cube);
 
+/**
+ * Returns a string form of the cube's state
+ * @param cube the cube to return the state of
+ * @return char* a string of the cube's state
+ */
 char* cube_string(const Cube* cube);
 
-// returns form that will be put into the heap/radix tree to store and compare for later
+/**
+ * returns a form that will be put into the heap/radix tree to store and compare for later
+ * @param cube
+ * @return char*
+ */
 char* cube_to_string(const Cube* cube);
 
 // returns a new cube representing the input cube rotated on a specific face
+/**
+ * Creates a duplicate cube rotated on the specified side by the amount provided
+ * @param cube the cube to rotate
+ * @param side the side to rotate on
+ * @param rot the amount to rotate
+ * @return Cube* the new cube
+ */
 Cube* cube_rotate(const Cube* cube, const face side, const rotation rot);
 
-// Compares 2 cubes; used for both sorting and equality. Takes in 2 Cubes, but needed to label them as void * here to allow use with Storage.
+/**
+ * Compares cubes and returns an int representing if state1 is less (negative), equal (zero), or more (positive) than state2
+ * @param state1 the first cube to compare
+ * @param state2 the second cube to compare
+ * @return int the difrerence between the cubes
+ */
 int cube_compare(const Cube* state1, const Cube* state2);
 
-//prints the cubes value and the binary form
+/**
+ * Prints the cube's value and binary representation of each subcube
+ * @param cube the cube to print
+ */
 void cube_print_vals(const Cube* cube);
 
-//returns a hash of the cube
+/**
+ * UNIMPLEMENTED
+ * Returns a hash of the cube
+ * @param cube  the cube to hash
+ * @return size_t the hash of the cube
+ */
 size_t cube_hash(const Cube* cube);
 #endif
