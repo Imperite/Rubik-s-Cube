@@ -18,8 +18,8 @@ int main()
   // cube_string(solved);
   // Cube* new = cube_rotate(solved, WHITE, ROT_90);
   // cube_string(new);
-  // cube_destroy(solved);
-  // cube_destroy(new);
+  // cube_free(solved);
+  // cube_free(new);
   // /*
     //Obviously, I don't have the power to test this function and see if it works fully in 15 min, but here, I've simulated the two main different types of circumstances that could occur, of 3:
       //a) the cube is some number of rotations away on the front face, in which case this the first and second examples prove that it works
@@ -42,17 +42,17 @@ int main()
   // solved = cube_create();
   rotated = cube_rotate(solved, WHITE, ROT_270);
   Cube* rotated2 = cube_rotate(rotated, RED, ROT_180);
-  cube_destroy(rotated);
+  cube_free(rotated);
   rotated = cube_rotate(rotated2, GREEN, ROT_90);
-  cube_destroy(rotated2);
+  cube_free(rotated2);
   // rotated2 = cube_rotate(rotated, RED, ROT_270);
-  // cube_destroy(rotated);
+  // cube_free(rotated);
   // rotated = cube_rotate(rotated2, WHITE, ROT_180);
-  // cube_destroy(rotated2);
+  // cube_free(rotated2);
 
   puts("2:To solve a front -90 rotation:");
   solve(rotated);
-  cube_destroy(rotated);
+  cube_free(rotated);
   puts("DONE\n");
 
   /*
@@ -60,7 +60,7 @@ int main()
   rotated = cube_rotate(solved, WHITE, ROT_90);
   puts("3:To solve a cube rotated on front face 90:");
   solve(rotated);
-  cube_destroy(rotated);
+  cube_free(rotated);
   puts("DONE\n");
 
   //4th EXAMPLE:
@@ -73,7 +73,7 @@ int main()
   Cube* rotatedtmp = cube_rotate(solved, WHITE, ROT_90);
   rotated = cube_rotate(rotatedtmp, YELLOW, ROT_180);
   puts("5:To solve a cube rotated on front face 90 and the back 180:");
-  cube_destroy(rotatedtmp);
+  cube_free(rotatedtmp);
   solve(rotated);
   puts("DONE\n");
 
@@ -81,10 +81,10 @@ int main()
   Cube* rotatedtmp = cube_rotate(solved, WHITE, ROT_90);
   rotated = cube_rotate(rotatedtmp, ORANGE, ROT_180);
   puts("6:To solve a cube rotated on front face 90 and the left 180:");
-  cube_destroy(rotatedtmp);
+  cube_free(rotatedtmp);
   solve(rotated);
   puts("DONE\n");
   //*/
-  cube_destroy(solved);
+  cube_free(solved);
   return 0;
 }

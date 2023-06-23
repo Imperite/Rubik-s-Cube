@@ -50,51 +50,54 @@ enum axis
 /** Size used for storage of a cube*/
 extern const size_t CUBE_STORAGE_SIZE;
 
+/** Size of the printed form of the cube*/
+extern const size_t CUBE_PRINT_SIZE;
+
 /**Struct used for storing cube*/
 typedef struct cube Cube;
 
 
 /**
- * Creates a default cube.
- * @return Cube* the new cube
+ * Initializes a default cube.
+ * @param cube the cube to initialize
  */
-Cube* cube_create();
+void cube_create(Cube* cube);
 
 // destroys cube
 /**
  * Destroys the cube, freeing its memory.
  * @param cube the cube to free
  */
-void cube_destroy(Cube* cube);
+void cube_free(Cube* cube);
 
 /**
  *  Copies the cube into a new address.
- * @param cube the cube to copy
- * @return Cube* the new instance of the cube
+ * @param original the cube to copy
+ * @param copy the place to put the copy of the cube
  */
-Cube* cube_copy(const Cube* cube);
+void cube_copy(const Cube* original, Cube* copy);
 
 // With the new methods, generating a solved cube is very simple and not costly at all, but randomizing will likely take time.
 /**
  * UNIMPLEMENTED
  * Creates a new cube and randomizes it.
- * @return Cube*
+ * @param cube the cube to randomize
  */
-Cube* cube_randomized();
+void cube_randomized(Cube* cube);
 
-// will require more work to visualize effectively, but should be doable
-/**
- * Prints the cube in a formatted fashion
- * @param cube  the cube to print
- */
+  // will require more work to visualize effectively, but should be doable
+  /**
+   * Prints the cube in a formatted fashion
+   * @param cube  the cube to print
+   */
 void cube_print(const Cube* cube);
 
 /**
  * Returns a string form of the cube's state
  * @param cube the cube to return the state of
- * @return char* a string of the cube's state
+ * @param dest the array to place the string in
  */
-char* cube_string(const Cube* cube);
+void cube_string(char dest[CUBE_PRINT_SIZE], const Cube* cube);
 
 /**
  * returns a form that will be put into the heap/radix tree to store and compare for later
@@ -107,11 +110,11 @@ char* cube_to_string(const Cube* cube);
 /**
  * Creates a duplicate cube rotated on the specified side by the amount provided
  * @param cube the cube to rotate
+ * @param newCube the pointer to where the new cube should be
  * @param side the side to rotate on
  * @param rot the amount to rotate
- * @return Cube* the new cube
  */
-Cube* cube_rotate(const Cube* cube, const face side, const rotation rot);
+void cube_rotate(const Cube* cube, Cube* newCube, const face side, const rotation rot);
 
 /**
  * Compares cubes and returns an int representing if state1 is less (negative), equal (zero), or more (positive) than state2

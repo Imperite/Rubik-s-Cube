@@ -43,7 +43,7 @@ void cube_state_destroy(void* c1)
 {
     CubeState* state = ((CubeState*)c1);
     // cube_state_print(state);
-    // cube_destroy(state->cube);
+    // cube_free(state->cube);
     free(state->moves);
     free(state);
 }

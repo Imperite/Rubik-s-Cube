@@ -63,7 +63,7 @@ void solve(Cube* initial_state)
     storage_for_each(storage, cube_state_destroy);
     storage_destroy(storage);
 
-    cube_destroy(solved);
+    cube_free(solved);
 }
 
 /*
