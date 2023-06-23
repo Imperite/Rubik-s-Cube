@@ -41,7 +41,7 @@ void storage_destroy(ArrayListPtr list)
 
 void storage_insert(ArrayListPtr list, Item obj, Comparator compare)
 {
-    resize_Storage(list);
+    storage_resize(list);
     size_t i;
 
     for (i = list->size++; i > 0 && compare(obj, list->data[i - 1]) < 0; --i)
@@ -50,7 +50,7 @@ void storage_insert(ArrayListPtr list, Item obj, Comparator compare)
     list->data[i] = obj;
 }
 
-void resize_Storage(ArrayListPtr list)
+void storage_resize(ArrayListPtr list)
 {
     if (list->size == list->capacity) {
         list->capacity *= 2;
@@ -94,7 +94,7 @@ Item* storage_location_of(const ArrayListPtr list, const Item obj, Comparator co
 }
 
 
-Item storage_do(ArrayListPtr list, const Item obj, Comparator compare, Item(*do_on)(ArrayListPtr, const Item, Item*))
+Item storage_do(ArrayListPtr list, const Item obj, Comparator compare, Item(*do_on)(ArrayListPtr, const void*, Item*))
 {
     return do_on(list, obj, storage_location_of(list, obj, compare));
 }

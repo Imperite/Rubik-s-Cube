@@ -5,6 +5,8 @@
  * Basic Queue interface.
  * Allows me to change the underlying code (i.e. hopefully add locks to allow for concurrency) without changing the interface.
  */
+#ifndef queue_h
+#define queue_h
 
 /** Queue datastructure used by methods*/
 typedef struct queue Queue;
@@ -15,9 +17,9 @@ typedef void* Item;
 
 /**
  * Initializes a Queue, returning the stuct used.
- * @return Queue* the initialized queue
+ * @param queue the queue to initalize
  */
-Queue* queue_create();
+void queue_create(Queue* queue);
 
 /**
  * Destroys the queue and anything nodes in it. DOES NOT FREE ITEMS IN QUEUE.
@@ -60,3 +62,5 @@ int queue_is_empty(const Queue* queue);
  * @return int the size of the queue
  */
 int queue_size(const Queue* queue);
+
+#endif

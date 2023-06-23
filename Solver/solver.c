@@ -15,16 +15,18 @@ void solve(Cube* initial_state);
 bool check_state(CubeState* to_check, Storage storage, Queue* queue, Cube* solved);
 
 //returns true if the cube has been updated/inserted inside the storage, otherwise returns false.
-Item* solver_update_cubestate(Storage storage, const void* new, void** loc);
+Item solver_update_cubestate(Storage storage, const void* new, void** loc);
 
 
 // Solve acts as a wrapper function to print out the results of cube_solve. Creates a Storage and Queue in order to remember traversed nodes and boundary nodes.
 // Currently only works in one thread, but programmatically is ready for multi-threading (though storage needs locks)
 void solve(Cube* initial_state)
 {
-    Cube* solved = cube_create();
+    Cube* solved = malloc(sizeof(solved));
+    cube_create(solved);
 
-    Queue* queue = queue_create();
+    Queue* queue = malloc(sizeof(queue));
+    queue_create(queue);
     Storage storage = storage_create();
 
     CubeState* current = malloc(sizeof(CubeState));
@@ -32,7 +34,7 @@ void solve(Cube* initial_state)
         .depth = 0,
         .moves = NULL
     };
-    current->cube = cube_copy(initial_state);
+    cube_copy(initial_state, current->cube);
     // for (size_t i = 0; i < 20; i++) {
     //     current->cube[i] = (*initial_state)[i];
     // }
@@ -97,7 +99,7 @@ bool check_state(CubeState* to_check, Storage storage, Queue* queue, Cube* solve
 }
 
 
-Item* solver_update_cubestate(Storage storage, const void* new, void** loc)
+Item solver_update_cubestate(Storage storage, const void* new, void** loc)
 {
     CubeState* newState = (CubeState*) new;
 
@@ -116,5 +118,5 @@ Item* solver_update_cubestate(Storage storage, const void* new, void** loc)
         // printf("\tinserting\n");
         storage_insert(storage, newState, cube_state_compare);
     }
-    return *loc;
+    return loc;
 }

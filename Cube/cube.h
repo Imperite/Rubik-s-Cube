@@ -5,9 +5,8 @@
  * Provides an interface for modifying, storing and accessing cubes.
  *
  */
-#ifndef _cube_h
-
-#define _cube_h
+#ifndef cube_h
+#define cube_h
 
 #include <stddef.h>
 
@@ -52,6 +51,8 @@ extern const size_t CUBE_STORAGE_SIZE;
 
 /** Size of the printed form of the cube*/
 extern const size_t CUBE_PRINT_SIZE;
+
+
 
 /**Struct used for storing cube*/
 typedef struct cube Cube;

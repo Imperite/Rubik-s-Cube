@@ -23,7 +23,7 @@ typedef struct storage
     size_t size;
     size_t capacity;
     pthread_mutex_t lock;
-    Item** data;
+    Item* data;
 } ArrayList;
 typedef ArrayList* ArrayListPtr;
 
@@ -92,7 +92,7 @@ Item* storage_location_of(const ArrayListPtr list, const Item obj, Comparator co
     int left = 0;
     int right = list->size - 1;
     int mid;
-    Item* value = NULL;
+    Item value = NULL;
     while (left <= right) {
         mid = (left + right) / 2;
         int comp = compare(obj, list->data[mid]);
@@ -110,7 +110,7 @@ Item* storage_location_of(const ArrayListPtr list, const Item obj, Comparator co
 }
 
 
-Item storage_do(ArrayListPtr list, const Item obj, Comparator compare, void* (*do_on)(ArrayListPtr, const Item, Item*))
+Item storage_do(ArrayListPtr list, const Item obj, Comparator compare, void* (*do_on)(ArrayListPtr, const void*, Item*))
 {
     Container* c = (Container*)storage_location_of(list, obj, compare);
 
@@ -121,7 +121,7 @@ Item storage_do(ArrayListPtr list, const Item obj, Comparator compare, void* (*d
     // if (lock != NULL)
     //     pthread_mutex_lock(lock);
 
-    Item result = do_on(list, obj, (Item**)c);
+    Item result = do_on(list, obj, (Item*)c);
     // if (lock != NULL)
     //     pthread_mutex_unlock(lock);
 

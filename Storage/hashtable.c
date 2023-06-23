@@ -107,7 +107,7 @@ Item* storage_location_of(const HashPtr hash, const Item obj, Comparator compare
     return (hash->data + (actualIndex % hash->capacity));
 }
 
-Item storage_do(HashPtr hash, const Item obj, Comparator compare, Item(*do_on)(HashPtr, const Item, Item*))
+Item storage_do(HashPtr hash, const Item obj, Comparator compare, Item(*do_on)(HashPtr, const void*, Item*))
 {
     storage_access_start(hash);
 

@@ -1,5 +1,5 @@
-#ifndef _storage_h_
-#define _storage_h_
+#ifndef storage_h
+#define storage_h
 
 #include <stdbool.h>
 
@@ -10,7 +10,7 @@ typedef struct storage* Storage;
 typedef void* Item;
 
 /** A comparator that compares to items stored in the queue and returns a value of their difference*/
-typedef int(*Comparator)(const Item, const Item);
+typedef int(*Comparator)(const void*, const void*);
 
 /** A function that operates on the item without returning anything*/
 typedef void(*Function)(Item);
@@ -72,7 +72,7 @@ Item* storage_location_of(const Storage storage, const Item obj, Comparator comp
  * @param do_on the fucntion to call on the location of
  * @return Item the result of calling do_on on the location
  */
-Item storage_do(Storage storage, const Item obj, Comparator compare, Item(*do_on)(Storage, const Item, Item*));
+Item storage_do(Storage storage, const Item obj, Comparator compare, Item(*do_on)(Storage, const void*, Item*));
 
 /**
  * Returns the size of the storage

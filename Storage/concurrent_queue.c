@@ -24,9 +24,9 @@ typedef struct queue {
     _Atomic NodePointer tail;
 } Queue;
 
-Queue* queue_create()
+void queue_create(Queue* queue)
 {
-    Node* node = calloc(1, sizeof(Node));
+    Node* node = malloc(sizeof(Node));
     *node = (Node){
         .value = NULL,
             .next = {
@@ -34,7 +34,6 @@ Queue* queue_create()
                 .count = 0
         }
     };
-    Queue* queue = calloc(1, sizeof(Queue));
     *queue = (Queue){
         .head = {
             .ptr = node,
@@ -45,7 +44,6 @@ Queue* queue_create()
             .count = 0
         }
     };
-    return queue;
 }
 
 void queue_destroy(Queue* queue)
@@ -58,7 +56,7 @@ void queue_destroy(Queue* queue)
 
 void queue_push(Queue* queue, Item obj)
 {
-    Node* node = calloc(1, sizeof(Node));
+    Node* node = malloc(sizeof(Node));
     *node = (Node){
         {NULL, 0}, obj
     };
@@ -96,7 +94,7 @@ Item queue_pop(Queue* queue)
 {
     NodePointer head;
     Item obj;
-    NodePointer* new = calloc(1, sizeof(NodePointer));
+    NodePointer* new = malloc(sizeof(NodePointer));
     while (1) {
         head = atomic_load(&queue->head);
         NodePointer tail = atomic_load(&queue->tail);
@@ -128,7 +126,7 @@ Item queue_pop(Queue* queue)
 //TODO: check if threadsafe
 //probably not threadsafe, but I don't plan to run **during** any other threads - this is only for after the threaded operation has completed, ideally.
 
-void queue_for_each(const Queue* queue, void(*toDo)(Item*))
+void queue_for_each(const Queue* queue, void(*toDo)(Item))
 {
     Node* head = atomic_load(&queue->head).ptr;
 

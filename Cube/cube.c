@@ -11,11 +11,9 @@
 #include <stdbool.h>
 
 #include "cube.h"
-#include "subcube.c"
+#include "subcube.h"
 
 
-// Size of the cube being stored
-const size_t CUBE_STORAGE_SIZE = 20;
 
 const size_t CUBE_PRINT_SIZE = 171;
 
@@ -25,9 +23,8 @@ const size_t CUBE_PRINT_SIZE = 171;
 struct cube {
     char cubes[20];
 };
+const size_t CUBE_STORAGE_SIZE = sizeof(struct cube);
 
-/** Null subcube*/
-const Subcube null = -1;
 
 /**Array used for knowing where the rotation goes to next for corners*/
 size_t cornerRotationOrder[4][2] = {
@@ -119,11 +116,11 @@ Subcube* subcube(const Cube* cube, size_t i, size_t j, size_t k)
 {
     switch (subcube_type(i, j, k)) {
     case CORNER:
-        return (cube->cubes + i * 2 + j + k / 2);
+        return (Subcube*)(cube->cubes + i * 2 + j + k / 2);
     case SIDE:
-        return (cube->cubes + NUM_CORNERS + subcube_index(i, j, k));
+        return (Subcube*)(cube->cubes + NUM_CORNERS + subcube_index(i, j, k));
     default:
-        return &null;
+        return (Subcube*)&null;
     }
     // return (cube->cubes + i * 9 + j * 3 + k);
 }
@@ -308,8 +305,6 @@ void cube_rotate(const Cube* cube, Cube* newCube, face side, rotation rot)
         pos(side, nextIndex, sideRotationOrder, next_s);
 
     }
-
-    return newCube;
 }
 
 int cube_compare(const Cube* s1, const Cube* s2)

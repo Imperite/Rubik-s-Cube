@@ -1,11 +1,13 @@
 
+#include <pthread.h>
+#include <stdatomic.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "../Cube/cube.h"
 #include "../Storage/storage.h"
 #include "../Storage/queue.h"
 #include "solver.h"
-#include <pthread.h>
-#include <stdatomic.h>
-#include <stdlib.h>
 
 char* face_to_string[7] = { "ERROR", "front", "top", "left", "back", "bottom", "right" };
 char* rotation_to_string[4] = { "ERROR", "90", "180", "-90" };
@@ -34,9 +36,12 @@ void* solver_update_cubestate(Storage storage, const void* new, void** loc);
 
 void solve(Cube* initial_state)
 {
-    Cube* solved = cube_create();
+    Cube* solved = malloc(CUBE_STORAGE_SIZE);
+    cube_create(solved);
 
-    Queue* queue = queue_create();
+    Queue* queue = malloc(sizeof(queue));
+    queue_create(queue);
+
     Storage storage = storage_create();
 
     CubeState* current = malloc(sizeof(CubeState));
@@ -44,7 +49,7 @@ void solve(Cube* initial_state)
         .depth = 0,
         .moves = NULL
     };
-    current->cube = cube_copy(initial_state);
+    cube_copy(initial_state, current->cube);
     // for (size_t i = 0; i < 20; i++) {
     //     current->cube[i] = (*initial_state)[i];
     // }

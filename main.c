@@ -26,8 +26,9 @@ int main()
       //b) the cube is some number of rotations away on a different face, in which case the third example demostrates that this works
       //c) the cube is not 1 move away, and so should be rotated again. this is proven by the 4th one, which is two different moves away from a solve.
   srand(42);
-  Cube* solved = cube_create();
-  Cube* rotated;
+  Cube* solved = malloc(CUBE_STORAGE_SIZE);
+  Cube* rotated = malloc(CUBE_STORAGE_SIZE);
+  Cube* rotated2 = malloc(CUBE_STORAGE_SIZE);
 
   /*
   //1st EXAMPLE:
@@ -40,10 +41,10 @@ int main()
   // /*
   //2nd EXAMPLE
   // solved = cube_create();
-  rotated = cube_rotate(solved, WHITE, ROT_270);
-  Cube* rotated2 = cube_rotate(rotated, RED, ROT_180);
+  cube_rotate(solved, rotated, WHITE, ROT_270);
+  cube_rotate(rotated, rotated2, RED, ROT_180);
   cube_free(rotated);
-  rotated = cube_rotate(rotated2, GREEN, ROT_90);
+  cube_rotate(rotated2, rotated, GREEN, ROT_90);
   cube_free(rotated2);
   // rotated2 = cube_rotate(rotated, RED, ROT_270);
   // cube_free(rotated);

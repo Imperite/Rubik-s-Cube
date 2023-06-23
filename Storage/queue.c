@@ -15,12 +15,10 @@ typedef struct queue {
 } Queue;
 
 
-Queue* queue_create()
+void queue_create(Queue* queue)
 {
-    Queue* queue = malloc(sizeof(Queue));
     queue->tail = NULL;
     queue->head = NULL;
-    return queue;
 }
 
 void queue_destroy(Queue* queue)
