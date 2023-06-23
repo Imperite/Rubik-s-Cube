@@ -46,9 +46,8 @@ void storage_resize(HashPtr hash);
 size_t hash_cube(Item toHash);
 
 
-HashPtr storage_create()
+void storage_create(HashPtr hash)
 {
-    HashPtr hash = malloc(sizeof(Hashtable));
     *hash = (Hashtable){
         .accessors = 0,
         .size = 0,
@@ -57,7 +56,6 @@ HashPtr storage_create()
         .hash = hash_cube,
         .data = calloc(64, sizeof(Item))
     };
-    return hash;
 }
 
 void storage_destroy(HashPtr hash)

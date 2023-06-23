@@ -17,9 +17,9 @@ typedef void(*Function)(Item);
 
 /**
  * Creates a default storage object
- * @return Storage the new storage object
+ * @param storage the object to initialize
  */
-Storage storage_create();
+void storage_create(Storage storage);
 
 /**
  * Destroy the storage object. DOES NOT FREE VALUES STORED INSIDE.

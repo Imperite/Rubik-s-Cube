@@ -42,7 +42,8 @@ void solve(Cube* initial_state)
     Queue* queue = malloc(sizeof(queue));
     queue_create(queue);
 
-    Storage storage = storage_create();
+    Storage storage = malloc(sizeof(storage));
+    storage_create(storage);
 
     CubeState* current = malloc(sizeof(CubeState));
     *current = (CubeState){
@@ -192,7 +193,6 @@ void* solver_update_cubestate(Storage storage, const void* new, void** loc)
     // }
 
     if (storage_loc != NULL) {// Found match in storage
-        // cube_state_destroy(*storage_loc);
         while (1) {
             size_t depth = (*storage_loc)->depth;
             if (depth <= newState->depth)
@@ -201,7 +201,6 @@ void* solver_update_cubestate(Storage storage, const void* new, void** loc)
         }
         cube_state_destroy(newState);
         return *storage_loc;
-        // **storage_loc = *newState;
     }
     else {
         // printf("\tinserting\n");

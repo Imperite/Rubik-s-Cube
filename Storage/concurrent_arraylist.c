@@ -35,16 +35,14 @@ void storage_resize(ArrayListPtr list);
 
 
 
-ArrayListPtr storage_create()
+void storage_create(ArrayListPtr newList)
 {
-    ArrayListPtr newList = malloc(sizeof(ArrayList));
     *newList = (ArrayList){
         .size = 0,
         .capacity = 8,
         .data = calloc(8, sizeof(Container*))
     };
     pthread_mutex_init(&newList->lock, NULL);
-    return newList;
 }
 
 void storage_destroy(ArrayListPtr list)

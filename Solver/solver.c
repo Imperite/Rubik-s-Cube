@@ -27,7 +27,8 @@ void solve(Cube* initial_state)
 
     Queue* queue = malloc(sizeof(queue));
     queue_create(queue);
-    Storage storage = storage_create();
+    Storage storage = malloc(sizeof(storage));
+    storage_create(storage);
 
     CubeState* current = malloc(sizeof(CubeState));
     *current = (CubeState){

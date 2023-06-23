@@ -21,15 +21,13 @@ typedef ArrayList* ArrayListPtr;
 void storage_resize(ArrayListPtr list);
 
 
-ArrayListPtr storage_create()
+void storage_create(ArrayListPtr newList)
 {
-    ArrayListPtr newList = malloc(sizeof(ArrayList));
     *newList = (ArrayList){
         .size = 0,
         .capacity = 8,
         .data = calloc(8, sizeof(void*))
     };
-    return newList;
 }
 
 //Destroys the arraylist. Assumes all values inside have already been destroyed, and so does not try to free them.
