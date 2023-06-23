@@ -6,30 +6,23 @@
 //Based on the Michael and Scott paper,"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms"
 //Meant to be non-blocking for fastest operation
 
-
+/** Pointer to a node */
 typedef struct pointer {
     struct node* ptr;
     unsigned int count;
 } NodePointer;
 
+/** Node stored in queue*/
 typedef struct node {
     _Atomic NodePointer next;
-    Item* value;
+    Item value;
 } Node;
 
+/** Queue datastructure*/
 typedef struct queue {
     _Atomic NodePointer head;
     _Atomic NodePointer tail;
 } Queue;
-
-Queue* queue_create();
-void queue_destroy(Queue* queue);
-void queue_push(Queue* queue, Item* obj);
-Item* queue_pop(Queue* queue);
-void queue_for_each(const Queue* queue, void(*toDo)(Item*));
-int queue_is_empty(const Queue* queue);
-int queue_size(const Queue* queue);
-
 
 Queue* queue_create()
 {
@@ -55,7 +48,6 @@ Queue* queue_create()
     return queue;
 }
 
-//assumes all operations are done, clearing the queue;
 void queue_destroy(Queue* queue)
 {
     while (!queue_is_empty(queue))
@@ -64,8 +56,7 @@ void queue_destroy(Queue* queue)
     free(queue);
 }
 
-//same as enqueue
-void queue_push(Queue* queue, Item* obj)
+void queue_push(Queue* queue, Item obj)
 {
     Node* node = calloc(1, sizeof(Node));
     *node = (Node){
@@ -101,10 +92,10 @@ void queue_push(Queue* queue, Item* obj)
 }
 
 
-Item* queue_pop(Queue* queue)
+Item queue_pop(Queue* queue)
 {
     NodePointer head;
-    Item* obj;
+    Item obj;
     NodePointer* new = calloc(1, sizeof(NodePointer));
     while (1) {
         head = atomic_load(&queue->head);
@@ -136,6 +127,7 @@ Item* queue_pop(Queue* queue)
 
 //TODO: check if threadsafe
 //probably not threadsafe, but I don't plan to run **during** any other threads - this is only for after the threaded operation has completed, ideally.
+
 void queue_for_each(const Queue* queue, void(*toDo)(Item*))
 {
     Node* head = atomic_load(&queue->head).ptr;
