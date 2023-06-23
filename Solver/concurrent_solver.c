@@ -52,30 +52,33 @@ void solve(Cube* initial_state) {
     CubeState* finalState;
 
     storage_insert(storage, current, cube_state_compare);
-    if (check_state(current, storage, queue, solved))
+    bool* isSolved = malloc(sizeof(bool));
+    if (check_state(current, storage, queue, solved)) {
         finalState = current;
+        *isSolved = true;
+    }
     else {
-        bool* isSolved = malloc(sizeof(bool));
         *isSolved = false;
         finalState = startThreads(isSolved, storage, queue, current, solved);
 
         printf("solved: %d\n", *isSolved);
-        free(isSolved);
     }
 
-    for (size_t i = 0; i < finalState->depth; ++i) {
+    for (size_t i = 0; *isSolved && i < finalState->depth; ++i) {
         printf("do a %s turn\n", id_to_str[finalState->moves[i].change_id]);
         // printf("do a %s %s degree turn\n", face_to_string[finalState->moves[i].face + 1], rotation_to_string[finalState->moves[i].degree]);
     }
-    // free(finalState);
-    // free(result);
-    // puts("Queue:");
-    // queue_for_each(queue, cube_state_print);
-    // puts("\nStorage:");
-    // storage_print(storage, cube_state_print);
+    free(isSolved);
 
-    // printf("STORAGE SIZE: %d\n", storage_size(storage));
-    // printf("QUEUE SIZE: %d\n", queue_size(queue));
+// free(finalState);
+// free(result);
+// puts("Queue:");
+// queue_for_each(queue, cube_state_print);
+// puts("\nStorage:");
+// storage_print(storage, cube_state_print);
+
+// printf("STORAGE SIZE: %d\n", storage_size(storage));
+// printf("QUEUE SIZE: %d\n", queue_size(queue));
 
     queue_destroy(queue);
 
@@ -128,22 +131,14 @@ void* thread_solve(void* info) {
     Queue queue = tInfo->queue;
     Storage storage = tInfo->storage;
 
-    // printf("%zu starting\n", tInfo->id);
     while (!queue_is_empty(queue) && !*isSolved) {
         CubeState* current = queue_pop(queue);
         printf("Thread %zu: depth %zu\n", tInfo->id, current->depth);
-        // cube_state_print(current);
-        // printf("comp: %d\n", cube_compare(current->cube, solved));
-        // cube_state_print(current);
-        // puts(cube_string(solved));
         if (check_state(current, storage, queue, tInfo->solved)) {
             *isSolved = true;
-            // printf("returning not null\n");
             return current;
         }
-        // puts("");
     }
-    // printf("returning null\n");
     return NULL;
 }
 
@@ -164,6 +159,8 @@ bool check_state(CubeState* to_check, Storage storage, Queue queue, Cube* solved
             //shift the rotation to check the 180 rotation first
             // storage_print(storage, cube_state_print);
             CubeState* result = storage_do(storage, new, cube_state_compare, solver_update_cubestate);
+            if (result == new)
+                storage_insert(storage, new, cube_state_compare);
             if (result != NULL) { // try to add/modify existing version in storage
                 queue_push(queue, result);
             }
@@ -200,7 +197,7 @@ void* solver_update_cubestate(Storage storage, void* new, void** loc) {
     }
     else {
         // printf("\tinserting\n");
-        storage_insert(storage, newState, cube_state_compare);
+        // storage_insert(storage, newState, cube_state_compare);
         return newState;
     }
 }

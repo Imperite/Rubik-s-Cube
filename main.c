@@ -11,10 +11,6 @@
 #include "solver.h"
 #include <pthread.h>
 
-void print_solved() {
-
-}
-
 int main()
 {
   // Cube* solved = cube_create();

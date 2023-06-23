@@ -278,3 +278,10 @@ int cube_compare(Cube s1, Cube s2)
             return s1[i] - s2[i];
     return 0;
 }
+
+size_t cube_hash(Cube s1) {
+    size_t val = 0;
+    for (size_t i = 0; i < 20; ++i)
+        val += s1[i];
+    return val;
+}

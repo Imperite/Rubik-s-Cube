@@ -1,3 +1,4 @@
+#include <stddef.h>
 #ifndef _cube_h
 #define _cube_h
 
@@ -26,4 +27,7 @@ int cube_compare(void* state1, void* state2);
 
 //prints the cubes value and the binary form
 void cube_print_vals(void* cube);
+
+//returns a hash of the cube
+size_t cube_hash(void* cube);
 #endif
