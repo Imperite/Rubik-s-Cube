@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <pthread.h>
 
+#include "storage.h"
+
 
 typedef void Item;
 
@@ -14,7 +16,7 @@ typedef struct container {
 
 //Changing to an array of Container pointers to allow for modifying of the index of items without needing to acquire a lock for the item itself.
 // Works because no items are destroyed for the list during use, only modified or added.
-typedef struct array_list
+typedef struct storage
 {
     size_t size;
     size_t capacity;
@@ -28,13 +30,13 @@ ArrayListPtr storage_create();
 // destroy arraylist and all parts (DOES NOT DESTROY OBJECTS STORED INSIDE)
 void storage_destroy(ArrayListPtr list);
 // add
-void storage_insert(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*));
+void storage_insert(ArrayListPtr list, Item* obj, Comparator compare);
 // resize
 void resize_Storage(ArrayListPtr list);
 
-Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*));
+Item** storage_location_of(ArrayListPtr list, const Item* obj, Comparator compare);
 
-void* storage_do(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*), void* (*do_on)(ArrayListPtr, Item*, Item**));
+Item* storage_do(ArrayListPtr list, const Item* obj, Comparator compare, Item* (*do_on)(ArrayListPtr, const Item*, Item**));
 
 int storage_size(ArrayListPtr list);
 
@@ -66,7 +68,7 @@ void storage_destroy(ArrayListPtr list)
     free(list);
 }
 
-void storage_insert(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*))
+void storage_insert(ArrayListPtr list, Item* obj, Comparator compare)
 {
     pthread_mutex_lock(&list->lock);
     resize_Storage(list);
@@ -85,21 +87,20 @@ void storage_insert(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*))
 
 void resize_Storage(ArrayListPtr list)
 {
-    if (list->size == list->capacity - 1)
-    {
+    if (list->size == list->capacity - 1) {
         list->data = realloc(list->data, list->capacity * 2 * sizeof(Container*));
         list->capacity *= 2;
     }
 }
 
-Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*)) {
+Item** storage_location_of(const ArrayListPtr list, const Item* obj, Comparator compare)
+{
     pthread_mutex_lock(&list->lock);
     int left = 0;
     int right = list->size - 1;
     int mid;
     Item** value = NULL;
-    while (left <= right)
-    {
+    while (left <= right) {
         mid = (left + right) / 2;
         int comp = compare(obj, list->data[mid]);
         if (comp >= 1)
@@ -116,7 +117,8 @@ Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, It
 }
 
 
-void* storage_do(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*), void* (*do_on)(ArrayListPtr, Item*, Item**)) {
+void* storage_do(ArrayListPtr list, const Item* obj, Comparator compare, void* (*do_on)(ArrayListPtr, const Item*, Item**))
+{
     Container* c = (Container*)storage_location_of(list, obj, compare);
 
     // pthread_mutex_t* lock = NULL;
@@ -134,9 +136,9 @@ void* storage_do(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*), void
 }
 
 
-void storage_for_each(ArrayListPtr list, void(*function)(Item*)) {
-    for (size_t i = 0; i < list->size; i++)
-    {
+void storage_for_each(const ArrayListPtr list, Function function)
+{
+    for (size_t i = 0; i < list->size; i++) {
         // pthread_mutex_lock(&(list->data[i])->lock);
         function(list->data[i]);
         // pthread_mutex_unlock(&list->data[i]->lock);
@@ -144,13 +146,15 @@ void storage_for_each(ArrayListPtr list, void(*function)(Item*)) {
 
 }
 
-void storage_print(ArrayListPtr list, void(*print)(Item*)) {
+void storage_print(const ArrayListPtr list, Function print)
+{
     printf("[");
     storage_for_each(list, print);
     puts("]");
 
 }
 
-int storage_size(ArrayListPtr list) {
+int storage_size(const ArrayListPtr list)
+{
     return list->size;
 }

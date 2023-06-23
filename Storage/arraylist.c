@@ -2,10 +2,10 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "storage.h"
 
-typedef void Item;
 
-typedef struct array_list
+typedef struct storage
 {
     size_t size;
     size_t capacity;
@@ -18,15 +18,17 @@ ArrayListPtr storage_create();
 // destroy
 void storage_destroy(ArrayListPtr list);
 // add
-void storage_insert(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*));
+void storage_insert(ArrayListPtr list, Item* obj, Comparator compare);
 // resize
 void resize_Storage(ArrayListPtr list);
 // contains; will use a binary search to find in list.
-bool storage_contains(ArrayListPtr list, Item* to_find, int(*compare)(Item*, Item*));
+bool storage_contains(const ArrayListPtr list, const Item* to_find, Comparator compare);
 
-Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*));
+Item* storage_replace(ArrayListPtr list, const Item* obj, Comparator compare);
 
-bool storage_do(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*), bool(*do_on)(ArrayListPtr, Item*, Item**));
+Item** storage_location_of(const ArrayListPtr list, const Item* obj, Comparator compare);
+
+Item* storage_do(ArrayListPtr list, const Item* obj, Comparator compare, Item* (*do_on)(ArrayListPtr, const Item*, Item**));
 
 int storage_size(ArrayListPtr list);
 
@@ -49,7 +51,7 @@ void storage_destroy(ArrayListPtr list)
     free(list);
 }
 
-void storage_insert(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*))
+void storage_insert(ArrayListPtr list, Item* obj, Comparator compare)
 {
     resize_Storage(list);
     size_t i;
@@ -62,14 +64,13 @@ void storage_insert(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*))
 
 void resize_Storage(ArrayListPtr list)
 {
-    if (list->size == list->capacity)
-    {
+    if (list->size == list->capacity) {
         list->capacity *= 2;
         list->data = realloc(list->data, list->capacity * sizeof(Item*));
     }
 }
 
-bool storage_contains(ArrayListPtr list, Item* to_find, int(*compare)(Item*, Item*))
+bool storage_contains(const ArrayListPtr list, const Item* to_find, Comparator compare)
 {
     return storage_location_of(list, to_find, compare) != NULL;
     /*
@@ -93,7 +94,8 @@ bool storage_contains(ArrayListPtr list, Item* to_find, int(*compare)(Item*, Ite
     */
 }
 
-void* storage_replace(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*)) {
+Item* storage_replace(ArrayListPtr list, const Item* obj, Comparator compare)
+{
     Item** itemLoc = storage_location_of(list, obj, compare);
     if (itemLoc == NULL)
         return NULL;
@@ -126,12 +128,12 @@ void* storage_replace(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*))
     */
 }
 
-Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*)) {
+Item** storage_location_of(const ArrayListPtr list, const Item* obj, Comparator compare)
+{
     int left = 0;
     int right = list->size - 1;
     int mid;
-    while (left <= right)
-    {
+    while (left <= right) {
         mid = (left + right) / 2;
         int comp = compare(obj, list->data[mid]);
         if (comp >= 1)
@@ -146,26 +148,29 @@ Item** storage_location_of(ArrayListPtr list, Item* obj, int(*compare)(Item*, It
 }
 
 
-bool storage_do(ArrayListPtr list, Item* obj, int(*compare)(Item*, Item*), bool(*do_on)(ArrayListPtr, Item*, Item**)) {
+Item* storage_do(ArrayListPtr list, const Item* obj, Comparator compare, Item* (*do_on)(ArrayListPtr, const Item*, Item**))
+{
     return do_on(list, obj, storage_location_of(list, obj, compare));
 }
 
 
-void storage_for_each(ArrayListPtr list, void(*function)(Item*)) {
-    for (size_t i = 0; i < list->size; i++)
-    {
+void storage_for_each(ArrayListPtr list, void(*function)(Item*))
+{
+    for (size_t i = 0; i < list->size; i++) {
         function(list->data[i]);
     }
 
 }
 
-void storage_print(ArrayListPtr list, void(*print)(Item*)) {
+void storage_print(ArrayListPtr list, void(*print)(Item*))
+{
     printf("[");
     storage_for_each(list, print);
     puts("]");
 
 }
 
-int storage_size(ArrayListPtr list) {
+int storage_size(ArrayListPtr list)
+{
     return list->size;
 }

@@ -1,8 +1,8 @@
 
-#include "../cube.h"
-#include "../storage.h"
-#include "../queue.h"
-#include "cubestate.c"
+#include "../Cube/cube.h"
+#include "../Storage/storage.h"
+#include "../Storage/queue.h"
+#include "solver.h"
 #include <pthread.h>
 #include <stdatomic.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@ size_t THREADS = 10;
 typedef struct threadInfo {
     bool* isSolved;
     Storage storage;
-    Queue queue;
+    Queue* queue;
     Cube* solved;
     size_t id;
 } threadInfo;
@@ -22,20 +22,21 @@ typedef struct threadInfo {
 
 void solve(Cube* initial_state);
 
-CubeState* startThreads(bool* isSolved, Storage storage, Queue queue, CubeState* start, Cube* target);
+CubeState* startThreads(bool* isSolved, Storage storage, Queue* queue, CubeState* start, Cube* target);
 
 void* thread_solve(void* info);
 
-bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved);
+bool check_state(CubeState* to_check, Storage storage, Queue* queue, Cube* solved);
 
 //returns true if the cube has been updated/inserted inside the storage, otherwise returns false.
-void* solver_update_cubestate(Storage storage, void* new, void** loc);
+void* solver_update_cubestate(Storage storage, const void* new, void** loc);
 
 
-void solve(Cube* initial_state) {
+void solve(Cube* initial_state)
+{
     Cube* solved = cube_create();
 
-    Queue queue = queue_create();
+    Queue* queue = queue_create();
     Storage storage = storage_create();
 
     CubeState* current = malloc(sizeof(CubeState));
@@ -43,10 +44,10 @@ void solve(Cube* initial_state) {
         .depth = 0,
         .moves = NULL
     };
-    for (size_t i = 0; i < 20; i++)
-    {
-        current->cube[i] = (*initial_state)[i];
-    }
+    current->cube = cube_copy(initial_state);
+    // for (size_t i = 0; i < 20; i++) {
+    //     current->cube[i] = (*initial_state)[i];
+    // }
 
 
     CubeState* finalState;
@@ -90,12 +91,12 @@ void solve(Cube* initial_state) {
 
 }
 
-CubeState* startThreads(bool* isSolved, Storage storage, Queue queue, CubeState* start, Cube* target) {
+CubeState* startThreads(bool* isSolved, Storage storage, Queue* queue, CubeState* start, Cube* target)
+{
     pthread_t* threads = calloc(THREADS, sizeof(pthread_t));
     threadInfo* tinfos = calloc(THREADS, sizeof(threadInfo));
 
-    for (size_t i = 0; i < THREADS; i++)
-    {
+    for (size_t i = 0; i < THREADS; i++) {
         tinfos[i] = (threadInfo){
             isSolved,
             storage,
@@ -109,8 +110,7 @@ CubeState* startThreads(bool* isSolved, Storage storage, Queue queue, CubeState*
 
 //set up wait on isSolved
     CubeState* finalState = NULL;
-    for (size_t i = 0; i < THREADS; i++)
-    {
+    for (size_t i = 0; i < THREADS; i++) {
         if (finalState == NULL)
             pthread_join(threads[i], (void**)&finalState);
         else
@@ -125,10 +125,11 @@ CubeState* startThreads(bool* isSolved, Storage storage, Queue queue, CubeState*
 
 }
 
-void* thread_solve(void* info) {
+void* thread_solve(void* info)
+{
     threadInfo* tInfo = (threadInfo*)info;
     bool* isSolved = tInfo->isSolved;
-    Queue queue = tInfo->queue;
+    Queue* queue = tInfo->queue;
     Storage storage = tInfo->storage;
 
     while (!queue_is_empty(queue) && !*isSolved) {
@@ -149,7 +150,8 @@ Returns true if this is the solved state, and false otherwise.
 
 Notably, this should be thread-safe, as long as the Storage and Queue used are also such.
 */
-bool check_state(CubeState* to_check, Storage storage, Queue queue, Cube* solved) {
+bool check_state(CubeState* to_check, Storage storage, Queue* queue, Cube* solved)
+{
     if (cube_compare(to_check->cube, solved) == 0)
         return true;
 
@@ -174,7 +176,8 @@ bool check_state(CubeState* to_check, Storage storage, Queue queue, Cube* solved
 }
 
 
-void* solver_update_cubestate(Storage storage, void* new, void** loc) {
+void* solver_update_cubestate(Storage storage, const void* new, void** loc)
+{
     CubeState* newState = (CubeState*) new;
 
     CubeState** storage_loc = (CubeState**)loc;

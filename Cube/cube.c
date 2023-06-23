@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdbool.h>
 
+#include "cube.h"
 #include "subcube.c"
 
 // TODO: try splitting into a 2x2x2 of corners and something for sides?
@@ -10,6 +11,12 @@
 
 #define NUM_CORNERS 8
 #define NUM_SIDES 12
+
+size_t CUBE_STORAGE_SIZE = 20;
+
+struct cube {
+    char cubes[20];
+};
 
 Subcube null = -1;
 
@@ -27,7 +34,7 @@ size_t sideRotationOrder[4][2] = {
     {1,0},
 };
 
-Subcube* subcube(Cube* cube, size_t i, size_t j, size_t k);
+Subcube* subcube(const Cube* cube, size_t i, size_t j, size_t k);
 
 Cube* cube_create();
 
@@ -35,40 +42,39 @@ void cube_destroy(Cube* cube);
 
 Cube* cube_randomized();
 
-void subcube_print_face(Cube* cube, char* output, size_t* cursor, size_t i, size_t j, size_t k, enum axis axis);
+void subcube_print_face(const Cube* cube, char* output, size_t* cursor, size_t i, size_t j, size_t k, enum axis axis);
 
-void print_top_or_bottom(Cube* cube, char* output, size_t* cursor, size_t layer, size_t row);
+void print_top_or_bottom(const Cube* cube, char* output, size_t* cursor, size_t layer, size_t row);
 
-void print_center_row(Cube* cube, char* output, size_t* cursor, size_t layer, size_t row);
+void print_center_row(const Cube* cube, char* output, size_t* cursor, size_t layer, size_t row);
 
-void cube_print_line(Cube* cube, char* output, size_t* cursor, size_t row, void(*printer_func)(Cube* cube, char* output, size_t* cursor, size_t layer, size_t row));
+void cube_print_line(const Cube* cube, char* output, size_t* cursor, size_t row, void(*printer_func)(const Cube* cube, char* output, size_t* cursor, size_t layer, size_t row));
 
-char* cube_string(Cube* cube);
+char* cube_string(const Cube* cube);
 
 void print_binary(char c);
 
-void cube_print_vals(Cube* cube);
+void cube_print_vals(const Cube* cube);
 
-Cube* cube_rotate(Cube* cube, face side, rotation rot);
+Cube* cube_rotate(const Cube* cube, const face side, const rotation rot);
 
-int cube_compare(Cube state1, Cube state2);
+int cube_compare(const Cube* state1, const Cube* state2);
 
 void pos(face face, size_t index, size_t ordering[4][2], size_t pos[3]);
 
 
 
-Subcube* subcube(Cube* cube, size_t i, size_t j, size_t k)
+Subcube* subcube(const Cube* cube, size_t i, size_t j, size_t k)
 {
-    switch (subcube_type(i, j, k))
-    {
+    switch (subcube_type(i, j, k)) {
     case CORNER:
-        return (*cube + i * 2 + j + k / 2);
+        return (cube->cubes + i * 2 + j + k / 2);
     case SIDE:
-        return (*cube + NUM_CORNERS + subcube_index(i, j, k));
+        return (cube->cubes + NUM_CORNERS + subcube_index(i, j, k));
     default:
         return &null;
     }
-    // return (*cube + i * 9 + j * 3 + k);
+    // return (cube->cubes + i * 9 + j * 3 + k);
 }
 
 Cube* cube_create()
@@ -77,14 +83,11 @@ Cube* cube_create()
     size_t dim = 3;
     Cube* cube = malloc(sizeof(Cube));
 
-    for (size_t i = 0; i < dim; i++)
-    {
+    for (size_t i = 0; i < dim; i++) {
 
-        for (size_t j = 0; j < dim; j++)
-        {
+        for (size_t j = 0; j < dim; j++) {
 
-            for (size_t k = 0; k < dim; k++)
-            {
+            for (size_t k = 0; k < dim; k++) {
                 if (subcube(cube, i, j, k) != &null)
                     *subcube(cube, i, j, k) = subcube_default_at(i, j, k);
             }
@@ -94,16 +97,14 @@ Cube* cube_create()
     return cube;
 }
 
-Cube* copy(Cube* cube) {
+Cube* copy(const Cube* cube)
+{
     size_t dim = 3;
     Cube* newCube = malloc(sizeof(Cube));
 
-    for (size_t i = 0; i < dim; i++)
-    {
-        for (size_t j = 0; j < dim; j++)
-        {
-            for (size_t k = 0; k < dim; k++)
-            {
+    for (size_t i = 0; i < dim; i++) {
+        for (size_t j = 0; j < dim; j++) {
+            for (size_t k = 0; k < dim; k++) {
                 if (subcube(cube, i, j, k) != &null)
                     *subcube(newCube, i, j, k) = *subcube(cube, i, j, k);
             }
@@ -113,28 +114,31 @@ Cube* copy(Cube* cube) {
     return newCube;
 }
 
-void cube_destroy(Cube* cube) {
+void cube_destroy(Cube* cube)
+{
     free(cube);
 }
 
-Cube* randomize_cube() {
+Cube* randomize_cube()
+{
     Cube* cube = cube_create();
     return cube;
 }
 
-void subcube_print_face(Cube* cube, char* output, size_t* cursor, size_t i, size_t j, size_t k, enum axis axis) {
+void subcube_print_face(const Cube* cube, char* output, size_t* cursor, size_t i, size_t j, size_t k, enum axis axis)
+{
     face faceColor = subcube_color_along_axis(*subcube(cube, i, j, k), axis, subcube_type(i, j, k));
     output[(*cursor)++] = faceToChar(faceColor);
     output[(*cursor)++] = ' ';
     // printf("%c ", faceToChar(faceColor));
 }
 
-void print_top_or_bottom(Cube* cube, char* output, size_t* cursor, size_t layer, size_t row) {
+void print_top_or_bottom(const Cube* cube, char* output, size_t* cursor, size_t layer, size_t row)
+{
     output[(*cursor)++] = ' ';
     output[(*cursor)++] = ' ';
     // printf("  ");
-    for (size_t i = 0; i < 3; i++)
-    {
+    for (size_t i = 0; i < 3; i++) {
         subcube_print_face(cube, output, cursor, layer, row, i, BG);
     }
     output[(*cursor)++] = ' ';
@@ -142,27 +146,28 @@ void print_top_or_bottom(Cube* cube, char* output, size_t* cursor, size_t layer,
     // printf("  ");
 }
 
-void print_center_row(Cube* cube, char* output, size_t* cursor, size_t layer, size_t row) {
+void print_center_row(const Cube* cube, char* output, size_t* cursor, size_t layer, size_t row)
+{
     subcube_print_face(cube, output, cursor, layer, row, 0, OR);
 
-    for (size_t j = 0; j < 3; j++)
-    {
+    for (size_t j = 0; j < 3; j++) {
         subcube_print_face(cube, output, cursor, layer, row, j, WY);
     }
 
     subcube_print_face(cube, output, cursor, layer, row, 2, OR);
 }
 
-void cube_print_line(Cube* cube, char* output, size_t* cursor, size_t row, void(*printer_func)(Cube* cube, char* output, size_t* cursor, size_t layer, size_t row)) {
-    for (size_t i = 0; i < 3; i++)
-    {
+void cube_print_line(const Cube* cube, char* output, size_t* cursor, size_t row, void(*printer_func)(const Cube* cube, char* output, size_t* cursor, size_t layer, size_t row))
+{
+    for (size_t i = 0; i < 3; i++) {
         printer_func(cube, output, cursor, i, row);
         output[(*cursor)++] = '\t';
     }
     output[(*cursor)++] = '\n';
 }
 
-char* cube_string(Cube* cube) {
+char* cube_string(const Cube* cube)
+{
     size_t* cursor = malloc(sizeof(size_t));
     *cursor = 0;
     char* output = calloc(171, sizeof(char));
@@ -178,17 +183,18 @@ char* cube_string(Cube* cube) {
 }
 
 
-void cube_print(Cube* cube) {
+void cube_print(const Cube* cube)
+{
     char* s = cube_string(cube);
     puts(s);
     free(s);
 }
 
-void print_binary(char c) {
+void print_binary(char c)
+{
     if (c == null)
         return;
-    for (int i = 7; i >= 0; --i)
-    {
+    for (int i = 7; i >= 0; --i) {
         putchar((c & (1 << i)) ? '1' : '0');
     }
     printf("\t");
@@ -196,13 +202,11 @@ void print_binary(char c) {
 }
 
 //prints the values and their binary for each subcube; useful for debugging
-void cube_print_vals(Cube* cube) {
-    for (size_t i = 0; i < 3; i++)
-    {
-        for (size_t j = 0; j < 3; j++)
-        {
-            for (size_t k = 0; k < 3; k++)
-            {
+void cube_print_vals(const Cube* cube)
+{
+    for (size_t i = 0; i < 3; i++) {
+        for (size_t j = 0; j < 3; j++) {
+            for (size_t k = 0; k < 3; k++) {
                 printf("%d: ", *subcube(cube, i, j, k));
                 print_binary(*subcube(cube, i, j, k));
             }
@@ -214,7 +218,8 @@ void cube_print_vals(Cube* cube) {
 }
 
 //used to get the next position in a sequence when rotating along a face.
-void pos(face face, size_t index, size_t ordering[4][2], size_t pos[3]) {
+void pos(face face, size_t index, size_t ordering[4][2], size_t pos[3])
+{
     enum axis ax = faceToAxis(face);
     size_t firstIndex = (ax == WY ? 1 : 0);
     size_t secondIndex = (ax == OR ? 1 : 2);
@@ -225,7 +230,8 @@ void pos(face face, size_t index, size_t ordering[4][2], size_t pos[3]) {
 }
 
 
-Cube* cube_rotate(Cube* cube, face side, rotation rot) {
+Cube* cube_rotate(const Cube* cube, face side, rotation rot)
+{
     size_t shift = rot;
     if (shift == 3) shift = -1;
     if (side == YELLOW || side == BLUE || side == RED) shift *= -1;
@@ -241,8 +247,7 @@ Cube* cube_rotate(Cube* cube, face side, rotation rot) {
     pos(side, 0, sideRotationOrder, curr_s);
     pos(side, nextIndex, sideRotationOrder, next_s);
 
-    for (size_t i = 0; i < 4; i++)
-    {
+    for (size_t i = 0; i < 4; i++) {
         char* newCorner = subcube(cube, curr_c[0], curr_c[1], curr_c[2]);
         *subcube(newCube, next_c[0], next_c[1], next_c[2]) = subcube_rotate(newCorner, CORNER, rot, side);
 
@@ -256,8 +261,7 @@ Cube* cube_rotate(Cube* cube, face side, rotation rot) {
         }
         else {
             nextIndex = (nextIndex + shift) % 4;
-            for (size_t i = 0; i < 3; i++)
-            {
+            for (size_t i = 0; i < 3; i++) {
                 curr_c[i] = next_c[i];
                 curr_s[i] = next_s[i];
             }
@@ -271,17 +275,18 @@ Cube* cube_rotate(Cube* cube, face side, rotation rot) {
     return newCube;
 }
 
-int cube_compare(Cube s1, Cube s2)
+int cube_compare(const Cube* s1, const Cube* s2)
 {
     for (size_t i = 0; i < 20; ++i)
-        if (s1[i] != s2[i])
-            return s1[i] - s2[i];
+        if (s1->cubes[i] != s2->cubes[i])
+            return s1->cubes[i] - s2->cubes[i];
     return 0;
 }
 
-size_t cube_hash(Cube s1) {
+size_t cube_hash(const Cube* s1)
+{
     size_t val = 0;
     for (size_t i = 0; i < 20; ++i)
-        val += s1[i];
+        val += s1->cubes[i];
     return val;
 }

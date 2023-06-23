@@ -1,20 +1,20 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../cube.h"
-#include "../storage.h"
-#include "../queue.h"
-#include "cubestate.c"
+#include "../Cube/cube.h"
+#include "../Storage/storage.h"
+#include "../Storage/queue.h"
+#include "solver.h"
 
 
 char* face_to_string[7] = { "ERROR", "front", "top", "left", "back", "bottom", "right" };
 char* rotation_to_string[4] = { "ERROR", "90", "180", "-90" };
 
 void solve(Cube* initial_state);
-bool check_state(CubeState* to_check, Storage storage, void* queue, Cube* solved);
+bool check_state(CubeState* to_check, Storage storage, Queue* queue, Cube* solved);
 
 //returns true if the cube has been updated/inserted inside the storage, otherwise returns false.
-bool solver_update_cubestate(Storage storage, void* new, void** loc);
+Item* solver_update_cubestate(Storage storage, const void* new, void** loc);
 
 
 // Solve acts as a wrapper function to print out the results of cube_solve. Creates a Storage and Queue in order to remember traversed nodes and boundary nodes.
@@ -23,7 +23,7 @@ void solve(Cube* initial_state)
 {
     Cube* solved = cube_create();
 
-    Queue queue = queue_create();
+    Queue* queue = queue_create();
     Storage storage = storage_create();
 
     CubeState* current = malloc(sizeof(CubeState));
@@ -31,10 +31,10 @@ void solve(Cube* initial_state)
         .depth = 0,
         .moves = NULL
     };
-    for (size_t i = 0; i < 20; i++)
-    {
-        current->cube[i] = (*initial_state)[i];
-    }
+    current->cube = cube_copy(initial_state);
+    // for (size_t i = 0; i < 20; i++) {
+    //     current->cube[i] = (*initial_state)[i];
+    // }
 
     storage_insert(storage, current, cube_state_compare);
 
@@ -72,7 +72,8 @@ Returns true if this is the solved state, and false otherwise.
 
 Notably, this should be thread-safe, as long as the Storage and Queue used are also such.
 */
-bool check_state(CubeState* to_check, Storage storage, Queue queue, Cube* solved) {
+bool check_state(CubeState* to_check, Storage storage, Queue* queue, Cube* solved)
+{
     if (cube_compare(to_check->cube, solved) == 0)
         return true;
 
@@ -95,13 +96,14 @@ bool check_state(CubeState* to_check, Storage storage, Queue queue, Cube* solved
 }
 
 
-bool solver_update_cubestate(Storage storage, void* new, void** loc) {
+Item* solver_update_cubestate(Storage storage, const void* new, void** loc)
+{
     CubeState* newState = (CubeState*) new;
 
     CubeState** storage_loc = (CubeState**)loc;
     if (storage_loc != NULL && (*storage_loc)->depth <= newState->depth) { // failure case: storage has this but has already traversed this state
         // printf("\treturning bc null or traversed\n");
-        return false;
+        return NULL;
     }
 
     if (storage_loc != NULL) {// Found match in storage
@@ -113,5 +115,5 @@ bool solver_update_cubestate(Storage storage, void* new, void** loc) {
         // printf("\tinserting\n");
         storage_insert(storage, newState, cube_state_compare);
     }
-    return true;
+    return *loc;
 }

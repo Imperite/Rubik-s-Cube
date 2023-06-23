@@ -1,15 +1,14 @@
 // Rubik's Cube Solver, written by David Bradley using Repl.it, CodeBlocks with MinGW, and Microsoft Visual Studio. Also drew on pseudocode from wikipedia.
 // #include "solver.c"
-#include "Cube/cube_constants.c"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdatomic.h>
-
-#include "cube.h"
-#include "storage.h"
-#include "solver.h"
 #include <pthread.h>
+
+#include "Cube/cube.h"
+#include "Storage/storage.h"
+#include "Solver/solver.h"
 
 int main()
 {

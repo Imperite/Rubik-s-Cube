@@ -2,8 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "cube_constants.c"
-
+#include "cube.h"
 
 enum axis
 {
@@ -58,7 +57,8 @@ Subcube subcube_rotate(Subcube* subcube, cubeType type, rotation rot, face face)
 char faceToChar(face face);
 
 //returns a number in the range [0-11] representing a unique index for each subcube
-size_t subcube_index(size_t i, size_t j, size_t k) {
+size_t subcube_index(size_t i, size_t j, size_t k)
+{
     size_t sum = 9 * i + 3 * j + k;
     size_t result = (sum + 1) / 2 - 1;
     if (result > 6) result--;
@@ -79,10 +79,10 @@ cubeType subcube_type(size_t i, size_t j, size_t k)
 }
 
 // stores rotations in order (flippedbit) - OR - BG - WY, with the first value being 1 and the second being 0; flipped bit unused for corners
-bool* subcube_rotations(Subcube subcube) {
+bool* subcube_rotations(Subcube subcube)
+{
     bool* rots = calloc(4, sizeof(bool));
-    for (size_t i = 0; i < 4; i++)
-    {
+    for (size_t i = 0; i < 4; i++) {
         rots[i] = 1 & (subcube >> (i + 4));
     }
 
@@ -90,12 +90,12 @@ bool* subcube_rotations(Subcube subcube) {
 }
 
 // stores colors same as rotations: 0 - OR - BG - WY, with first value being 0 and second 1. ASSUMES SUBCUBE IS SIDE OR CORNER
-face* subcube_colors(Subcube subcube) {
+face* subcube_colors(Subcube subcube)
+{
     face* colors = calloc(3, sizeof(face));
 
     // because the value for the axis (and i) aligns with the value for the default colors (WBO),  can just add 3 if that bit is true to shift to the opposite facing color
-    for (size_t i = 0; i < 3; i++)
-    {
+    for (size_t i = 0; i < 3; i++) {
         bool rot = subcube & (1 << i);
         colors[i] = i + (rot * 3);
     }
@@ -118,8 +118,7 @@ face subcube_color_along_axis(Subcube subcube, enum axis axis, cubeType type)
         face* faces = subcube_colors(subcube);
         bool* rots = subcube_rotations(subcube);
 
-        for (size_t i = 0; i < 3; i++)
-        {
+        for (size_t i = 0; i < 3; i++) {
             if (rots[i] == 1) {
                 size_t indexA = (i + 1) % 3, indexB = (i + 2) % 3;
                 face temp = faces[indexA];
@@ -157,17 +156,17 @@ face subcube_color_along_axis(Subcube subcube, enum axis axis, cubeType type)
     return BLANK;
 }
 
-Subcube subcube_default_at(size_t i, size_t j, size_t k) {
-    /*
-    if i/j/k is 0, then val should be W/B/O
-    if its 2, should be Y/G/R
-    ignore if 1
-    */
+Subcube subcube_default_at(size_t i, size_t j, size_t k)
+{
+/*
+if i/j/k is 0, then val should be W/B/O
+if its 2, should be Y/G/R
+ignore if 1
+*/
     Subcube subcube;
     cubeType type = subcube_type(i, j, k);
     size_t sum;
-    switch (type)
-    {
+    switch (type) {
     case CORNER:
         subcube = 0;
         if (i == 2) subcube += 1; // change to yellow if on bottom
@@ -194,9 +193,9 @@ Subcube subcube_default_at(size_t i, size_t j, size_t k) {
     return subcube;
 }
 
-enum axis faceToAxis(face face) {
-    switch (face)
-    {
+enum axis faceToAxis(face face)
+{
+    switch (face) {
     case WHITE:
     case YELLOW:
         return WY;
@@ -230,7 +229,8 @@ Bits 0-2 will only have 1 1 in them, as sides will always have one axis they are
 
 Since bits 0-2 act as the 'positioning' bits, bit 3 acts as a parity bit that determines the orientation of a side in a specific space. Doing UT'L would result in flipping bit 3, represnting how this flips the OW subcube.
 */
-Subcube subcube_rotate(Subcube* subcube, cubeType type, rotation rot, face face) {
+Subcube subcube_rotate(Subcube* subcube, cubeType type, rotation rot, face face)
+{
     enum axis rotAxis = faceToAxis(face);
     Subcube newSubcube = *subcube;
 
@@ -257,12 +257,12 @@ Subcube subcube_rotate(Subcube* subcube, cubeType type, rotation rot, face face)
 /*
 Should return the (virtual) faces along the W+, B+, and O+ directions. For example, if the cube were rotated 90 degrees clockwise along the White face, this would return 'wog'.
 */
-void subcube_primary_faces(Subcube* subcube, size_t i, size_t j, size_t k, char result[3]) {
+void subcube_primary_faces(Subcube* subcube, size_t i, size_t j, size_t k, char result[3])
+{
     cubeType type = subcube_type(i, j, k);
     size_t pos[3] = { i, j, k };
     // size_t emptySide = 4;
-    for (size_t i = 0; i < 3; i++)
-    {
+    for (size_t i = 0; i < 3; i++) {
         face color = subcube_color_along_axis(*subcube, i, type);
         // if (color == BLANK)
         //     emptySide = i;
@@ -279,9 +279,9 @@ void subcube_primary_faces(Subcube* subcube, size_t i, size_t j, size_t k, char 
 
 
 //returns a character representing that specific face
-char faceToChar(face face) {
-    switch (face)
-    {
+char faceToChar(face face)
+{
+    switch (face) {
     case WHITE:
         return 'w';
     case BLUE:

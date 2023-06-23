@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "queue.h"
+
 typedef void Item;
 
 typedef struct node {
@@ -16,25 +18,29 @@ Queue* queue_create();
 void queue_destroy(Queue* queue);
 void queue_push(Queue* queue, Item* obj);
 Item* queue_pop(Queue* queue);
-void queue_for_each(Queue* queue, void(*toDo)(Item*));
-int queue_is_empty(Queue* queue);
+void queue_for_each(const Queue* queue, void(*toDo)(Item*));
+int queue_is_empty(const Queue* queue);
+int queue_size(const Queue* queue);
 
 
-Queue* queue_create() {
+Queue* queue_create()
+{
     Queue* queue = malloc(sizeof(Queue));
     queue->tail = NULL;
     queue->head = NULL;
     return queue;
 }
 
-void queue_destroy(Queue* queue) {
+void queue_destroy(Queue* queue)
+{
     while (!queue_is_empty(queue)) {
         queue_pop(queue);
     }
     free(queue);
 }
 
-void queue_push(Queue* queue, Item* obj) {
+void queue_push(Queue* queue, Item* obj)
+{
     Node* n = malloc(sizeof(Node));
     n->next = NULL;
     n->value = obj;
@@ -48,7 +54,8 @@ void queue_push(Queue* queue, Item* obj) {
     queue->tail = n;
 }
 
-Item* queue_pop(Queue* queue) {
+Item* queue_pop(Queue* queue)
+{
     if (queue_is_empty(queue))
         return NULL;
 
@@ -60,13 +67,14 @@ Item* queue_pop(Queue* queue) {
 
     queue->head = head->next;
 
-    void* obj = head->value;
+    Item* obj = head->value;
     free(head);
     return obj;
 }
 
 
-void queue_for_each(Queue* queue, void(*toDo)(Item*)) {
+void queue_for_each(const Queue* queue, void(*toDo)(Item*))
+{
     Node* curr = queue->head;
     while (curr != NULL) {
         toDo(curr->value);
@@ -74,6 +82,18 @@ void queue_for_each(Queue* queue, void(*toDo)(Item*)) {
     }
 }
 
-int queue_is_empty(Queue* queue) {
+int queue_is_empty(const Queue* queue)
+{
     return queue->head == NULL;
+}
+
+int queue_size(const Queue* queue)
+{
+    int items = 0;
+    Node* curr = queue->head;
+    while (curr != NULL) {
+        items++;
+        curr = curr->next;
+    }
+    return items;
 }

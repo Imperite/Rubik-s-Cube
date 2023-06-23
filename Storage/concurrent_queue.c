@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <stdatomic.h>
 #include <stdio.h>
+
+#include "queue.h"
 //Based on the Michael and Scott paper,"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms"
 //Meant to be non-blocking for fastest operation
-
-typedef void* Item;
 
 
 typedef struct pointer {
@@ -14,7 +14,7 @@ typedef struct pointer {
 
 typedef struct node {
     _Atomic NodePointer next;
-    Item value;
+    Item* value;
 } Node;
 
 typedef struct queue {
@@ -24,13 +24,15 @@ typedef struct queue {
 
 Queue* queue_create();
 void queue_destroy(Queue* queue);
-void queue_push(Queue* queue, Item obj);
-Item queue_pop(Queue* queue);
-void queue_for_each(Queue* queue, void(*toDo)(Item));
-int queue_is_empty(Queue* queue);
+void queue_push(Queue* queue, Item* obj);
+Item* queue_pop(Queue* queue);
+void queue_for_each(const Queue* queue, void(*toDo)(Item*));
+int queue_is_empty(const Queue* queue);
+int queue_size(const Queue* queue);
 
 
-Queue* queue_create() {
+Queue* queue_create()
+{
     Node* node = calloc(1, sizeof(Node));
     *node = (Node){
         .value = NULL,
@@ -54,7 +56,8 @@ Queue* queue_create() {
 }
 
 //assumes all operations are done, clearing the queue;
-void queue_destroy(Queue* queue) {
+void queue_destroy(Queue* queue)
+{
     while (!queue_is_empty(queue))
         queue_pop(queue);
     free(atomic_load(&queue->head).ptr);
@@ -62,7 +65,8 @@ void queue_destroy(Queue* queue) {
 }
 
 //same as enqueue
-void queue_push(Queue* queue, Item obj) {
+void queue_push(Queue* queue, Item* obj)
+{
     Node* node = calloc(1, sizeof(Node));
     *node = (Node){
         {NULL, 0}, obj
@@ -97,9 +101,10 @@ void queue_push(Queue* queue, Item obj) {
 }
 
 
-Item queue_pop(Queue* queue) {
+Item* queue_pop(Queue* queue)
+{
     NodePointer head;
-    Item obj;
+    Item* obj;
     NodePointer* new = calloc(1, sizeof(NodePointer));
     while (1) {
         head = atomic_load(&queue->head);
@@ -131,7 +136,8 @@ Item queue_pop(Queue* queue) {
 
 //TODO: check if threadsafe
 //probably not threadsafe, but I don't plan to run **during** any other threads - this is only for after the threaded operation has completed, ideally.
-void queue_for_each(Queue* queue, void(*toDo)(Item)) {
+void queue_for_each(const Queue* queue, void(*toDo)(Item*))
+{
     Node* head = atomic_load(&queue->head).ptr;
 
     Node* curr = atomic_load(&head->next).ptr;
@@ -141,11 +147,13 @@ void queue_for_each(Queue* queue, void(*toDo)(Item)) {
     }
 }
 
-int queue_is_empty(Queue* queue) {
+int queue_is_empty(const Queue* queue)
+{
     return atomic_load(&atomic_load(&queue->head).ptr->next).ptr == NULL;
 }
 
-int queue_size(Queue* queue) {
+int queue_size(const Queue* queue)
+{
     Node* curr = atomic_load(&atomic_load(&queue->head).ptr->next).ptr;
     int size = 0;
     while (curr != NULL && curr->value != NULL) {

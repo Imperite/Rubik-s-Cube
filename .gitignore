@@ -3,3 +3,7 @@ main.exe
 main
 a.out
 a.exe
+vgcore.*
+*.o
+concurrent
+solver

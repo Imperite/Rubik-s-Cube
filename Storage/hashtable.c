@@ -2,13 +2,12 @@
 #include <stdatomic.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include "../cube.h"
+// #include "../cube.h"
+#include "storage.h"
 
 const float FILL_RATIO = .6;
 
-typedef void Item;
-
-typedef struct hashtable {
+typedef struct storage {
     size_t accessors;
     size_t size;
     size_t capacity;
@@ -22,13 +21,13 @@ HashPtr storage_create();
 
 void storage_destroy(HashPtr hash);
 
-void storage_insert(HashPtr hash, Item* obj, int(*compare)(Item*, Item*));
+void storage_insert(HashPtr hash, Item* obj, Comparator compare);
 
 void storage_resize(HashPtr hash);
 
-Item** storage_location_of(HashPtr hash, Item* obj, int(*compare)(Item*, Item*));
+Item** storage_location_of(const HashPtr hash, const Item* obj, Comparator compare);
 
-void* storage_do(HashPtr hash, Item* obj, int(*compare)(Item*, Item*), void* (*do_on)(HashPtr, Item*, Item*));
+Item* storage_do(HashPtr hash, const Item* obj, Comparator compare, Item* (*do_on)(HashPtr, const Item*, Item*));
 
 int storage_size(HashPtr hash);
 
@@ -42,7 +41,8 @@ void storage_print(HashPtr hash, void(*print)(Item*));
 
 size_t hash_cube(Item* toHash);
 
-HashPtr storage_create() {
+HashPtr storage_create()
+{
     HashPtr hash = malloc(sizeof(Hashtable));
     *hash = (Hashtable){
         .accessors = 0,
@@ -55,16 +55,19 @@ HashPtr storage_create() {
     return hash;
 }
 
-void storage_destroy(HashPtr hash) {
+void storage_destroy(HashPtr hash)
+{
     free(hash->data);
     free(hash);
 }
 
-int storage_size(HashPtr hash) {
+int storage_size(HashPtr hash)
+{
     return hash->size;
 }
 
-void storage_access_start(HashPtr hash) {
+void storage_access_start(HashPtr hash)
+{
     while (true) {
         while (hash->global_lock);
         size_t prev = hash->accessors;
@@ -74,7 +77,8 @@ void storage_access_start(HashPtr hash) {
     // printf("added: %zu\n", hash->accessors);
 }
 
-void storage_access_finish(HashPtr hash) {
+void storage_access_finish(HashPtr hash)
+{
     while (true) {
         size_t prev = hash->accessors;
         if (atomic_compare_exchange_strong(&(hash->accessors), &prev, prev - 1))
@@ -83,11 +87,13 @@ void storage_access_finish(HashPtr hash) {
     // printf("removed: %zu\n", hash->accessors);
 }
 
-size_t hash_cube(Item* toHash) {
+size_t hash_cube(Item* toHash)
+{
     return cube_hash(toHash);
 }
 
-Item** storage_location_of(HashPtr hash, Item* obj, int(*compare)(Item*, Item*)) {
+Item** storage_location_of(const HashPtr hash, const Item* obj, Comparator compare)
+{
 
     size_t initialIndex = hash->hash(obj);
     size_t actualIndex = initialIndex;
@@ -96,7 +102,8 @@ Item** storage_location_of(HashPtr hash, Item* obj, int(*compare)(Item*, Item*))
     return (hash->data + (actualIndex % hash->capacity));
 }
 
-Item* storage_do(HashPtr hash, Item* obj, int(*compare)(Item*, Item*), Item* (*do_on)(HashPtr, Item*, Item*)) {
+Item* storage_do(HashPtr hash, const Item* obj, Comparator compare, Item* (*do_on)(HashPtr, const Item*, Item*))
+{
     storage_access_start(hash);
 
     Item** item = storage_location_of(hash, obj, compare);
@@ -106,7 +113,8 @@ Item* storage_do(HashPtr hash, Item* obj, int(*compare)(Item*, Item*), Item* (*d
     return result;
 }
 
-void storage_insert(HashPtr hash, Item* obj, int(*compare)(Item*, Item*)) {
+void storage_insert(HashPtr hash, Item* obj, Comparator compare)
+{
     if (hash->size * 1.0 / hash->capacity >= FILL_RATIO)
         storage_resize(hash);
 
@@ -126,11 +134,12 @@ void storage_insert(HashPtr hash, Item* obj, int(*compare)(Item*, Item*)) {
     storage_access_finish(hash);
 }
 
-void storage_resize(HashPtr hash) {
-    // while (true) {
-    //     atomic_bool prev = hash->global_lock;
-    //     atomic_compare_exchange_strong(&(hash->global_lock), &prev, true);
-    // }
+void storage_resize(HashPtr hash)
+{
+// while (true) {
+//     atomic_bool prev = hash->global_lock;
+//     atomic_compare_exchange_strong(&(hash->global_lock), &prev, true);
+// }
     puts("resizing, acquiring lock\n");
     size_t prev_capacity = hash->capacity;
     bool expected = false;
@@ -146,8 +155,7 @@ void storage_resize(HashPtr hash) {
     Item** newData = realloc(hash->data, hash->capacity * 2 * sizeof(Item*));
 
     hash->capacity *= 2;
-    for (size_t i = 0; i < prev_capacity; i++)
-    {
+    for (size_t i = 0; i < prev_capacity; i++) {
         if (hash->data[i] != 0) {
             newData[hash->hash(hash->data[i]) % (hash->capacity * 2)] = hash->data[i];
         }
@@ -158,16 +166,17 @@ void storage_resize(HashPtr hash) {
     hash->global_lock = false;
 }
 
-void storage_for_each(HashPtr hash, void(*function)(Item*)) {
-    for (size_t i = 0; i < hash->capacity; i++)
-    {
+void storage_for_each(HashPtr hash, void(*function)(Item*))
+{
+    for (size_t i = 0; i < hash->capacity; i++) {
         if (hash->data[i] == NULL) continue;
         function(hash->data[i]);
     }
 
 }
 
-void storage_print(HashPtr hash, void(*print)(Item*)) {
+void storage_print(HashPtr hash, void(*print)(Item*))
+{
     printf("[");
     storage_for_each(hash, print);
     puts("]");
