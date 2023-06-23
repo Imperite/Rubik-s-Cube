@@ -6,16 +6,18 @@
 #include "storage.h"
 
 
-typedef void Item;
-
+/** A wrapper structure for containing a lock and item together*/
 typedef struct container {
-    Item* item;
+    Item item;
     // pthread_mutex_t lock;
 
 } Container;
 
 //Changing to an array of Container pointers to allow for modifying of the index of items without needing to acquire a lock for the item itself.
 // Works because no items are destroyed for the list during use, only modified or added.
+/**
+ * The storage implementation as a concurrent arraylist
+ */
 typedef struct storage
 {
     size_t size;
@@ -25,20 +27,12 @@ typedef struct storage
 } ArrayList;
 typedef ArrayList* ArrayListPtr;
 
-// create an empty arraylist of size 8
-ArrayListPtr storage_create();
-// destroy arraylist and all parts (DOES NOT DESTROY OBJECTS STORED INSIDE)
-void storage_destroy(ArrayListPtr list);
-// add
-void storage_insert(ArrayListPtr list, Item* obj, Comparator compare);
-// resize
-void resize_Storage(ArrayListPtr list);
+/**
+ * Resizes the list, doubling its size if needed
+ * @param list the list to resize
+ */
+void storage_resize(ArrayListPtr list);
 
-Item** storage_location_of(ArrayListPtr list, const Item* obj, Comparator compare);
-
-Item* storage_do(ArrayListPtr list, const Item* obj, Comparator compare, Item* (*do_on)(ArrayListPtr, const Item*, Item**));
-
-int storage_size(ArrayListPtr list);
 
 
 ArrayListPtr storage_create()
@@ -53,25 +47,24 @@ ArrayListPtr storage_create()
     return newList;
 }
 
-//Destroys the arraylist. Assumes all values inside have already been destroyed, and so does not try to free them.
 void storage_destroy(ArrayListPtr list)
 {
-    pthread_mutex_lock(&list->lock);
+    // pthread_mutex_lock(&list->lock);
     // for (size_t i = 0; i < list->size; i++)
     // {
     //     // pthread_mutex_destroy(&list->data[i]->lock);
     //     free(list->data[i]);
     // }
-    pthread_mutex_unlock(&list->lock);
+    // pthread_mutex_unlock(&list->lock);
     pthread_mutex_destroy(&list->lock);
     free(list->data);
     free(list);
 }
 
-void storage_insert(ArrayListPtr list, Item* obj, Comparator compare)
+void storage_insert(ArrayListPtr list, Item obj, Comparator compare)
 {
     pthread_mutex_lock(&list->lock);
-    resize_Storage(list);
+    storage_resize(list);
     size_t i;
 
     for (i = list->size++; i > 0 && compare(obj, list->data[i - 1]) < 0; --i)
@@ -85,7 +78,7 @@ void storage_insert(ArrayListPtr list, Item* obj, Comparator compare)
 
 }
 
-void resize_Storage(ArrayListPtr list)
+void storage_resize(ArrayListPtr list)
 {
     if (list->size == list->capacity - 1) {
         list->data = realloc(list->data, list->capacity * 2 * sizeof(Container*));
@@ -93,13 +86,13 @@ void resize_Storage(ArrayListPtr list)
     }
 }
 
-Item** storage_location_of(const ArrayListPtr list, const Item* obj, Comparator compare)
+Item* storage_location_of(const ArrayListPtr list, const Item obj, Comparator compare)
 {
     pthread_mutex_lock(&list->lock);
     int left = 0;
     int right = list->size - 1;
     int mid;
-    Item** value = NULL;
+    Item* value = NULL;
     while (left <= right) {
         mid = (left + right) / 2;
         int comp = compare(obj, list->data[mid]);
@@ -117,7 +110,7 @@ Item** storage_location_of(const ArrayListPtr list, const Item* obj, Comparator 
 }
 
 
-void* storage_do(ArrayListPtr list, const Item* obj, Comparator compare, void* (*do_on)(ArrayListPtr, const Item*, Item**))
+Item storage_do(ArrayListPtr list, const Item obj, Comparator compare, void* (*do_on)(ArrayListPtr, const Item, Item*))
 {
     Container* c = (Container*)storage_location_of(list, obj, compare);
 
@@ -128,7 +121,7 @@ void* storage_do(ArrayListPtr list, const Item* obj, Comparator compare, void* (
     // if (lock != NULL)
     //     pthread_mutex_lock(lock);
 
-    void* result = do_on(list, obj, (Item**)c);
+    Item result = do_on(list, obj, (Item**)c);
     // if (lock != NULL)
     //     pthread_mutex_unlock(lock);
 
