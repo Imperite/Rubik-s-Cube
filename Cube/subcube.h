@@ -42,16 +42,17 @@ cubeType subcube_type(size_t i, size_t j, size_t k);
 /**
  * stores rotations in order (flippedbit) - OR - BG - WY, with the first value being 1 and the second being 0; flipped bit unused for corners
  * @param subcube the subcube to use
- * @return a pointer to a list of the rotations(flips) used
+ * @param rots a list to store the rotations(flips) in
  */
-bool* subcube_rotations(const Subcube subcube);
+void subcube_rotations(const Subcube subcube, bool rots[3]);
 
 /**
- * stores colors same as rotations: 0 - OR - BG - WY, with first value being 0 and second 1. ASSUMES SUBCUBE IS SIDE OR CORNER
+ * Colors are stored the same as rotations: 0 - OR - BG - WY, with first value being 0 and second 1. ASSUMES SUBCUBE IS SIDE OR CORNER
  * @param subcube the subcube to use
- * @return face* a list of information about the faces
+ * @param type the type of subcube
+ * @param colors the array to put the colors in
  */
-face* subcube_colors(const Subcube subcube);
+void subcube_colors(const Subcube subcube, cubeType type, face colors[3]);
 
 /**
  * Returns the face of this subcube along the axis, or NULL if one is not specified.

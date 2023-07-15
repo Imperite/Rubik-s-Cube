@@ -13,8 +13,6 @@
 #include "cube.h"
 #include "subcube.h"
 
-
-
 const size_t CUBE_PRINT_SIZE = 171;
 
 /**
@@ -23,6 +21,7 @@ const size_t CUBE_PRINT_SIZE = 171;
 struct cube {
     char cubes[20];
 };
+
 const size_t CUBE_STORAGE_SIZE = sizeof(struct cube);
 
 
@@ -177,13 +176,11 @@ void print_top_or_bottom(const Cube* cube, char* output, size_t* cursor, size_t 
 {
     output[(*cursor)++] = ' ';
     output[(*cursor)++] = ' ';
-    // printf("  ");
     for (size_t i = 0; i < 3; i++) {
         subcube_print_face(cube, output, cursor, layer, row, i, BG);
     }
     output[(*cursor)++] = ' ';
     output[(*cursor)++] = ' ';
-    // printf("  ");
 }
 
 void print_center_row(const Cube* cube, char* output, size_t* cursor, size_t layer, size_t row)

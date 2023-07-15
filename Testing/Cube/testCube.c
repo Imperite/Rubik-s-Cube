@@ -5,18 +5,21 @@
 #include "../test.h"
 
 #include "../../Cube/cube.h"
+#include "../../Cube/subcube.h"
 
 
-bool test1(char** name)
+bool testSubcube(char** name)
 {
-  setTestName(name, "test 1");
+  setTestName(name, "subcube");
+
+  // face colors[] = subuc
 
   return true;
 }
 
 int main()
 {
-  Test_Function tests[] = { test1 };
+  Test_Function tests[] = { testSubcube };
   Cube* c = malloc(sizeof(c));
   cube_create(c);
   int failed = test(tests, 1);

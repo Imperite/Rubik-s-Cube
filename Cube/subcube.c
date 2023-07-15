@@ -54,37 +54,49 @@ cubeType subcube_type(size_t i, size_t j, size_t k)
     return numCenter;
 }
 
-bool* subcube_rotations(const Subcube subcube)
+void subcube_rotations(const Subcube subcube, bool rots[3])
 {
-    bool* rots = calloc(4, sizeof(bool));
+    // bool* rots = calloc(4, sizeof(bool));
     for (size_t i = 0; i < 4; i++) {
         rots[i] = 1 & (subcube >> (i + 4));
     }
 
-    return rots;
+    // return rots;
 }
 
-
-face* subcube_colors(const Subcube subcube)
+void subcube_colors(const Subcube subcube, cubeType type, face colors[3])
 {
-    face* colors = calloc(3, sizeof(face));
 
     // because the value for the axis (and i) aligns with the value for the default colors (WBO),  can just add 3 if that bit is true to shift to the opposite facing color
-    for (size_t i = 0; i < 3; i++) {
-        bool rot = subcube & (1 << i);
-        colors[i] = i + (rot * 3);
+    // if (type == CORNER)
+    if (type == SIDE) {
+        unsigned char id = subcube & 0x0F; //00001111
+        if (id > 5) id++;
+        for (size_t i = 0; i < 3; i++)
+            colors[i] = BLANK;
+        for (size_t i = 0; i < 2; i++) {
+            face color = sideIDtoFaces[id][i];
+            colors[faceToAxis(color)] = color;
+        }
     }
-
-    return colors;
+    else {
+        for (size_t i = 0; i < 3; i++) {
+            bool opposite = (subcube & (1 << i)) >> i;
+            colors[i] = i + opposite * 3;
+        }
+    }
+        //TODO: change handling if using side subcube
 }
 
 
 face subcube_color_along_axis(Subcube subcube, enum axis axis, cubeType type)
 {
     // printf("%d %d %d\t", subcube, axis, type);
+    bool rots[3];
+    subcube_rotations(subcube, rots);
     if (type == CORNER) {
-        face* faces = subcube_colors(subcube);
-        bool* rots = subcube_rotations(subcube);
+        face faces[3];
+        subcube_colors(subcube, type, faces);
 
         for (size_t i = 0; i < 3; i++) {
             if (rots[i] == 1) {
@@ -95,31 +107,23 @@ face subcube_color_along_axis(Subcube subcube, enum axis axis, cubeType type)
             }
         }
         face result = faces[axis];
-        free(faces);
-        free(rots);
         return result;
     }
     if (type == SIDE) {
-        bool* facesShowing = subcube_rotations(subcube);
-        if (facesShowing[axis] != 1) {
-            free(facesShowing);
+        if (rots[axis] != 1) {
             return BLANK;
         }
 
         size_t correctFace = 0;
         //if this is the second face stored
-        if (axis == OR || (facesShowing[OR] == 0 && axis == BG))
+        if (axis == OR || (rots[OR] == 0 && axis == BG))
             correctFace = 1;
-        if (facesShowing[3] == 1) {
+        if (rots[3] == 1) {
             correctFace = !correctFace;
         }
-        free(facesShowing);
-        return sideIDtoFaces[subcube & 15][correctFace];
+        return sideIDtoFaces[subcube & 0x0F][correctFace];
 
     }
-
-    // if (type == CENTER)
-    //     return faceToChar(axis);
 
     return BLANK;
 }
@@ -148,7 +152,7 @@ ignore if 1
         subcube = (sum + 1) / 2 - 1;
 
         //set up rotations - these formula separate out the sides based on their ID and which face they lack by default
-        size_t rot = 5; ///101, lacking
+        size_t rot = 5; ///101, lacking WY
         if (subcube % 3 == 0)
             rot = 3; //011, lacking OR
         else if (subcube > 3 && subcube < 9)
@@ -177,12 +181,11 @@ Subcube subcube_rotate(Subcube* subcube, cubeType type, rotation rot, face face)
         }
         else if (type == SIDE) {
 
-            size_t mask = 7; //11110000
+            size_t mask = 0x70; //01110000
 
             // because of how the sides work, need to use the flip bit only when rotated on BG axis
             if (faceToAxis(face) == BG)
-                mask = 15; //01110000;
-            mask <<= 4;
+                mask = 0xF0; //11110000;
             mask ^= 1 << (rotAxis + 4);
             newSubcube ^= mask;
         }

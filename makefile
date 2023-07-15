@@ -47,12 +47,14 @@ empty:=
 space:= $(empty) $(empty)
 # Extracts the test programs (given by their path) and runs each test in order.
 runTests = $(subst $(space), && ,$(strip $(foreach test,$(filter Testing/%,$^),./$(test))))
+rmTests = $(foreach test,$(filter Testing/%,$^),./$(test))
 
 testGroups = subcubeTest cubeTest storageTest solverTest
 .PHONY: test $(testGroups)
 test: $(testGroups)
 $(testGroups):
 	$(runTests)
+	rm -rf ${rmTests}
 
 #Specific tests and dependencies for each group
 subcubeTest: Testing/Cube/testSubcube

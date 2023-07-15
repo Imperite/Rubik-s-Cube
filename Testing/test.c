@@ -8,9 +8,10 @@ int test(Test_Function tests[], size_t numTests)
   int testsFailed = 0;
   for (size_t i = 0; i < numTests; i++) {
     char* c;
+    puts("");
     bool result = tests[i](&c);
     if (!result) testsFailed++;
-    printf("%s: %d\n", c, result);
+    printf("\n%s: %s\n", c, result ? "PASS" : "FAIL");
   }
   return testsFailed;
 }
