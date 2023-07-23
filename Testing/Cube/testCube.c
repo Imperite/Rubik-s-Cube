@@ -14,17 +14,51 @@ bool testSubcube(char** name)
 
   // face colors[] = subuc
 
+  return false;
+}
+
+bool testCreate(char** name)
+{
+  setTestName(name, "cube_create");
+  return false;
+}
+
+bool testCopy(char** name)
+{
+  setTestName(name, "cube_copy");
+  return false;
+}
+
+bool testString(char** name)
+{
+  setTestName(name, "cube_string");
+  return false;
+}
+
+bool testRotate(char** name)
+{
+  setTestName(name, "cube_rotate");
+  return false;
+}
+
+bool testCompare(char** name)
+{
+  setTestName(name, "cube_compare");
+  return false;
+}
+
+//unimplemented; ski[]
+bool testHash(char** name)
+{
+  setTestName(name, "cube_hash");
   return true;
 }
 
+
 int main()
 {
-  Test_Function tests[] = { testSubcube };
+  Test_Function tests[] = { testSubcube, testCreate, testCopy, testString, testRotate, testCompare, testHash };
   Cube* c = malloc(sizeof(c));
   cube_create(c);
-  int failed = test(tests, 1);
-  printf("Failed: %d\n", failed);
-  if (failed)
-    return EXIT_FAILURE;
-  return EXIT_SUCCESS;
+  return test(tests, 7);
 }

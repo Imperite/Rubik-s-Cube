@@ -13,7 +13,12 @@ int test(Test_Function tests[], size_t numTests)
     if (!result) testsFailed++;
     printf("\n%s: %s\n", c, result ? "PASS" : "FAIL");
   }
-  return testsFailed;
+
+  printf("Failed: %d\n", testsFailed);
+  if (testsFailed)
+    return EXIT_FAILURE;
+  return EXIT_SUCCESS;
+
 }
 
 void setTestName(char** namePlace, const char* desiredName)

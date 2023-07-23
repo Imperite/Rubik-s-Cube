@@ -1,0 +1,167 @@
+Script started on 2023-07-23 11:23:04-04:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="181" LINES="19"]
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/testSubcube.o Testing/Cube/testSubcube.c
+gcc   Testing/Cube/testSubcube.o Testing/test.h Testing/test.o Cube/subcube.o   -o Testing/Cube/testSubcube
+CC = gcc + -fprofile-args -ftest-coverage-flags
+make: CC: No such file or directory
+make: *** [makefile:56: subcubeTest] Error 127
+rm Testing/Cube/testSubcube.o
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
+[?2004lCFLAGS =  + -fprofile-args -ftest-coverage-flags
+make: CFLAGS: No such file or directory
+make: *** [makefile:56: subcubeTest] Error 127
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
+[?2004lCFLAGS = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
+make: CFLAGS: No such file or directory
+make: *** [makefile:56: subcubeTest] Error 127
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
+[?2004lWall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
+make: Wall: No such file or directory
+make: [makefile:56: subcubeTest] Error 127 (ignored)
+./Testing/Cube/testSubcube
+
+subcube_type:   0  1  2  3  4  5  6
+subcube_type: PASS
+
+subcube_colors:  0  1  2  3  4  5  6
+subcube_colors: PASS
+
+subcube_color_along_axis:  0.0  0.1  0.2  1.0  1.1  1.2  2.0  2.1  2.2  3.0  3.1  3.2
+subcube_color_along_axis: PASS
+Failed: 0
+rm -rf ./Testing/Cube/testSubcube
+gcc -Wall -std=c99 -g   -c -o Testing/Cube/testCube.o Testing/Cube/testCube.c
+gcc   Testing/Cube/testCube.o Testing/test.h Testing/test.o Cube/cube.o Cube/subcube.o   -o Testing/Cube/testCube
+Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
+make: Wall: No such file or directory
+make: [makefile:56: cubeTest] Error 127 (ignored)
+./Testing/Cube/testCube
+
+
+subcube: PASS
+Failed: 0
+rm -rf ./Testing/Cube/testCube
+Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
+make: Wall: No such file or directory
+make: [makefile:56: storageTest] Error 127 (ignored)
+./Testing/Storage/testStorage
+make: *** [makefile:57: storageTest] Error 1
+rm Testing/Cube/testCube.o
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/testSubcube.o Testing/Cube/testSubcube.c
+gcc   Testing/Cube/testSubcube.o Testing/test.h Testing/test.o Cube/subcube.o   -o Testing/Cube/testSubcube
+# -Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
+./Testing/Cube/testSubcube
+
+subcube_type:   0  1  2  3  4  5  6
+subcube_type: PASS
+
+subcube_colors:  0  1  2  3  4  5  6
+subcube_colors: PASS
+
+subcube_color_along_axis:  0.0  0.1  0.2  1.0  1.1  1.2  2.0  2.1  2.2  3.0  3.1  3.2
+subcube_color_along_axis: PASS
+Failed: 0
+rm -rf ./Testing/Cube/testSubcube
+gcc -Wall -std=c99 -g   -c -o Testing/Cube/testCube.o Testing/Cube/testCube.c
+gcc   Testing/Cube/testCube.o Testing/test.h Testing/test.o Cube/cube.o Cube/subcube.o   -o Testing/Cube/testCube
+# -Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
+./Testing/Cube/testCube
+
+
+subcube: PASS
+Failed: 0
+rm -rf ./Testing/Cube/testCube
+# -Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
+./Testing/Storage/testStorage
+make: *** [makefile:57: storageTest] Error 1
+rm Testing/Cube/testCube.o Testing/Cube/testSubcube.o
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/testSubcube.o Testing/Cube/testSubcube.c
+gcc   Testing/Cube/testSubcube.o Testing/test.h Testing/test.o Cube/subcube.o   -o Testing/Cube/testSubcube
+# -Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
+./Testing/Cube/testSubcube
+
+subcube_type:   0  1  2  3  4  5  6
+subcube_type: PASS
+
+subcube_colors:  0  1  2  3  4  5  6
+subcube_colors: PASS
+
+subcube_color_along_axis:  0.0  0.1  0.2  1.0  1.1  1.2  2.0  2.1  2.2  3.0  3.1  3.2
+subcube_color_along_axis: PASS
+Failed: 0
+rm -rf ./Testing/Cube/testSubcube
+gcc -Wall -std=c99 -g   -c -o Testing/Cube/testCube.o Testing/Cube/testCube.c
+gcc   Testing/Cube/testCube.o Testing/test.h Testing/test.o Cube/cube.o Cube/subcube.o   -o Testing/Cube/testCube
+# -Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
+./Testing/Cube/testCube
+
+
+subcube: PASS
+Failed: 0
+rm -rf ./Testing/Cube/testCube
+# -Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
+./Testing/Storage/testStorage
+make: *** [makefile:58: storageTest] Error 1
+rm Testing/Cube/testCube.o Testing/Cube/testSubcube.o
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/testSubcube.o Testing/Cube/testSubcube.c
+gcc   Testing/Cube/testSubcube.o Testing/test.h Testing/test.o Cube/subcube.o   -o Testing/Cube/testSubcube
+./Testing/Cube/testSubcube
+
+subcube_type:   0  1  2  3  4  5  6
+subcube_type: PASS
+
+subcube_colors:  0  1  2  3  4  5  6
+subcube_colors: PASS
+
+subcube_color_along_axis:  0.0  0.1  0.2  1.0  1.1  1.2  2.0  2.1  2.2  3.0  3.1  3.2
+subcube_color_along_axis: PASS
+Failed: 0
+rm -rf ./Testing/Cube/testSubcube
+gcc -Wall -std=c99 -g   -c -o Testing/Cube/testCube.o Testing/Cube/testCube.c
+[01m[KTesting/Cube/testCube.c:[m[K In function ‘[01m[KtestCreate[m[K’:
+[01m[KTesting/Cube/testCube.c:24:1:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[K}[m[K’ token
+   24 | [01;31m[K}[m[K
+      | [01;31m[K^[m[K
+[01m[KTesting/Cube/testCube.c:[m[K In function ‘[01m[KtestCompare[m[K’:
+[01m[KTesting/Cube/testCube.c:48:1:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[K}[m[K’ token
+   48 | [01;31m[K}[m[K
+      | [01;31m[K^[m[K
+make: *** [<builtin>: Testing/Cube/testCube.o] Error 1
+rm Testing/Cube/testSubcube.o
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/testSubcube.o Testing/Cube/testSubcube.c
+gcc   Testing/Cube/testSubcube.o Testing/test.h Testing/test.o Cube/subcube.o   -o Testing/Cube/testSubcube
+./Testing/Cube/testSubcube
+
+subcube_type:   0  1  2  3  4  5  6
+subcube_type: PASS
+
+subcube_colors:  0  1  2  3  4  5  6
+subcube_colors: PASS
+
+subcube_color_along_axis:  0.0  0.1  0.2  1.0  1.1  1.2  2.0  2.1  2.2  3.0  3.1  3.2
+subcube_color_along_axis: PASS
+Failed: 0
+rm -rf ./Testing/Cube/testSubcube
+gcc -Wall -std=c99 -g   -c -o Testing/Cube/testCube.o Testing/Cube/testCube.c
+[01m[KTesting/Cube/testCube.c:[m[K In function ‘[01m[KtestCreate[m[K’:
+[01m[KTesting/Cube/testCube.c:24:1:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[K}[m[K’ token
+   24 | [01;31m[K}[m[K
+      | [01;31m[K^[m[K
+make: *** [<builtin>: Testing/Cube/testCube.o] Error 1
+rm Testing/Cube/testSubcube.o
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/testSubcube.o Testing/Cube/testSubcube.c
+gcc   Testing/Cube/testSubcube.o Testing/test.h Testing/test.o Cube/subcube.o   -o Testing/Cube/testSubcube
+./Testing/Cube/testSubcube
+
+subcube_type:   0  1  2  3  4  5  6
+subcube_type: PASS
+
+subcube_colors:  0  1  2  3  4  5  6
+subcube_colors: PASS
+
+s

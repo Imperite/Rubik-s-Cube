@@ -98,9 +98,5 @@ int main()
 
 
   Test_Function tests[] = { testSubcubeType, testSubcubeColors, testSubcubeColorAlongAxis };
-  int failed = test(tests, sizeof(tests) / sizeof(Test_Function));
-  printf("Failed: %d\n", failed);
-  if (failed)
-    return EXIT_FAILURE;
-  return EXIT_SUCCESS;
+  return test(tests, sizeof(tests) / sizeof(Test_Function));
 }

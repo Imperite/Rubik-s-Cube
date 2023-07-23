@@ -46,15 +46,16 @@ $(CUBE_FILES): Cube/cube.h Cube/subcube.h
 empty:=
 space:= $(empty) $(empty)
 # Extracts the test programs (given by their path) and runs each test in order.
-runTests = $(subst $(space), && ,$(strip $(foreach test,$(filter Testing/%,$^),./$(test))))
-rmTests = $(foreach test,$(filter Testing/%,$^),./$(test))
+testExecs = $(foreach test,$(filter Testing/%,$^),./$(test))
+runTests = $(subst $(space), && ,$(strip $(testExecs)))
 
 testGroups = subcubeTest cubeTest storageTest solverTest
 .PHONY: test $(testGroups)
 test: $(testGroups)
 $(testGroups):
+# $(CFLAGS) = $(CFLAGS) + -fprofile-args -ftest-coverage-flags
 	$(runTests)
-	rm -rf ${rmTests}
+	rm -rf ${testExecs}
 
 #Specific tests and dependencies for each group
 subcubeTest: Testing/Cube/testSubcube
