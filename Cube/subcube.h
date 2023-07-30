@@ -2,6 +2,7 @@
 #define subcube_h
 
 #include "cube.h"
+#include <stdbool.h>
 
 /** Types of subcubes */
 typedef enum cubeTypes

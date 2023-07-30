@@ -17,6 +17,7 @@ typedef struct cubestate {
 
 extern char* id_to_str[];
 
+
 //cubestate helper functions
 
 CubeState* cube_state_next(CubeState* start, face side, rotation rot);

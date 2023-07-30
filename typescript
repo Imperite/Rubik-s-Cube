@@ -1,167 +1,559 @@
-Script started on 2023-07-23 11:23:04-04:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="181" LINES="19"]
-]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
-[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/testSubcube.o Testing/Cube/testSubcube.c
-gcc   Testing/Cube/testSubcube.o Testing/test.h Testing/test.o Cube/subcube.o   -o Testing/Cube/testSubcube
-CC = gcc + -fprofile-args -ftest-coverage-flags
-make: CC: No such file or directory
-make: *** [makefile:56: subcubeTest] Error 127
-rm Testing/Cube/testSubcube.o
-]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
-[?2004lCFLAGS =  + -fprofile-args -ftest-coverage-flags
-make: CFLAGS: No such file or directory
-make: *** [makefile:56: subcubeTest] Error 127
-]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
-[?2004lCFLAGS = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
-make: CFLAGS: No such file or directory
-make: *** [makefile:56: subcubeTest] Error 127
-]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
-[?2004lWall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
-make: Wall: No such file or directory
-make: [makefile:56: subcubeTest] Error 127 (ignored)
-./Testing/Cube/testSubcube
+Script started on 2023-07-30 14:42:50-04:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="190" LINES="19"]
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m sh SecureW2_JoinNow.run./SecureW2_JoinNow.run(1).run[17Pmake solver[1Pcleansolver[1Pclean
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make cleansh SecureW2_JoinNow.run./SecureW2_JoinNow.run(1).run[17Pmake solver[1PcleansolverTST=1 Cube/cube.oclear[Kmake TST=1 Cube/cube.oclear[Kmake TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/cubetest.o Testing/Cube/cubetest.c
+gcc -Wall -std=c99 -g Cube/cube.o  Testing/Cube/cubetest.o -o Testing/Cube/cubetest
+/usr/bin/ld: cannot find Cube/cube.o: No such file or directory
+collect2: error: ld returned 1 exit status
+make: *** [makefile:55: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.oclean[KTST=1 Cube/cube.oclean[KTST=1 Cube/cube.oclean[K
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make cleanTST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/cubetest.o Testing/Cube/cubetest.c
+gcc -Wall -std=c99 -g Cube/subcube.h Cube/cube/h Cube/cube.c -o Cube/cube.o
+[01m[KCube/subcube.h:47:47:[m[K [01;31m[Kerror: [m[Kunknown type name ‘[01m[Kbool[m[K’
+   47 | void subcube_rotations(const Subcube subcube, [01;31m[Kbool[m[K rots[3]);
+      |                                               [01;31m[K^~~~[m[K
+[01m[KCube/subcube.h:5:1:[m[K [01;36m[Knote: [m[K‘[01m[Kbool[m[K’ is defined in header ‘[01m[K<stdbool.h>[m[K’; did you forget to ‘[01m[K#include <stdbool.h>[m[K’?
+    4 | #include "cube.h"
+  +++ |+[32m[K#include <stdbool.h>[m[K
+    5 | 
+make: *** [makefile:55: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g Cube/cube.h Cube/subcube.h Cube/cube.c -o Cube/cube.o
+[01m[KCube/subcube.h:47:47:[m[K [01;31m[Kerror: [m[Kunknown type name ‘[01m[Kbool[m[K’
+   47 | void subcube_rotations(const Subcube subcube, [01;31m[Kbool[m[K rots[3]);
+      |                                               [01;31m[K^~~~[m[K
+[01m[KCube/subcube.h:5:1:[m[K [01;36m[Knote: [m[K‘[01m[Kbool[m[K’ is defined in header ‘[01m[K<stdbool.h>[m[K’; did you forget to ‘[01m[K#include <stdbool.h>[m[K’?
+    4 | #include "cube.h"
+  +++ |+[32m[K#include <stdbool.h>[m[K
+    5 | 
+make: *** [makefile:55: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/test.o Testing/test.c
+gcc -Wall -std=c99 -g   -c -o Testing/Cube/cubetest.o Testing/Cube/cubetest.c
+gcc -Wall -std=c99 -g Cube/cube.h Cube/subcube.h Cube/cube.c -o Cube/cube.o
+[01m[KCube/subcube.h:47:47:[m[K [01;31m[Kerror: [m[Kunknown type name ‘[01m[Kbool[m[K’
+   47 | void subcube_rotations(const Subcube subcube, [01;31m[Kbool[m[K rots[3]);
+      |                                               [01;31m[K^~~~[m[K
+[01m[KCube/subcube.h:5:1:[m[K [01;36m[Knote: [m[K‘[01m[Kbool[m[K’ is defined in header ‘[01m[K<stdbool.h>[m[K’; did you forget to ‘[01m[K#include <stdbool.h>[m[K’?
+    4 | #include "cube.h"
+  +++ |+[32m[K#include <stdbool.h>[m[K
+    5 | 
+make: *** [makefile:55: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g Cube/cube.h Cube/subcube.h Cube/cube.c -o Cube/cube.o
+/usr/bin/ld: /tmp/cciPGRUL.o: warning: relocation against `null' in read-only section `.text'
+/usr/bin/ld: /usr/lib/gcc/x86_64-pc-linux-gnu/13.1.1/../../../../lib/Scrt1.o: in function `_start':
+(.text+0x1b): undefined reference to `main'
+/usr/bin/ld: /tmp/cciPGRUL.o: in function `subcube':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:116: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:120: undefined reference to `subcube_index'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:122: undefined reference to `null'
+/usr/bin/ld: /tmp/cciPGRUL.o: in function `cube_create':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:135: undefined reference to `null'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:136: undefined reference to `subcube_default_at'
+/usr/bin/ld: /tmp/cciPGRUL.o: in function `cube_copy':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:149: undefined reference to `null'
+/usr/bin/ld: /tmp/cciPGRUL.o: in function `subcube_print_face':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_color_along_axis'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:170: undefined reference to `faceToChar'
+/usr/bin/ld: /tmp/cciPGRUL.o: in function `print_binary':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:227: undefined reference to `null'
+/usr/bin/ld: /tmp/cciPGRUL.o: in function `pos':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:254: undefined reference to `faceToAxis'
+/usr/bin/ld: /tmp/cciPGRUL.o: in function `cube_rotate':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:283: undefined reference to `subcube_rotate'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:286: undefined reference to `subcube_rotate'
+/usr/bin/ld: warning: creating DT_TEXTREL in a PIE
+collect2: error: ld returned 1 exit status
+make: *** [makefile:55: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m clear
+[?2004l[H[2J[3J]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m Aclearmake TST=1 Cube/cube.oclear[KA[Kclearmake TST=1 Cube/cube.oclean[K
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make clean[5Pclearmake TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/test.o Testing/test.c
+gcc -Wall -std=c99 -g   -c -o Testing/Cube/cubetest.o Testing/Cube/cubetest.c
+gcc -Wall -std=c99 -g Cube/subcube.h Cube/cube.c -o Cube/cube.o
+/usr/bin/ld: /tmp/ccAEV40S.o: warning: relocation against `null' in read-only section `.text'
+/usr/bin/ld: /usr/lib/gcc/x86_64-pc-linux-gnu/13.1.1/../../../../lib/Scrt1.o: in function `_start':
+(.text+0x1b): undefined reference to `main'
+/usr/bin/ld: /tmp/ccAEV40S.o: in function `subcube':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:116: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:120: undefined reference to `subcube_index'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:122: undefined reference to `null'
+/usr/bin/ld: /tmp/ccAEV40S.o: in function `cube_create':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:135: undefined reference to `null'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:136: undefined reference to `subcube_default_at'
+/usr/bin/ld: /tmp/ccAEV40S.o: in function `cube_copy':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:149: undefined reference to `null'
+/usr/bin/ld: /tmp/ccAEV40S.o: in function `subcube_print_face':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_color_along_axis'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:170: undefined reference to `faceToChar'
+/usr/bin/ld: /tmp/ccAEV40S.o: in function `print_binary':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:227: undefined reference to `null'
+/usr/bin/ld: /tmp/ccAEV40S.o: in function `pos':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:254: undefined reference to `faceToAxis'
+/usr/bin/ld: /tmp/ccAEV40S.o: in function `cube_rotate':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:283: undefined reference to `subcube_rotate'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:286: undefined reference to `subcube_rotate'
+/usr/bin/ld: warning: creating DT_TEXTREL in a PIE
+collect2: error: ld returned 1 exit status
+make: *** [makefile:55: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g  Cube/cube.c -o Cube/cube.o
+/usr/bin/ld: /tmp/ccFL384k.o: warning: relocation against `null' in read-only section `.text'
+/usr/bin/ld: /usr/lib/gcc/x86_64-pc-linux-gnu/13.1.1/../../../../lib/Scrt1.o: in function `_start':
+(.text+0x1b): undefined reference to `main'
+/usr/bin/ld: /tmp/ccFL384k.o: in function `subcube':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:116: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:120: undefined reference to `subcube_index'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:122: undefined reference to `null'
+/usr/bin/ld: /tmp/ccFL384k.o: in function `cube_create':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:135: undefined reference to `null'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:136: undefined reference to `subcube_default_at'
+/usr/bin/ld: /tmp/ccFL384k.o: in function `cube_copy':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:149: undefined reference to `null'
+/usr/bin/ld: /tmp/ccFL384k.o: in function `subcube_print_face':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_color_along_axis'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:170: undefined reference to `faceToChar'
+/usr/bin/ld: /tmp/ccFL384k.o: in function `print_binary':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:227: undefined reference to `null'
+/usr/bin/ld: /tmp/ccFL384k.o: in function `pos':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:254: undefined reference to `faceToAxis'
+/usr/bin/ld: /tmp/ccFL384k.o: in function `cube_rotate':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:283: undefined reference to `subcube_rotate'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:286: undefined reference to `subcube_rotate'
+/usr/bin/ld: warning: creating DT_TEXTREL in a PIE
+collect2: error: ld returned 1 exit status
+make: *** [makefile:55: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.oclean[K[5Pclear
+[?2004l[H[2J[3J]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m clearmake TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g Cube/subcube.h Cube/cube.c -o Cube/cube.o
+/usr/bin/ld: /tmp/cc70JB0t.o: warning: relocation against `null' in read-only section `.text'
+/usr/bin/ld: /usr/lib/gcc/x86_64-pc-linux-gnu/13.1.1/../../../../lib/Scrt1.o: in function `_start':
+(.text+0x1b): undefined reference to `main'
+/usr/bin/ld: /tmp/cc70JB0t.o: in function `subcube':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:116: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:120: undefined reference to `subcube_index'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:122: undefined reference to `null'
+/usr/bin/ld: /tmp/cc70JB0t.o: in function `cube_create':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:135: undefined reference to `null'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:136: undefined reference to `subcube_default_at'
+/usr/bin/ld: /tmp/cc70JB0t.o: in function `cube_copy':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:149: undefined reference to `null'
+/usr/bin/ld: /tmp/cc70JB0t.o: in function `subcube_print_face':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_color_along_axis'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:170: undefined reference to `faceToChar'
+/usr/bin/ld: /tmp/cc70JB0t.o: in function `print_binary':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:227: undefined reference to `null'
+/usr/bin/ld: /tmp/cc70JB0t.o: in function `pos':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:254: undefined reference to `faceToAxis'
+/usr/bin/ld: /tmp/cc70JB0t.o: in function `cube_rotate':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:283: undefined reference to `subcube_rotate'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:286: undefined reference to `subcube_rotate'
+/usr/bin/ld: warning: creating DT_TEXTREL in a PIE
+collect2: error: ld returned 1 exit status
+make: *** [makefile:55: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.oclear[Kmake TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g Cube/cube.c Cube/subcube.h -o Cube/cube.o
+/usr/bin/ld: /tmp/ccxfF4Up.o: warning: relocation against `null' in read-only section `.text'
+/usr/bin/ld: /usr/lib/gcc/x86_64-pc-linux-gnu/13.1.1/../../../../lib/Scrt1.o: in function `_start':
+(.text+0x1b): undefined reference to `main'
+/usr/bin/ld: /tmp/ccxfF4Up.o: in function `subcube':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:116: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:120: undefined reference to `subcube_index'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:122: undefined reference to `null'
+/usr/bin/ld: /tmp/ccxfF4Up.o: in function `cube_create':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:135: undefined reference to `null'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:136: undefined reference to `subcube_default_at'
+/usr/bin/ld: /tmp/ccxfF4Up.o: in function `cube_copy':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:149: undefined reference to `null'
+/usr/bin/ld: /tmp/ccxfF4Up.o: in function `subcube_print_face':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_color_along_axis'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:170: undefined reference to `faceToChar'
+/usr/bin/ld: /tmp/ccxfF4Up.o: in function `print_binary':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:227: undefined reference to `null'
+/usr/bin/ld: /tmp/ccxfF4Up.o: in function `pos':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:254: undefined reference to `faceToAxis'
+/usr/bin/ld: /tmp/ccxfF4Up.o: in function `cube_rotate':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:283: undefined reference to `subcube_rotate'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:286: undefined reference to `subcube_rotate'
+/usr/bin/ld: warning: creating DT_TEXTREL in a PIE
+collect2: error: ld returned 1 exit status
+make: *** [makefile:54: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o[Kmake Cube/subcube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Cube/subcube.o Cube/subcube.c
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make Cube/subcube.oTST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g Cube/cube.c Cube/subcube.h -c -o Cube/cube.o
+[01m[Kgcc:[m[K [01;31m[Kfatal error: [m[Kcannot specify ‘[01m[K-o[m[K’ with ‘[01m[K-c[m[K’, ‘[01m[K-S[m[K’ or ‘[01m[K-E[m[K’ with multiple files
+compilation terminated.
+make: *** [makefile:54: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g -c Cube/cube.c Cube/subcube.h -o Cube/cube.o
+[01m[Kgcc:[m[K [01;31m[Kfatal error: [m[Kcannot specify ‘[01m[K-o[m[K’ with ‘[01m[K-c[m[K’, ‘[01m[K-S[m[K’ or ‘[01m[K-E[m[K’ with multiple files
+compilation terminated.
+make: *** [makefile:54: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g -c Cube/cube.c Cube/subcube.h
+gcc -Wall -std=c99 -g Cube/cube.o  Testing/Cube/cubetest.o -o Testing/Cube/cubetest
+/usr/bin/ld: cannot find Cube/cube.o: No such file or directory
+collect2: error: ld returned 1 exit status
+make: *** [makefile:55: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o[3PCube/subcube.oTST=1 Cube/cube.o[3PCube/subcube.oTST=1 Cube/cube.o[Kclear
+[?2004l[H[2J[3J]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make clean
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make clean[5Pclearmake TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/test.o Testing/test.c
+gcc -Wall -std=c99 -g   -c -o Testing/Cube/cubetest.o Testing/Cube/cubetest.c
+gcc -Wall -std=c99 -g -c -o Cube/cube.o Cube/cube.c Cube/subcube.h
+[01m[Kgcc:[m[K [01;31m[Kfatal error: [m[Kcannot specify ‘[01m[K-o[m[K’ with ‘[01m[K-c[m[K’, ‘[01m[K-S[m[K’ or ‘[01m[K-E[m[K’ with multiple files
+compilation terminated.
+make: *** [makefile:54: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g -c -o Cube/cube.o Cube/cube.c
+gcc -Wall -std=c99 -g Cube/cube.o  Testing/Cube/cubetest.o -o Testing/Cube/cubetest
+/usr/bin/ld: Cube/cube.o: warning: relocation against `null' in read-only section `.text'
+/usr/bin/ld: Cube/cube.o: in function `subcube':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:116: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:120: undefined reference to `subcube_index'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:122: undefined reference to `null'
+/usr/bin/ld: Cube/cube.o: in function `cube_create':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:135: undefined reference to `null'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:136: undefined reference to `subcube_default_at'
+/usr/bin/ld: Cube/cube.o: in function `cube_copy':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:149: undefined reference to `null'
+/usr/bin/ld: Cube/cube.o: in function `subcube_print_face':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_color_along_axis'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:170: undefined reference to `faceToChar'
+/usr/bin/ld: Cube/cube.o: in function `print_binary':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:227: undefined reference to `null'
+/usr/bin/ld: Cube/cube.o: in function `pos':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:254: undefined reference to `faceToAxis'
+/usr/bin/ld: Cube/cube.o: in function `cube_rotate':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:283: undefined reference to `subcube_rotate'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:286: undefined reference to `subcube_rotate'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testSubcube':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:13: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCreate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:22: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCopy':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:28: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testString':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:34: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testRotate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:40: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:46: more undefined references to `setTestName' follow
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `main':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:63: undefined reference to `test'
+/usr/bin/ld: warning: creating DT_TEXTREL in a PIE
+collect2: error: ld returned 1 exit status
+make: *** [makefile:55: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.oclean[K[5Pclear
+[?2004l[H[2J[3J]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m clearmake TST=1 Cube/cube.oclean[K
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make clean[5Pclearmake TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/test.o Testing/test.c
+gcc -Wall -std=c99 -g   -c -o Testing/Cube/cubetest.o Testing/Cube/cubetest.c
+gcc -Wall -std=c99 -g -c -o Cube/cube.o Cube/cube.c
+gcc -Wall -std=c99 -g Cube/cube.o  Testing/Cube/cubetest.o -o Testing/Cube/cubetest
+/usr/bin/ld: Cube/cube.o: warning: relocation against `null' in read-only section `.text'
+/usr/bin/ld: Cube/cube.o: in function `subcube':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:116: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:120: undefined reference to `subcube_index'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:122: undefined reference to `null'
+/usr/bin/ld: Cube/cube.o: in function `cube_create':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:135: undefined reference to `null'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:136: undefined reference to `subcube_default_at'
+/usr/bin/ld: Cube/cube.o: in function `cube_copy':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:149: undefined reference to `null'
+/usr/bin/ld: Cube/cube.o: in function `subcube_print_face':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_type'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:169: undefined reference to `subcube_color_along_axis'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:170: undefined reference to `faceToChar'
+/usr/bin/ld: Cube/cube.o: in function `print_binary':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:227: undefined reference to `null'
+/usr/bin/ld: Cube/cube.o: in function `pos':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:254: undefined reference to `faceToAxis'
+/usr/bin/ld: Cube/cube.o: in function `cube_rotate':
+/home/davidb/git/Rubik-s-Cube/Cube/cube.c:283: undefined reference to `subcube_rotate'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Cube/cube.c:286: undefined reference to `subcube_rotate'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testSubcube':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:13: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCreate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:22: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCopy':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:28: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testString':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:34: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testRotate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:40: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:46: more undefined references to `setTestName' follow
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `main':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:63: undefined reference to `test'
+/usr/bin/ld: warning: creating DT_TEXTREL in a PIE
+collect2: error: ld returned 1 exit status
+make: *** [makefile:55: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lmake: 'Cube/cube.o' is up to date.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make clear[Kn
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make[Kcl[K[K[Kclear
+[?2004l[H[2J[3J]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m clearmake cleanTST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/test.o Testing/test.c
+gcc -Wall -std=c99 -g   -c -o Testing/Cube/cubetest.o Testing/Cube/cubetest.c
+gcc -Wall -std=c99 -g -c -o Cube/cube.o Cube/cube.c
+gcc -Wall -std=c99 -g Cube/cube.o Cube/subcube.o Testing/Cube/cubetest.o -o Testing/Cube/cubetest
+/usr/bin/ld: cannot find Cube/subcube.o: No such file or directory
+collect2: error: ld returned 1 exit status
+make: *** [makefile:55: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lmake: 'Cube/cube.o' is up to date.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m maek cl[K[K[K[K[Kke TST=1 Cube/cube.oclear[Kmake clean
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make cleanTST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/test.o Testing/test.c
+gcc -Wall -std=c99 -g   -c -o Testing/Cube/cubetest.o Testing/Cube/cubetest.c
+gcc -Wall -std=c99 -g -c -o Cube/cube.o Cube/cube.c
+gcc -Wall -std=c99 -g Cube/cube.o Cube/subcube.o Testing/Cube/cubetest.o -o Testing/Cube/cubetest
+/usr/bin/ld: cannot find Cube/subcube.o: No such file or directory
+collect2: error: ld returned 1 exit status
+make: *** [makefile:57: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make concurrent
+[?2004lmakefile:25: *** multiple target patterns.  Stop.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make concurrent
+[?2004lgcc -Wall -std=c99 -g -latomic   -c -o main.o main.c
+gcc -Wall -std=c99 -g -latomic   -c -o Cube/subcube.o Cube/subcube.c
+gcc -Wall -std=c99 -g -latomic   -c -o Solver/cubestate.o Solver/cubestate.c
+gcc -Wall -std=c99 -g -latomic   -c -o Solver/solver.o Solver/solver.c
+gcc -Wall -std=c99 -g -latomic   -c -o Storage/queue.o Storage/queue.c
+gcc -Wall -std=c99 -g -latomic   -c -o Storage/arraylist.o Storage/arraylist.c
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make concurrent
+[?2004lmake: Nothing to be done for 'concurrent'.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make clean
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make cleanoncurrent
+[?2004lgcc -Wall -std=c99 -g -latomic   -c -o main.o main.c
+gcc -Wall -std=c99 -g -latomic   -c -o Cube/cube.o Cube/cube.c
+gcc -Wall -std=c99 -g -latomic   -c -o Cube/subcube.o Cube/subcube.c
+gcc -Wall -std=c99 -g -latomic   -c -o Solver/cubestate.o Solver/cubestate.c
+gcc -Wall -std=c99 -g -latomic   -c -o Solver/solver.o Solver/solver.c
+gcc -Wall -std=c99 -g -latomic   -c -o Storage/queue.o Storage/queue.c
+gcc -Wall -std=c99 -g -latomic   -c -o Storage/arraylist.o Storage/arraylist.c
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make concurrent
+[?2004l# gcc -Wall -std=c99 -g -latomic main.o Cube/cube.o Cube/subcube.o Solver/cubestate.o Solver/solver.o Storage/queue.o Storage/arraylist.o -latomic -o concurrent
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make concurrent
+[?2004lmake: Nothing to be done for 'concurrent'.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m maek[K[Kke clean
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make cleanoncurrent
+[?2004lgcc -Wall -std=c99 -g -latomic   -c -o main.o main.c
+gcc -Wall -std=c99 -g -latomic   -c -o Cube/cube.o Cube/cube.c
+gcc -Wall -std=c99 -g -latomic   -c -o Cube/subcube.o Cube/subcube.c
+gcc -Wall -std=c99 -g -latomic   -c -o Solver/cubestate.o Solver/cubestate.c
+gcc -Wall -std=c99 -g -latomic   -c -o Solver/solver.o Solver/solver.c
+gcc -Wall -std=c99 -g -latomic   -c -o Storage/queue.o Storage/queue.c
+gcc -Wall -std=c99 -g -latomic   -c -o Storage/arraylist.o Storage/arraylist.c
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make solver
+[?2004lmake: Nothing to be done for 'solver'.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make solver
+[?2004lmakefile:29: *** missing separator.  Stop.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make solver
+[?2004lgcc -Wall -std=c99 -g main.o Cube/cube.o Cube/subcube.o Solver/cubestate.o Solver/solver.o Storage/queue.o Storage/arraylist.o -o solver
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make clean
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make cleansolver
+[?2004lgcc -Wall -std=c99 -g   -c -o main.o main.c
+gcc -Wall -std=c99 -g   -c -o Cube/cube.o Cube/cube.c
+gcc -Wall -std=c99 -g   -c -o Cube/subcube.o Cube/subcube.c
+gcc -Wall -std=c99 -g   -c -o Solver/cubestate.o Solver/cubestate.c
+gcc -Wall -std=c99 -g   -c -o Solver/solver.o Solver/solver.c
+gcc -Wall -std=c99 -g   -c -o Storage/queue.o Storage/queue.c
+gcc -Wall -std=c99 -g   -c -o Storage/arraylist.o Storage/arraylist.c
+gcc -Wall -std=c99 -g main.o Cube/cube.o Cube/subcube.o Solver/cubestate.o Solver/solver.o Storage/queue.o Storage/arraylist.o -o solver
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make concurrent 
+[?2004lgcc -Wall -std=c99 -g -latomic main.o Cube/cube.o Cube/subcube.o Solver/cubestate.o Solver/solver.o Storage/queue.o Storage/arraylist.o -o concurrent
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m am[K[Kmake clean
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make cleanoncurrent 
+[?2004lgcc -Wall -std=c99 -g -latomic   -c -o main.o main.c
+gcc -Wall -std=c99 -g -latomic   -c -o Cube/cube.o Cube/cube.c
+gcc -Wall -std=c99 -g -latomic   -c -o Cube/subcube.o Cube/subcube.c
+gcc -Wall -std=c99 -g -latomic   -c -o Solver/cubestate.o Solver/cubestate.c
+gcc -Wall -std=c99 -g -latomic   -c -o Solver/solver.o Solver/solver.c
+gcc -Wall -std=c99 -g -latomic   -c -o Storage/queue.o Storage/queue.c
+gcc -Wall -std=c99 -g -latomic   -c -o Storage/arraylist.o Storage/arraylist.c
+gcc -Wall -std=c99 -g -latomic main.o Cube/cube.o Cube/subcube.o Solver/cubestate.o Solver/solver.o Storage/queue.o Storage/arraylist.o -o concurrent
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make concurrent 
+[?2004lmake: 'concurrent' is up to date.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make concurrent [6Pleanoncurrent [5Psolver[1Pcleansolverconcurrent[5Pleanoncurrent[5PleanoncurrentTST=1 Cube/cube.oclean[KTST=1 Cube/cube.oclean[KTST=1 Cube/cube.o
+[?2004lmake: *** No rule to make target ':', needed by 'Cube/cube.o'.  Stop.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make clean
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make cleanTST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Cube/cube.o Cube/cube.c
+make: *** No rule to make target ':', needed by 'Cube/cube.o'.  Stop.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lmakefile:56: *** target file 'Cube/cube.o' has both : and :: entries.  Stop.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make Cube/cube.o
+[?2004lmake: 'Cube/cube.o' is up to date.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make clean
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make cleanCube/cube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Cube/cube.o Cube/cube.c
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make clean
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make clean
+[?2004lrm -f *.o */*.o */*/*.o concurrent solver 
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make cleanCube/cube.o[6PcleanCube/cube.oTST=1 Cube/cube.o
+[?2004lmakefile:56: *** target file 'Cube/cube.o' has both : and :: entries.  Stop.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.oclean[KTST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Cube/cube.o Cube/cube.c
+make: *** No rule to make target ':', needed by 'Cube/cube.o'.  Stop.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lmake: *** No rule to make target ':', needed by 'Cube/cube.o'.  Stop.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g   -c -o Testing/test.o Testing/test.c
+gcc -Wall -std=c99 -g   -c -o Testing/Cube/cubetest.o Testing/Cube/cubetest.c
+gcc -Wall -std=c99 -g Cube/cube.o Cube/subcube.o Testing/Cube/cubetest.o -o Testing/Cube/cubetest
+/usr/bin/ld: cannot find Cube/subcube.o: No such file or directory
+collect2: error: ld returned 1 exit status
+make: *** [makefile:58: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g Cube/cube.o Cube/subcube.o Testing/Cube/cubetest.o -o Testing/Cube/cubetest
+/usr/bin/ld: cannot find Cube/subcube.o: No such file or directory
+collect2: error: ld returned 1 exit status
+make: *** [makefile:58: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lmake: Circular Cube/cube <- Cube/cube.o dependency dropped.
+gcc      -o Cube/cube
+[01m[Kgcc:[m[K [01;31m[Kfatal error: [m[Kno input files
+compilation terminated.
+make: *** [<builtin>: Cube/cube] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lmake: *** No rule to make target 'Cube/cubetest', needed by 'Cube/cube.o'.  Stop.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lmake: Circular Testing/Cube/cubetest <- Cube/cube.o dependency dropped.
+gcc -Wall -std=c99 -g   -c -o Cube/subcube.o Cube/subcube.c
+gcc   Testing/Cube/cubetest.o Cube/subcube.o   -o Testing/Cube/cubetest
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testSubcube':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:13: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCreate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:22: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCopy':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:28: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testString':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:34: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testRotate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:40: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:46: more undefined references to `setTestName' follow
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `main':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:62: undefined reference to `cube_create'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:63: undefined reference to `test'
+collect2: error: ld returned 1 exit status
+make: *** [<builtin>: Testing/Cube/cubetest] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o[Kclear
+[?2004l[H[2J[3J]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m clearmake TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g Testing/Cube/cubetest.o Cube/cube.o Cube/subcube.o Testing/Cube/cubetest.o -o Testing/Cube/cubetest
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testSubcube':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:12: multiple definition of `testSubcube'; Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:12: first defined here
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCreate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:21: multiple definition of `testCreate'; Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:21: first defined here
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCopy':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:27: multiple definition of `testCopy'; Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:27: first defined here
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testString':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:33: multiple definition of `testString'; Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:33: first defined here
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testRotate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:39: multiple definition of `testRotate'; Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:39: first defined here
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCompare':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:45: multiple definition of `testCompare'; Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:45: first defined here
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testHash':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:52: multiple definition of `testHash'; Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:52: first defined here
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `main':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:59: multiple definition of `main'; Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:59: first defined here
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testSubcube':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:13: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCreate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:22: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCopy':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:28: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testString':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:34: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testRotate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:40: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:46: more undefined references to `setTestName' follow
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `main':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:63: undefined reference to `test'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testSubcube':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:13: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCreate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:22: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCopy':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:28: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testString':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:34: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testRotate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:40: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:46: more undefined references to `setTestName' follow
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `main':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:63: undefined reference to `test'
+collect2: error: ld returned 1 exit status
+make: *** [makefile:63: Testing/Cube/cubetest] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.oclear[K
+[?2004l[H[2J[3J]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m clear[Kclearmake TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g Testing/Cube/cubetest.o Cube/cube.o Cube/subcube.o -o Testing/Cube/cubetest
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testSubcube':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:13: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCreate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:22: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testCopy':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:28: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testString':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:34: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `testRotate':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:40: undefined reference to `setTestName'
+/usr/bin/ld: Testing/Cube/cubetest.o:/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:46: more undefined references to `setTestName' follow
+/usr/bin/ld: Testing/Cube/cubetest.o: in function `main':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/cubetest.c:63: undefined reference to `test'
+collect2: error: ld returned 1 exit status
+make: *** [makefile:63: Testing/Cube/cubetest] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o
+[?2004lgcc -Wall -std=c99 -g Testing/test.o Testing/Cube/cubetest.o Cube/cube.o Cube/subcube.o -o Testing/Cube/cubetest
+./Testing/Cube/cubetest
 
-subcube_type:   0  1  2  3  4  5  6
-subcube_type: PASS
 
-subcube_colors:  0  1  2  3  4  5  6
-subcube_colors: PASS
-
-subcube_color_along_axis:  0.0  0.1  0.2  1.0  1.1  1.2  2.0  2.1  2.2  3.0  3.1  3.2
-subcube_color_along_axis: PASS
-Failed: 0
-rm -rf ./Testing/Cube/testSubcube
-gcc -Wall -std=c99 -g   -c -o Testing/Cube/testCube.o Testing/Cube/testCube.c
-gcc   Testing/Cube/testCube.o Testing/test.h Testing/test.o Cube/cube.o Cube/subcube.o   -o Testing/Cube/testCube
-Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
-make: Wall: No such file or directory
-make: [makefile:56: cubeTest] Error 127 (ignored)
-./Testing/Cube/testCube
+subcube: FAIL
 
 
-subcube: PASS
-Failed: 0
-rm -rf ./Testing/Cube/testCube
-Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
-make: Wall: No such file or directory
-make: [makefile:56: storageTest] Error 127 (ignored)
-./Testing/Storage/testStorage
-make: *** [makefile:57: storageTest] Error 1
-rm Testing/Cube/testCube.o
-]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
-[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/testSubcube.o Testing/Cube/testSubcube.c
-gcc   Testing/Cube/testSubcube.o Testing/test.h Testing/test.o Cube/subcube.o   -o Testing/Cube/testSubcube
-# -Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
-./Testing/Cube/testSubcube
-
-subcube_type:   0  1  2  3  4  5  6
-subcube_type: PASS
-
-subcube_colors:  0  1  2  3  4  5  6
-subcube_colors: PASS
-
-subcube_color_along_axis:  0.0  0.1  0.2  1.0  1.1  1.2  2.0  2.1  2.2  3.0  3.1  3.2
-subcube_color_along_axis: PASS
-Failed: 0
-rm -rf ./Testing/Cube/testSubcube
-gcc -Wall -std=c99 -g   -c -o Testing/Cube/testCube.o Testing/Cube/testCube.c
-gcc   Testing/Cube/testCube.o Testing/test.h Testing/test.o Cube/cube.o Cube/subcube.o   -o Testing/Cube/testCube
-# -Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
-./Testing/Cube/testCube
+cube_create: FAIL
 
 
-subcube: PASS
-Failed: 0
-rm -rf ./Testing/Cube/testCube
-# -Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
-./Testing/Storage/testStorage
-make: *** [makefile:57: storageTest] Error 1
-rm Testing/Cube/testCube.o Testing/Cube/testSubcube.o
-]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
-[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/testSubcube.o Testing/Cube/testSubcube.c
-gcc   Testing/Cube/testSubcube.o Testing/test.h Testing/test.o Cube/subcube.o   -o Testing/Cube/testSubcube
-# -Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
-./Testing/Cube/testSubcube
-
-subcube_type:   0  1  2  3  4  5  6
-subcube_type: PASS
-
-subcube_colors:  0  1  2  3  4  5  6
-subcube_colors: PASS
-
-subcube_color_along_axis:  0.0  0.1  0.2  1.0  1.1  1.2  2.0  2.1  2.2  3.0  3.1  3.2
-subcube_color_along_axis: PASS
-Failed: 0
-rm -rf ./Testing/Cube/testSubcube
-gcc -Wall -std=c99 -g   -c -o Testing/Cube/testCube.o Testing/Cube/testCube.c
-gcc   Testing/Cube/testCube.o Testing/test.h Testing/test.o Cube/cube.o Cube/subcube.o   -o Testing/Cube/testCube
-# -Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
-./Testing/Cube/testCube
+cube_copy: FAIL
 
 
-subcube: PASS
-Failed: 0
-rm -rf ./Testing/Cube/testCube
-# -Wall -std=c99 -g = -Wall -std=c99 -g + -fprofile-args -ftest-coverage-flags
-./Testing/Storage/testStorage
-make: *** [makefile:58: storageTest] Error 1
-rm Testing/Cube/testCube.o Testing/Cube/testSubcube.o
-]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
-[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/testSubcube.o Testing/Cube/testSubcube.c
-gcc   Testing/Cube/testSubcube.o Testing/test.h Testing/test.o Cube/subcube.o   -o Testing/Cube/testSubcube
-./Testing/Cube/testSubcube
+cube_string: FAIL
 
-subcube_type:   0  1  2  3  4  5  6
-subcube_type: PASS
 
-subcube_colors:  0  1  2  3  4  5  6
-subcube_colors: PASS
+cube_rotate: FAIL
 
-subcube_color_along_axis:  0.0  0.1  0.2  1.0  1.1  1.2  2.0  2.1  2.2  3.0  3.1  3.2
-subcube_color_along_axis: PASS
-Failed: 0
-rm -rf ./Testing/Cube/testSubcube
-gcc -Wall -std=c99 -g   -c -o Testing/Cube/testCube.o Testing/Cube/testCube.c
-[01m[KTesting/Cube/testCube.c:[m[K In function ‘[01m[KtestCreate[m[K’:
-[01m[KTesting/Cube/testCube.c:24:1:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[K}[m[K’ token
-   24 | [01;31m[K}[m[K
-      | [01;31m[K^[m[K
-[01m[KTesting/Cube/testCube.c:[m[K In function ‘[01m[KtestCompare[m[K’:
-[01m[KTesting/Cube/testCube.c:48:1:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[K}[m[K’ token
-   48 | [01;31m[K}[m[K
-      | [01;31m[K^[m[K
-make: *** [<builtin>: Testing/Cube/testCube.o] Error 1
-rm Testing/Cube/testSubcube.o
-]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
-[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/testSubcube.o Testing/Cube/testSubcube.c
-gcc   Testing/Cube/testSubcube.o Testing/test.h Testing/test.o Cube/subcube.o   -o Testing/Cube/testSubcube
-./Testing/Cube/testSubcube
 
-subcube_type:   0  1  2  3  4  5  6
-subcube_type: PASS
+cube_compare: FAIL
 
-subcube_colors:  0  1  2  3  4  5  6
-subcube_colors: PASS
 
-subcube_color_along_axis:  0.0  0.1  0.2  1.0  1.1  1.2  2.0  2.1  2.2  3.0  3.1  3.2
-subcube_color_along_axis: PASS
-Failed: 0
-rm -rf ./Testing/Cube/testSubcube
-gcc -Wall -std=c99 -g   -c -o Testing/Cube/testCube.o Testing/Cube/testCube.c
-[01m[KTesting/Cube/testCube.c:[m[K In function ‘[01m[KtestCreate[m[K’:
-[01m[KTesting/Cube/testCube.c:24:1:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[K}[m[K’ token
-   24 | [01;31m[K}[m[K
-      | [01;31m[K^[m[K
-make: *** [<builtin>: Testing/Cube/testCube.o] Error 1
-rm Testing/Cube/testSubcube.o
-]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make test
-[?2004lgcc -Wall -std=c99 -g   -c -o Testing/Cube/testSubcube.o Testing/Cube/testSubcube.c
-gcc   Testing/Cube/testSubcube.o Testing/test.h Testing/test.o Cube/subcube.o   -o Testing/Cube/testSubcube
-./Testing/Cube/testSubcube
-
-subcube_type:   0  1  2  3  4  5  6
-subcube_type: PASS
-
-subcube_colors:  0  1  2  3  4  5  6
-subcube_colors: PASS
-
-s
+cube_hash: PASS
+Failed: 6
+make: *** [makefile:59: Cube/cube.o] Error 1
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/cube.o[KCube/subcube.o
+[?2004lmake: *** No rule to make target 'Testing/Cube/subcubetest', needed by 'Cube/subcube.o'.  Stop.
+]0;davidb@david-inspiron145410:~/git/Rubik-s-Cube[?2004h[01;32m[davidb@david-inspiron145410[01;37m Rubik-s-Cube[01;32m]$[00m make TST=1 Cube/subcube.o
+[?2004lgcc -Wall -std=c99 -g    Testing/Cube/subcubetest.c   -o Testing/Cube/subcubetest
+/usr/bin/ld: /tmp/cctkVKw8.o: in function `testSubcubeType':
+/home/davidb/git/Rubik-s-Cube/Testing/Cube/subcubetest.c:28: undefined reference to `setTestName'
+/usr/bin/ld: /home/davidb/git/Rubik-s-Cube/Testing/Cube/subcubetest.c:33: unde
